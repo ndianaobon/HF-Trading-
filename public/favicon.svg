@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" width="140" height="140" role="img" aria-label="HarborFinance Trading"><title>HarborFinance Trading</title><g transform="translate(0 0)">
+  <rect width="140" height="140" rx="30" fill="#F4BE2C"/>
+  <path d="M0 30A30 30 0 0 1 30 0H110A30 30 0 0 1 140 30V106H0Z" fill="#161616"/>
+  <path d="M56.91 76L45.58 76L45.58 42.40L56.91 42.40L56.91 76ZM35.12 76L23.79 76L23.79 42.40L35.12 42.40L35.12 76ZM46.35 63.62L34.35 63.62L34.35 54.30L46.35 54.30L46.35 63.62ZM72.21 76L60.88 76L60.88 42.40L88.19 42.40L88.19 50.94L72.21 50.94L72.21 76ZM86.22 65.25L71.44 65.25L71.44 56.70L86.22 56.70L86.22 65.25ZM108.92 76L97.59 76L97.59 51.18L87.75 51.18L87.75 42.40L118.76 42.40L118.76 51.18L108.92 51.18L108.92 76Z" fill="#FFFFFF"/>
+  <rect x="44" y="119" width="52" height="8" rx="4" fill="#161616"/>
+</g></svg>

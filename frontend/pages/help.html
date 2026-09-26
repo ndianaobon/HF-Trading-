@@ -1,0 +1,41 @@
+<!-- @page {"title": "Help Center", "description": "Guides and answers for HarborFinance accounts, funding, trading, security and products.", "layout": "marketing"} -->
+<section class="relative overflow-hidden border-b border-line">
+  <!-- @include page-hero-start -->
+  <div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+    <p class="text-xs font-bold tracking-[0.2em] text-accent uppercase">Help Center</p>
+    <h1 class="mt-3 max-w-3xl font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl">How can we help?</h1>
+    <p class="mt-4 max-w-2xl text-lg leading-relaxed text-muted">Browse topics below, or reach our team through live chat and support tickets from your dashboard.</p>
+  </div>
+</section>
+<div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+  <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <a href="/faq#account" class="flex gap-4 rounded-2xl border border-line bg-panel p-5 transition-colors hover:border-line-strong"><i data-icon="user-circle" class="mt-0.5 h-5 w-5 shrink-0 text-accent"></i><div><p class="font-semibold text-white">Getting started</p><p class="mt-1 text-sm text-muted">Registration, email verification and identity checks.</p></div></a>
+    <a href="/faq#funding" class="flex gap-4 rounded-2xl border border-line bg-panel p-5 transition-colors hover:border-line-strong"><i data-icon="wallet" class="mt-0.5 h-5 w-5 shrink-0 text-accent"></i><div><p class="font-semibold text-white">Deposits &amp; withdrawals</p><p class="mt-1 text-sm text-muted">Networks, confirmations, minimums and fees.</p></div></a>
+    <a href="/faq#trading" class="flex gap-4 rounded-2xl border border-line bg-panel p-5 transition-colors hover:border-line-strong"><i data-icon="candlestick-chart" class="mt-0.5 h-5 w-5 shrink-0 text-accent"></i><div><p class="font-semibold text-white">Trading</p><p class="mt-1 text-sm text-muted">Order types, fills, rejections and fees.</p></div></a>
+    <a href="/faq#products" class="flex gap-4 rounded-2xl border border-line bg-panel p-5 transition-colors hover:border-line-strong"><i data-icon="piggy-bank" class="mt-0.5 h-5 w-5 shrink-0 text-accent"></i><div><p class="font-semibold text-white">Plans &amp; copy trading</p><p class="mt-1 text-sm text-muted">How subscriptions and copy settings work.</p></div></a>
+    <a href="#security" class="flex gap-4 rounded-2xl border border-line bg-panel p-5 transition-colors hover:border-line-strong"><i data-icon="shield-check" class="mt-0.5 h-5 w-5 shrink-0 text-accent"></i><div><p class="font-semibold text-white">Security</p><p class="mt-1 text-sm text-muted">2FA, sessions and protecting your account.</p></div></a>
+    <a href="/learn" class="flex gap-4 rounded-2xl border border-line bg-panel p-5 transition-colors hover:border-line-strong"><i data-icon="book-open" class="mt-0.5 h-5 w-5 shrink-0 text-accent"></i><div><p class="font-semibold text-white">Learn</p><p class="mt-1 text-sm text-muted">In-depth guides to markets and risk.</p></div></a>
+  </div>
+
+  <section id="security" class="mt-16 scroll-mt-24">
+    <h2 class="font-display text-2xl font-extrabold text-white">How we protect your account</h2>
+    <div class="mt-6 grid gap-6 lg:grid-cols-2">
+      <ul class="space-y-3 text-sm text-muted">
+        <li class="flex gap-2.5"><i data-icon="shield-check" class="mt-0.5 h-4 w-4 shrink-0 text-up"></i>Passwords are hashed with Argon2id; we never store or see them in plain text.</li>
+        <li class="flex gap-2.5"><i data-icon="shield-check" class="mt-0.5 h-4 w-4 shrink-0 text-up"></i>Two-factor authentication with time-based codes and single-use backup codes.</li>
+        <li class="flex gap-2.5"><i data-icon="shield-check" class="mt-0.5 h-4 w-4 shrink-0 text-up"></i>Sessions use secure, HTTP-only cookies. You can end any session from Settings.</li>
+        <li class="flex gap-2.5"><i data-icon="shield-check" class="mt-0.5 h-4 w-4 shrink-0 text-up"></i>Sensitive data such as 2FA secrets and ID numbers is encrypted at rest (AES-256-GCM).</li>
+        <li class="flex gap-2.5"><i data-icon="shield-check" class="mt-0.5 h-4 w-4 shrink-0 text-up"></i>Withdrawals require step-up verification and are reviewed before processing.</li>
+        <li class="flex gap-2.5"><i data-icon="shield-check" class="mt-0.5 h-4 w-4 shrink-0 text-up"></i>Balances can never go negative: every balance change runs in a database transaction with integrity constraints.</li>
+        <li class="flex gap-2.5"><i data-icon="shield-check" class="mt-0.5 h-4 w-4 shrink-0 text-up"></i>Administrative actions on accounts and funds are recorded in an audit log.</li>
+        <li class="flex gap-2.5"><i data-icon="shield-check" class="mt-0.5 h-4 w-4 shrink-0 text-up"></i>Rate limiting and request-origin checks protect against brute force and cross-site attacks.</li>
+      </ul>
+      <div class="space-y-3"><!-- @faq-security --></div>
+    </div>
+  </section>
+
+  <div class="mt-16 grid gap-4 md:grid-cols-2">
+    <a href="/dashboard/support?chat=1" class="flex items-center gap-4 rounded-2xl border border-accent/25 bg-accent-soft p-6"><i data-icon="message-circle" class="h-6 w-6 text-accent"></i><div><p class="font-semibold text-white">Live chat</p><p class="text-sm text-muted">Chat with our support team from your dashboard.</p></div></a>
+    <a href="/dashboard/support" class="flex items-center gap-4 rounded-2xl border border-line bg-panel p-6"><i data-icon="life-buoy" class="h-6 w-6 text-accent"></i><div><p class="font-semibold text-white">Create a support ticket</p><p class="text-sm text-muted">Attach screenshots and track replies in one place.</p></div></a>
+  </div>
+</div>

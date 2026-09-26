@@ -1,0 +1,28 @@
+<!-- @page {"title": "Fees", "description": "HarborFinance trading fees, network withdrawal fees, deposit minimums and investment plan fees.", "layout": "marketing", "script": "fees"} -->
+<section class="relative overflow-hidden border-b border-line">
+  <!-- @include page-hero-start -->
+  <div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+    <p class="text-xs font-bold tracking-[0.2em] text-accent uppercase">Fees</p>
+    <h1 class="mt-3 max-w-3xl font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl">Simple, published pricing</h1>
+    <p class="mt-4 max-w-2xl text-lg leading-relaxed text-muted">The fees below are the current schedule. The exact fee for each order, withdrawal or subscription is always shown before you confirm.</p>
+  </div>
+</section>
+<div class="mx-auto max-w-7xl space-y-12 px-4 py-12 sm:px-6 lg:px-8" id="fees-root">
+  <section>
+    <h2 class="font-display text-xl font-bold text-white">Spot trading</h2>
+    <div class="mt-4 grid gap-4 sm:grid-cols-2">
+      <div class="rounded-2xl border border-line bg-panel p-6"><p class="text-sm text-dim">Maker fee</p><p class="num mt-1 font-display text-3xl font-extrabold text-white" data-fee="maker">—</p><p class="mt-2 text-sm text-muted">Charged when a resting limit order is filled.</p></div>
+      <div class="rounded-2xl border border-line bg-panel p-6"><p class="text-sm text-dim">Taker fee</p><p class="num mt-1 font-display text-3xl font-extrabold text-white" data-fee="taker">—</p><p class="mt-2 text-sm text-muted">Charged when an order executes immediately against the market.</p></div>
+    </div>
+    <p class="mt-3 text-xs text-dim">Trading fees are charged in the quote currency (USDT). Individual markets may have specific rates, shown on the order ticket.</p>
+  </section>
+  <section>
+    <h2 class="font-display text-xl font-bold text-white">Deposits &amp; withdrawals</h2>
+    <p class="mt-1 text-sm text-muted">HarborFinance does not charge a deposit fee. Network fees apply to withdrawals.</p>
+    <div class="mt-4 overflow-x-auto rounded-2xl border border-line bg-panel" data-networks><div class="p-4"><div class="skeleton h-40"></div></div></div>
+  </section>
+  <section>
+    <h2 class="font-display text-xl font-bold text-white">Investment plans</h2>
+    <div class="mt-4 overflow-x-auto rounded-2xl border border-line bg-panel" data-plans><div class="p-4"><div class="skeleton h-28"></div></div></div>
+  </section>
+</div>

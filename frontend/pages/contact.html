@@ -1,0 +1,32 @@
+<!-- @page {"title": "Contact", "description": "Get in touch with the HarborFinance team.", "layout": "marketing", "script": "contact"} -->
+<section class="relative overflow-hidden border-b border-line">
+  <!-- @include page-hero-start -->
+  <div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+    <p class="text-xs font-bold tracking-[0.2em] text-accent uppercase">Contact</p>
+    <h1 class="mt-3 max-w-3xl font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl">We're here to help</h1>
+    <p class="mt-4 max-w-2xl text-lg leading-relaxed text-muted">For account-specific questions, sign in and open a support ticket so we can verify your identity and see the details.</p>
+  </div>
+</section>
+<div class="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[1fr_1.4fr] lg:px-8">
+  <div class="space-y-4">
+    <div class="flex gap-4 rounded-2xl border border-line bg-panel p-5"><i data-icon="life-buoy" class="mt-0.5 h-5 w-5 shrink-0 text-accent"></i><div><p class="font-semibold text-white">Account support</p><p class="mt-1 text-sm text-muted">Signed-in users get the fastest help through tickets and live chat.</p><a href="/dashboard/support" class="mt-2 inline-flex text-sm font-semibold text-accent hover:text-accent-strong">Open support →</a></div></div>
+    <div class="flex gap-4 rounded-2xl border border-line bg-panel p-5"><i data-icon="book-open" class="mt-0.5 h-5 w-5 shrink-0 text-accent"></i><div><p class="font-semibold text-white">Help Center</p><p class="mt-1 text-sm text-muted">Guides on funding, trading, security and verification.</p><a href="/help" class="mt-2 inline-flex text-sm font-semibold text-accent hover:text-accent-strong">Browse articles →</a></div></div>
+    <div class="flex gap-4 rounded-2xl border border-line bg-panel p-5"><i data-icon="mail" class="mt-0.5 h-5 w-5 shrink-0 text-accent"></i><div><p class="font-semibold text-white">Email</p><p class="mt-1 text-sm text-muted" data-support-email>—</p><a href="#" class="mt-2 inline-flex text-sm font-semibold text-accent hover:text-accent-strong" data-support-mailto>Send an email →</a></div></div>
+    <p class="text-sm text-dim" data-support-hours hidden></p>
+    <p class="text-xs leading-relaxed text-dim">Never share your password, 2FA codes or backup codes with anyone — including people claiming to be HarborFinance staff.</p>
+  </div>
+  <div class="rounded-2xl border border-line bg-panel p-6" id="contact-card">
+    <h2 class="font-display text-xl font-bold text-white">Send us a message</h2>
+    <p class="mt-1 text-sm text-muted">General enquiries, partnerships and press.</p>
+    <form method="post" id="contact-form" class="mt-6 space-y-4" novalidate>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="field"><label class="label" for="c-name">Name</label><input id="c-name" name="name" class="input" autocomplete="name" /><p class="field-error" data-error-for="name" hidden></p></div>
+        <div class="field"><label class="label" for="c-email">Email</label><input id="c-email" name="email" type="email" class="input" autocomplete="email" /><p class="field-error" data-error-for="email" hidden></p></div>
+      </div>
+      <div class="field"><label class="label" for="c-topic">Topic</label><select id="c-topic" name="topic" class="select"><option>General</option><option>Partnerships</option><option>Press</option><option>Feedback</option><option>Other</option></select></div>
+      <div class="field"><label class="label" for="c-msg">Message</label><textarea id="c-msg" name="message" rows="6" class="textarea"></textarea><p class="field-error" data-error-for="message" hidden></p></div>
+      <div data-form-error hidden></div>
+      <button type="submit" class="btn btn-primary w-full sm:w-auto">Send message</button>
+    </form>
+  </div>
+</div>

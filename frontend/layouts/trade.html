@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- @include head -->
+    <script src="/vendor/lightweight-charts.standalone.js" defer></script>
+  </head>
+  <body class="flex min-h-dvh flex-col" data-layout="trade" data-path="{{path}}">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded-lg focus:bg-accent focus:px-3 focus:py-2 focus:text-accent-ink">Skip to content</a>
+    <div id="system-banner"></div>
+    <header class="glass sticky top-0 z-40 border-b border-line">
+      <div class="flex h-14 items-center gap-3 px-4 sm:gap-6">
+        <!-- @include logo -->
+        <nav class="hidden items-center gap-1 md:flex" aria-label="Main" data-trade-nav>
+          <a href="/markets" class="nav-link">Markets</a>
+          <a href="/trade" class="nav-link" aria-current="page">Trade</a>
+          <a href="/investment-plans" class="nav-link">Investment Plans</a>
+          <a href="/copy-trading" class="nav-link">Copy Trading</a>
+        </nav>
+        <div class="ml-auto flex items-center gap-2" data-signed-out>
+          <!-- @include theme-toggle -->
+          <a href="/login" class="btn btn-ghost btn-sm" data-login-link>Log In</a>
+          <a href="/register" class="btn btn-primary btn-sm">Create Account</a>
+        </div>
+        <div class="ml-auto flex items-center gap-1 sm:gap-2" data-signed-in hidden>
+          <!-- @include theme-toggle -->
+          <span class="hidden rounded-md border border-warn/30 bg-warn-soft px-2 py-1 text-[11px] font-bold text-warn sm:inline" data-demo-chip hidden>DEMO</span>
+          <a href="/dashboard/deposit" class="btn btn-primary btn-sm hidden sm:inline-flex">Deposit</a>
+          <a href="/dashboard" class="btn btn-ghost btn-icon md:hidden" aria-label="Dashboard"><i data-icon="layout-dashboard" class="h-4 w-4"></i></a>
+          <div class="relative" data-bell>
+            <button type="button" class="relative grid h-9 w-9 place-items-center rounded-lg text-muted hover:bg-panel-2 hover:text-white" aria-label="Notifications" data-bell-toggle>
+              <i data-icon="bell" class="h-[18px] w-[18px]"></i>
+              <span class="absolute top-1 right-1 grid h-4 min-w-4 place-items-center rounded-full bg-accent px-1 text-[10px] font-bold text-accent-ink" data-bell-count hidden></span>
+            </button>
+          </div>
+          <div class="relative" data-account>
+            <button type="button" class="flex items-center gap-2 rounded-lg p-1 pr-2 hover:bg-panel-2" aria-haspopup="menu" aria-expanded="false" aria-label="Account menu" data-account-toggle>
+              <span class="grid h-[30px] w-[30px] place-items-center rounded-full bg-accent/15 text-xs font-bold text-accent ring-1 ring-accent/35" data-avatar>··</span>
+              <i data-icon="chevron-down" class="hidden h-4 w-4 text-dim md:block"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main id="main" class="flex-1">{{content}}</main>
+  </body>
+</html>

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+<script>
+  // Apply the saved (or system) colour theme before first paint to avoid a flash.
+  (function () {
+    var t = "dark";
+    try {
+      var saved = localStorage.getItem("hf.theme");
+      t = saved === "light" || saved === "dark" ? saved : matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    } catch (e) {}
+    document.documentElement.setAttribute("data-theme", t);
+    var m = document.createElement("meta");
+    m.name = "theme-color";
+    m.content = t === "light" ? "#f5f6f8" : "#000000";
+    document.head.appendChild(m);
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Page not found | HarborFinance Trading</title>
+<meta name="description" content="The page you're looking for doesn't exist." />
+<meta name="robots" content="noindex" />
+<meta name="application-name" content="HarborFinance Trading" />
+<link rel="canonical" href="/404" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="HarborFinance Trading" />
+<meta property="og:title" content="Page not found | HarborFinance Trading" />
+<meta property="og:description" content="The page you're looking for doesn't exist." />
+<meta property="og:url" content="/404" />
+<meta property="og:image" content="/opengraph-image" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Page not found | HarborFinance Trading" />
+<meta name="twitter:description" content="The page you're looking for doesn't exist." />
+<meta name="twitter:image" content="/twitter-image" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-icon" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@600;700;800&family=Montserrat:wght@700;900&display=swap" />
+<link rel="stylesheet" href="/assets/css/app.css" />
+<script type="module" src="/assets/js/pages/none.js"></script>
+
+  </head>
+  <body data-layout="bare" data-path="/404">
+    <main id="main"><div class="flex min-h-dvh flex-col items-center justify-center px-4 text-center">
+  <a href="/" class="inline-flex shrink-0 items-center gap-2.5" aria-label="HarborFinance Trading home" data-logo>
+  <svg width="36" height="36" viewBox="0 0 140 140" class="shrink-0" aria-hidden="true">
+    <rect width="140" height="140" rx="30" fill="#F4BE2C" />
+    <path d="M0 30A30 30 0 0 1 30 0H110A30 30 0 0 1 140 30V106H0Z" fill="#161616" />
+    <path d="M56.91 76L45.58 76L45.58 42.40L56.91 42.40L56.91 76ZM35.12 76L23.79 76L23.79 42.40L35.12 42.40L35.12 76ZM46.35 63.62L34.35 63.62L34.35 54.30L46.35 54.30L46.35 63.62ZM72.21 76L60.88 76L60.88 42.40L88.19 42.40L88.19 50.94L72.21 50.94L72.21 76ZM86.22 65.25L71.44 65.25L71.44 56.70L86.22 56.70L86.22 65.25ZM108.92 76L97.59 76L97.59 51.18L87.75 51.18L87.75 42.40L118.76 42.40L118.76 51.18L108.92 51.18L108.92 76Z" fill="#FFFFFF" />
+    <rect x="44" y="119" width="52" height="8" rx="4" fill="#161616" />
+  </svg>
+  <span class="logo-text flex flex-col leading-none">
+    <span class="font-logo text-[16px] font-black tracking-[0.01em] text-white">HARBORFINANCE</span>
+    <span class="mt-[5px] flex items-center gap-1.5 font-logo text-[8.5px] font-bold tracking-[0.5em] text-accent"><span class="h-[1.5px] w-3.5 bg-accent"></span>TRADING</span>
+  </span>
+</a>
+
+  <div class="mt-12 grid h-14 w-14 place-items-center rounded-2xl border border-line bg-panel text-accent"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-6 w-6" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/></svg></div>
+  <p class="mt-6 font-mono text-sm text-dim">404</p>
+  <h1 class="mt-2 font-display text-3xl font-extrabold text-white">This page drifted out of the harbor</h1>
+  <p class="mt-3 max-w-md text-muted">The page you're looking for doesn't exist or has moved.</p>
+  <div class="mt-8 flex gap-3">
+    <a href="/" class="btn btn-primary">Go home</a>
+    <a href="/markets" class="btn btn-secondary">View markets</a>
+  </div>
+  <a href="/help" class="mt-6 text-sm text-dim hover:text-muted">Visit the Help Center</a>
+</div>
+</main>
+  </body>
+</html>

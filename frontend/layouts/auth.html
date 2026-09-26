@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- @include head -->
+  </head>
+  <body class="flex min-h-dvh flex-col" data-layout="auth" data-path="{{path}}">
+    <div id="system-banner"></div>
+    <div class="grid flex-1 lg:grid-cols-[1fr_minmax(480px,560px)]">
+      <aside class="relative hidden overflow-hidden border-r border-line bg-base-2 lg:flex lg:flex-col">
+        <div class="grid-bg absolute inset-0 [mask-image:radial-gradient(70%_60%_at_40%_30%,black,transparent)]" aria-hidden="true"></div>
+        <div class="absolute -top-32 -left-24 h-96 w-96 rounded-full bg-accent/15 blur-3xl" aria-hidden="true"></div>
+        <div class="relative flex flex-1 flex-col p-10 xl:p-14">
+          <!-- @include logo -->
+          <div class="my-auto max-w-lg py-12">
+            <h2 class="font-display text-4xl leading-tight font-extrabold tracking-tight text-white">Your digital assets. One professional platform.</h2>
+            <p class="mt-4 text-muted">Monitor markets, manage your portfolio and access powerful trading tools from a secure, modern platform designed for digital-asset users.</p>
+            <ul class="mt-8 space-y-4 text-sm text-fg">
+              <li class="flex items-center gap-3"><span class="grid h-8 w-8 place-items-center rounded-lg border border-accent/20 bg-accent-soft text-accent"><i data-icon="activity" class="h-4 w-4"></i></span>Live market data with honest status indicators</li>
+              <li class="flex items-center gap-3"><span class="grid h-8 w-8 place-items-center rounded-lg border border-accent/20 bg-accent-soft text-accent"><i data-icon="line-chart" class="h-4 w-4"></i></span>Portfolio analytics with cost basis and P&amp;L</li>
+              <li class="flex items-center gap-3"><span class="grid h-8 w-8 place-items-center rounded-lg border border-accent/20 bg-accent-soft text-accent"><i data-icon="shield-check" class="h-4 w-4"></i></span>Two-factor authentication and session control</li>
+            </ul>
+          </div>
+          <div class="glass rounded-2xl border border-line p-4" id="auth-markets">
+            <div class="mb-3 flex items-center justify-between"><span class="text-xs font-bold tracking-wider text-dim uppercase">Markets</span><span data-feed-status></span></div>
+            <div class="grid grid-cols-3 gap-3" data-auth-tickers></div>
+          </div>
+        </div>
+      </aside>
+      <main id="main" class="flex flex-col px-4 py-8 sm:px-10">
+        <div class="flex items-center justify-between"><div class="lg:hidden"><!-- @include logo --></div><div class="ml-auto"><!-- @include theme-toggle --></div></div>
+        <div class="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-10">{{content}}</div>
+        <p class="text-center text-xs text-dim"><a href="/terms" class="hover:text-muted">Terms</a> · <a href="/privacy" class="hover:text-muted">Privacy</a> · <a href="/risk-disclosure" class="hover:text-muted">Risk Disclosure</a></p>
+      </main>
+    </div>
+  </body>
+</html>

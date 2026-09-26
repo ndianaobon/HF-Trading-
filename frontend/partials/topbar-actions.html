@@ -1,0 +1,21 @@
+<div class="ml-auto flex items-center gap-2 sm:gap-3">
+  <div class="hidden items-center gap-2 rounded-lg border border-line px-2.5 py-1.5 xl:flex">
+    <span class="text-[11px] font-semibold text-dim">Market data</span>
+    <span data-feed-status></span>
+  </div>
+  <span class="hidden rounded-md border border-warn/30 bg-warn-soft px-2 py-1 text-[11px] font-bold text-warn sm:inline" data-demo-chip hidden>DEMO</span>
+  <!-- @include theme-toggle -->
+  <div class="relative" data-bell>
+    <button type="button" class="relative grid h-9 w-9 place-items-center rounded-lg text-muted hover:bg-panel-2 hover:text-white" aria-label="Notifications" data-bell-toggle>
+      <i data-icon="bell" class="h-[18px] w-[18px]"></i>
+      <span class="absolute top-1 right-1 grid h-4 min-w-4 place-items-center rounded-full bg-accent px-1 text-[10px] font-bold text-accent-ink" data-bell-count hidden></span>
+    </button>
+  </div>
+  <div class="relative" data-account>
+    <button type="button" class="flex items-center gap-2 rounded-lg p-1 pr-2 hover:bg-panel-2" aria-haspopup="menu" aria-expanded="false" aria-label="Account menu" data-account-toggle>
+      <span class="grid h-[30px] w-[30px] place-items-center rounded-full bg-accent/15 text-xs font-bold text-accent ring-1 ring-accent/35" data-avatar>··</span>
+      <span class="hidden max-w-32 truncate text-sm font-medium text-fg md:block" data-account-name>Account</span>
+      <i data-icon="chevron-down" class="hidden h-4 w-4 text-dim md:block"></i>
+    </button>
+  </div>
+</div>

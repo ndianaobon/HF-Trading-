@@ -1,0 +1,39 @@
+<meta charset="utf-8" />
+<script>
+  // Apply the saved (or system) colour theme before first paint to avoid a flash.
+  (function () {
+    var t = "dark";
+    try {
+      var saved = localStorage.getItem("hf.theme");
+      t = saved === "light" || saved === "dark" ? saved : matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    } catch (e) {}
+    document.documentElement.setAttribute("data-theme", t);
+    var m = document.createElement("meta");
+    m.name = "theme-color";
+    m.content = t === "light" ? "#f5f6f8" : "#000000";
+    document.head.appendChild(m);
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{{title}}</title>
+<meta name="description" content="{{description}}" />
+<meta name="robots" content="{{robots}}" />
+<meta name="application-name" content="HarborFinance Trading" />
+<link rel="canonical" href="{{path}}" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="HarborFinance Trading" />
+<meta property="og:title" content="{{title}}" />
+<meta property="og:description" content="{{description}}" />
+<meta property="og:url" content="{{path}}" />
+<meta property="og:image" content="/opengraph-image" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="{{title}}" />
+<meta name="twitter:description" content="{{description}}" />
+<meta name="twitter:image" content="/twitter-image" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-icon" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@600;700;800&family=Montserrat:wght@700;900&display=swap" />
+<link rel="stylesheet" href="/assets/css/app.css" />
+<script type="module" src="/assets/js/pages/{{script}}.js"></script>

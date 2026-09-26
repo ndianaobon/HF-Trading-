@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+<script>
+  // Apply the saved (or system) colour theme before first paint to avoid a flash.
+  (function () {
+    var t = "dark";
+    try {
+      var saved = localStorage.getItem("hf.theme");
+      t = saved === "light" || saved === "dark" ? saved : matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    } catch (e) {}
+    document.documentElement.setAttribute("data-theme", t);
+    var m = document.createElement("meta");
+    m.name = "theme-color";
+    m.content = t === "light" ? "#f5f6f8" : "#000000";
+    document.head.appendChild(m);
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fees | HarborFinance Trading</title>
+<meta name="description" content="HarborFinance trading fees, network withdrawal fees, deposit minimums and investment plan fees." />
+<meta name="robots" content="index, follow" />
+<meta name="application-name" content="HarborFinance Trading" />
+<link rel="canonical" href="/fees" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="HarborFinance Trading" />
+<meta property="og:title" content="Fees | HarborFinance Trading" />
+<meta property="og:description" content="HarborFinance trading fees, network withdrawal fees, deposit minimums and investment plan fees." />
+<meta property="og:url" content="/fees" />
+<meta property="og:image" content="/opengraph-image" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Fees | HarborFinance Trading" />
+<meta name="twitter:description" content="HarborFinance trading fees, network withdrawal fees, deposit minimums and investment plan fees." />
+<meta name="twitter:image" content="/twitter-image" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-icon" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@600;700;800&family=Montserrat:wght@700;900&display=swap" />
+<link rel="stylesheet" href="/assets/css/app.css" />
+<script type="module" src="/assets/js/pages/fees.js"></script>
+
+  </head>
+  <body class="flex min-h-dvh flex-col " data-layout="marketing" data-path="/fees">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded-lg focus:bg-accent focus:px-3 focus:py-2 focus:text-accent-ink">Skip to content</a>
+    <div id="system-banner"></div>
+    <header id="site-header" class="sticky top-0 z-50 border-b border-transparent transition-colors">
+  <div class="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
+    <a href="/" class="inline-flex shrink-0 items-center gap-2.5" aria-label="HarborFinance Trading home" data-logo>
+  <svg width="36" height="36" viewBox="0 0 140 140" class="shrink-0" aria-hidden="true">
+    <rect width="140" height="140" rx="30" fill="#F4BE2C" />
+    <path d="M0 30A30 30 0 0 1 30 0H110A30 30 0 0 1 140 30V106H0Z" fill="#161616" />
+    <path d="M56.91 76L45.58 76L45.58 42.40L56.91 42.40L56.91 76ZM35.12 76L23.79 76L23.79 42.40L35.12 42.40L35.12 76ZM46.35 63.62L34.35 63.62L34.35 54.30L46.35 54.30L46.35 63.62ZM72.21 76L60.88 76L60.88 42.40L88.19 42.40L88.19 50.94L72.21 50.94L72.21 76ZM86.22 65.25L71.44 65.25L71.44 56.70L86.22 56.70L86.22 65.25ZM108.92 76L97.59 76L97.59 51.18L87.75 51.18L87.75 42.40L118.76 42.40L118.76 51.18L108.92 51.18L108.92 76Z" fill="#FFFFFF" />
+    <rect x="44" y="119" width="52" height="8" rx="4" fill="#161616" />
+  </svg>
+  <span class="logo-text flex flex-col leading-none">
+    <span class="font-logo text-[16px] font-black tracking-[0.01em] text-white">HARBORFINANCE</span>
+    <span class="mt-[5px] flex items-center gap-1.5 font-logo text-[8.5px] font-bold tracking-[0.5em] text-accent"><span class="h-[1.5px] w-3.5 bg-accent"></span>TRADING</span>
+  </span>
+</a>
+
+    <nav class="hidden flex-1 items-center gap-1 lg:flex" aria-label="Main">
+      <div class="group relative" data-dropdown>
+        <button type="button" class="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors group-hover:text-accent group-focus-within:text-accent" aria-haspopup="true" aria-expanded="false">Trading <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="invisible absolute top-full left-0 z-50 w-72 translate-y-1 pt-2 opacity-0 transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+          <div class="rounded-2xl border border-line bg-panel p-2 shadow-2xl">
+            <a href="/forex" data-nav="/forex" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Forex</span><span class="mt-0.5 block text-xs text-muted">Major and minor currency pairs</span></a>
+            <a href="/markets" data-nav="/markets" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Cryptocurrencies</span><span class="mt-0.5 block text-xs text-muted">Trade BTC, ETH and altcoins</span></a>
+            <a href="/shares" data-nav="/shares" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Shares</span><span class="mt-0.5 block text-xs text-muted">Global equity markets</span></a>
+            <a href="/indices" data-nav="/indices" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Indices</span><span class="mt-0.5 block text-xs text-muted">Track top market indices</span></a>
+            <a href="/markets?category=MEME" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Memecoins</span><span class="mt-0.5 block text-xs text-muted">DOGE, SHIB, PEPE and more</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="group relative" data-dropdown>
+        <button type="button" class="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors group-hover:text-accent group-focus-within:text-accent" aria-haspopup="true" aria-expanded="false">System <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="invisible absolute top-full left-0 z-50 w-72 translate-y-1 pt-2 opacity-0 transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+          <div class="rounded-2xl border border-line bg-panel p-2 shadow-2xl">
+            <a href="/trade" data-nav="/trade" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Trade</span><span class="mt-0.5 block text-xs text-muted">Open the trading terminal</span></a>
+            <a href="/investment-plans" data-nav="/investment-plans" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Investment Plans</span><span class="mt-0.5 block text-xs text-muted">Basic, Silver, Gold and Platinum</span></a>
+            <a href="/copy-trading" data-nav="/copy-trading" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Copy Trading</span><span class="mt-0.5 block text-xs text-muted">Follow expert strategies</span></a>
+            <a href="/automated-trading" data-nav="/automated-trading" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Automated Bot Trading</span><span class="mt-0.5 block text-xs text-muted">Set rules and bots</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="group relative" data-dropdown>
+        <button type="button" class="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors group-hover:text-accent group-focus-within:text-accent" aria-haspopup="true" aria-expanded="false">Company <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="invisible absolute top-full left-0 z-50 w-72 translate-y-1 pt-2 opacity-0 transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+          <div class="rounded-2xl border border-line bg-panel p-2 shadow-2xl">
+            <a href="/about" data-nav="/about" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">About Us</span><span class="mt-0.5 block text-xs text-muted">Our mission and team</span></a>
+            <a href="/faq" data-nav="/faq" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">FAQ</span><span class="mt-0.5 block text-xs text-muted">Answers to common questions</span></a>
+            <a href="/help" data-nav="/help" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Help Center</span><span class="mt-0.5 block text-xs text-muted">Guides and support</span></a>
+            <a href="/contact" data-nav="/contact" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Contact</span><span class="mt-0.5 block text-xs text-muted">Get in touch with our team</span></a>
+            <a href="/terms" data-nav="/terms" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Legal</span><span class="mt-0.5 block text-xs text-muted">Terms, privacy and risk disclosure</span></a>
+          </div>
+        </div>
+      </div>
+      <a href="/learn" data-nav="/learn" class="rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:text-accent">Education</a>
+    </nav>
+    <div class="ml-auto flex items-center gap-2">
+      <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to light mode" title="Switch light / dark mode">
+  <span data-when="dark"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span>
+  <span data-when="light"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg></span>
+</button>
+
+      <div class="hidden items-center gap-2 lg:flex" data-auth-slot>
+        <a href="/login" class="btn btn-ghost">Log In</a>
+        <a href="/register" class="btn btn-primary">Create Account</a>
+      </div>
+    </div>
+    <button type="button" id="menu-toggle" class="grid h-10 w-10 place-items-center rounded-lg border border-line-strong text-fg lg:hidden" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-5 w-5" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg>
+    </button>
+  </div>
+  <div id="mobile-menu" class="h-[calc(100dvh-4rem)] animate-fade-in overflow-y-auto border-t border-line bg-base px-4 pt-4 pb-10 lg:hidden" hidden>
+    <nav class="flex flex-col" aria-label="Mobile">
+      <details class="group border-b border-line [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex cursor-pointer list-none items-center justify-between py-4 font-display text-lg font-bold text-white">Trading <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-5 w-5 text-muted transition-transform group-open:rotate-180" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="grid gap-1 pb-4">
+          <a href="/forex" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Forex</span><span class="block text-sm text-muted">Major and minor currency pairs</span></a>
+          <a href="/markets" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Cryptocurrencies</span><span class="block text-sm text-muted">Trade BTC, ETH and altcoins</span></a>
+          <a href="/shares" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Shares</span><span class="block text-sm text-muted">Global equity markets</span></a>
+          <a href="/indices" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Indices</span><span class="block text-sm text-muted">Track top market indices</span></a>
+          <a href="/markets?category=MEME" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Memecoins</span><span class="block text-sm text-muted">DOGE, SHIB, PEPE and more</span></a>
+        </div>
+      </details>
+      <details class="group border-b border-line [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex cursor-pointer list-none items-center justify-between py-4 font-display text-lg font-bold text-white">System <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-5 w-5 text-muted transition-transform group-open:rotate-180" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="grid gap-1 pb-4">
+          <a href="/trade" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Trade</span><span class="block text-sm text-muted">Open the trading terminal</span></a>
+          <a href="/investment-plans" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Investment Plans</span><span class="block text-sm text-muted">Basic, Silver, Gold and Platinum</span></a>
+          <a href="/copy-trading" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Copy Trading</span><span class="block text-sm text-muted">Follow expert strategies</span></a>
+          <a href="/automated-trading" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Automated Bot Trading</span><span class="block text-sm text-muted">Set rules and bots</span></a>
+        </div>
+      </details>
+      <details class="group border-b border-line [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex cursor-pointer list-none items-center justify-between py-4 font-display text-lg font-bold text-white">Company <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-5 w-5 text-muted transition-transform group-open:rotate-180" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="grid gap-1 pb-4">
+          <a href="/about" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">About Us</span><span class="block text-sm text-muted">Our mission and team</span></a>
+          <a href="/faq" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">FAQ</span><span class="block text-sm text-muted">Answers to common questions</span></a>
+          <a href="/help" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Help Center</span><span class="block text-sm text-muted">Guides and support</span></a>
+          <a href="/contact" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Contact</span><span class="block text-sm text-muted">Get in touch with our team</span></a>
+          <a href="/terms" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Legal</span><span class="block text-sm text-muted">Terms, privacy and risk disclosure</span></a>
+        </div>
+      </details>
+      <a href="/learn" class="border-b border-line py-4 font-display text-lg font-bold text-white">Education</a>
+    </nav>
+    <div class="mt-6 grid gap-3" data-auth-slot-mobile>
+      <a href="/register" class="btn btn-primary btn-lg">Create Account</a>
+      <a href="/login" class="btn btn-secondary btn-lg">Log In</a>
+    </div>
+  </div>
+</header>
+
+    <div id="ticker-bar" class="relative flex h-10 items-center overflow-hidden border-b border-line bg-base-2/80 text-xs">
+  <div class="z-10 flex h-full shrink-0 items-center border-r border-line bg-base-2 px-3" data-feed-status></div>
+  <div class="flex-1 overflow-hidden" data-ticker-items><p class="px-4 text-dim">Loading market data…</p></div>
+</div>
+
+    <main id="main" class="flex-1"><section class="relative overflow-hidden border-b border-line">
+  <div class="grid-bg absolute inset-0 [mask-image:radial-gradient(70%_80%_at_50%_0%,black,transparent)]" aria-hidden="true"></div>
+<div class="absolute top-0 left-1/2 h-64 w-[720px] -translate-x-1/2 rounded-full bg-accent/10 blur-3xl" aria-hidden="true"></div>
+
+  <div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+    <p class="text-xs font-bold tracking-[0.2em] text-accent uppercase">Fees</p>
+    <h1 class="mt-3 max-w-3xl font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl">Simple, published pricing</h1>
+    <p class="mt-4 max-w-2xl text-lg leading-relaxed text-muted">The fees below are the current schedule. The exact fee for each order, withdrawal or subscription is always shown before you confirm.</p>
+  </div>
+</section>
+<div class="mx-auto max-w-7xl space-y-12 px-4 py-12 sm:px-6 lg:px-8" id="fees-root">
+  <section>
+    <h2 class="font-display text-xl font-bold text-white">Spot trading</h2>
+    <div class="mt-4 grid gap-4 sm:grid-cols-2">
+      <div class="rounded-2xl border border-line bg-panel p-6"><p class="text-sm text-dim">Maker fee</p><p class="num mt-1 font-display text-3xl font-extrabold text-white" data-fee="maker">—</p><p class="mt-2 text-sm text-muted">Charged when a resting limit order is filled.</p></div>
+      <div class="rounded-2xl border border-line bg-panel p-6"><p class="text-sm text-dim">Taker fee</p><p class="num mt-1 font-display text-3xl font-extrabold text-white" data-fee="taker">—</p><p class="mt-2 text-sm text-muted">Charged when an order executes immediately against the market.</p></div>
+    </div>
+    <p class="mt-3 text-xs text-dim">Trading fees are charged in the quote currency (USDT). Individual markets may have specific rates, shown on the order ticket.</p>
+  </section>
+  <section>
+    <h2 class="font-display text-xl font-bold text-white">Deposits &amp; withdrawals</h2>
+    <p class="mt-1 text-sm text-muted">HarborFinance does not charge a deposit fee. Network fees apply to withdrawals.</p>
+    <div class="mt-4 overflow-x-auto rounded-2xl border border-line bg-panel" data-networks><div class="p-4"><div class="skeleton h-40"></div></div></div>
+  </section>
+  <section>
+    <h2 class="font-display text-xl font-bold text-white">Investment plans</h2>
+    <div class="mt-4 overflow-x-auto rounded-2xl border border-line bg-panel" data-plans><div class="p-4"><div class="skeleton h-28"></div></div></div>
+  </section>
+</div>
+</main>
+    <footer class="border-t border-line bg-base-2">
+  <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+    <div class="grid gap-10 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
+      <div class="max-w-xs">
+        <a href="/" class="inline-flex shrink-0 items-center gap-2.5" aria-label="HarborFinance Trading home" data-logo>
+  <svg width="36" height="36" viewBox="0 0 140 140" class="shrink-0" aria-hidden="true">
+    <rect width="140" height="140" rx="30" fill="#F4BE2C" />
+    <path d="M0 30A30 30 0 0 1 30 0H110A30 30 0 0 1 140 30V106H0Z" fill="#161616" />
+    <path d="M56.91 76L45.58 76L45.58 42.40L56.91 42.40L56.91 76ZM35.12 76L23.79 76L23.79 42.40L35.12 42.40L35.12 76ZM46.35 63.62L34.35 63.62L34.35 54.30L46.35 54.30L46.35 63.62ZM72.21 76L60.88 76L60.88 42.40L88.19 42.40L88.19 50.94L72.21 50.94L72.21 76ZM86.22 65.25L71.44 65.25L71.44 56.70L86.22 56.70L86.22 65.25ZM108.92 76L97.59 76L97.59 51.18L87.75 51.18L87.75 42.40L118.76 42.40L118.76 51.18L108.92 51.18L108.92 76Z" fill="#FFFFFF" />
+    <rect x="44" y="119" width="52" height="8" rx="4" fill="#161616" />
+  </svg>
+  <span class="logo-text flex flex-col leading-none">
+    <span class="font-logo text-[16px] font-black tracking-[0.01em] text-white">HARBORFINANCE</span>
+    <span class="mt-[5px] flex items-center gap-1.5 font-logo text-[8.5px] font-bold tracking-[0.5em] text-accent"><span class="h-[1.5px] w-3.5 bg-accent"></span>TRADING</span>
+  </span>
+</a>
+
+        <p class="mt-4 text-sm leading-relaxed text-muted">Trade smarter. Manage your digital assets from one professional platform.</p>
+      </div>
+      <div>
+        <p class="text-xs font-bold tracking-wider text-dim uppercase">Platform</p>
+        <ul class="mt-4 space-y-2.5 text-sm">
+          <li><a class="text-muted hover:text-white" href="/markets">Markets</a></li>
+          <li><a class="text-muted hover:text-white" href="/trade">Trade</a></li>
+          <li><a class="text-muted hover:text-white" href="/investment-plans">Investment Plans</a></li>
+          <li><a class="text-muted hover:text-white" href="/copy-trading">Copy Trading</a></li>
+          <li><a class="text-muted hover:text-white" href="/fees">Fees</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="text-xs font-bold tracking-wider text-dim uppercase">Company</p>
+        <ul class="mt-4 space-y-2.5 text-sm">
+          <li><a class="text-muted hover:text-white" href="/about">About</a></li>
+          <li><a class="text-muted hover:text-white" href="/contact">Contact</a></li>
+          <li><a class="text-muted hover:text-white" href="/learn">Learn</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="text-xs font-bold tracking-wider text-dim uppercase">Support</p>
+        <ul class="mt-4 space-y-2.5 text-sm">
+          <li><a class="text-muted hover:text-white" href="/help">Help Center</a></li>
+          <li><a class="text-muted hover:text-white" href="/faq">FAQ</a></li>
+          <li><a class="text-muted hover:text-white" href="/dashboard/support">Open a ticket</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="text-xs font-bold tracking-wider text-dim uppercase">Legal</p>
+        <ul class="mt-4 space-y-2.5 text-sm">
+          <li><a class="text-muted hover:text-white" href="/terms">Terms of Service</a></li>
+          <li><a class="text-muted hover:text-white" href="/privacy">Privacy Policy</a></li>
+          <li><a class="text-muted hover:text-white" href="/cookies">Cookie Policy</a></li>
+          <li><a class="text-muted hover:text-white" href="/risk-disclosure">Risk Disclosure</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="mt-12 space-y-4 border-t border-line pt-8 text-xs leading-relaxed text-dim">
+      <p>
+        <strong class="text-muted">Risk warning:</strong> Digital assets are highly volatile and can lose some or all of their value. Past performance does not indicate future results. Nothing on
+        this website is investment, legal or tax advice. Only trade with funds you can afford to lose. Read our <a href="/risk-disclosure" class="text-accent hover:underline">Risk Disclosure</a>.
+      </p>
+      <p id="company-line" hidden></p>
+      <div class="flex flex-col justify-between gap-2 sm:flex-row">
+        <p>© <span data-year>2026</span> HarborFinance Trading. All rights reserved.</p>
+        <p>Market data provided by third-party sources and may be delayed.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

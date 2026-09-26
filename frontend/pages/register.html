@@ -1,0 +1,33 @@
+<!-- @page {"title": "Create Account", "description": "Open a HarborFinance Trading account.", "layout": "auth", "script": "auth-register"} -->
+<h1 class="font-display text-3xl font-extrabold tracking-tight text-white">Create your account</h1>
+<p class="mt-2 text-sm text-muted">Already have an account? <a href="/login" class="font-semibold text-accent hover:text-accent-strong">Log in</a></p>
+<form method="post" id="register-form" class="mt-8 space-y-4" novalidate>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div class="field"><label class="label" for="firstName">First name</label><input id="firstName" name="firstName" class="input" autocomplete="given-name" /><p class="field-error" data-error-for="firstName" hidden></p></div>
+    <div class="field"><label class="label" for="lastName">Last name</label><input id="lastName" name="lastName" class="input" autocomplete="family-name" /><p class="field-error" data-error-for="lastName" hidden></p></div>
+  </div>
+  <div class="field"><label class="label" for="email">Email</label><input id="email" name="email" type="email" class="input" autocomplete="email" /><p class="field-error" data-error-for="email" hidden></p></div>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div class="field"><label class="label" for="phone">Phone</label><input id="phone" name="phone" type="tel" class="input" autocomplete="tel" placeholder="+44 20 1234 5678" /><p class="field-error" data-error-for="phone" hidden></p><p class="hint">Optional</p></div>
+    <div class="field"><label class="label" for="country">Country of residence</label><select id="country" name="country" class="select" autocomplete="country"><option value="">Select…</option></select><p class="field-error" data-error-for="country" hidden></p></div>
+  </div>
+  <div class="field">
+    <label class="label" for="password">Password</label>
+    <div class="input-wrap"><input id="password" name="password" type="password" class="input pr-12" autocomplete="new-password" /><button type="button" class="toggle-pw" data-toggle-pw aria-label="Show password"><i data-icon="eye" class="h-4 w-4"></i></button></div>
+    <p class="field-error" data-error-for="password" hidden></p>
+    <div class="mt-1 flex items-center gap-2" data-strength hidden aria-live="polite"><div class="flex flex-1 gap-1"><span class="h-1 flex-1 rounded-full bg-panel-3"></span><span class="h-1 flex-1 rounded-full bg-panel-3"></span><span class="h-1 flex-1 rounded-full bg-panel-3"></span><span class="h-1 flex-1 rounded-full bg-panel-3"></span></div><span class="text-xs text-dim" data-strength-label></span></div>
+  </div>
+  <div class="field">
+    <label class="label" for="confirmPassword">Confirm password</label>
+    <div class="input-wrap"><input id="confirmPassword" name="confirmPassword" type="password" class="input pr-12" autocomplete="new-password" /><button type="button" class="toggle-pw" data-toggle-pw aria-label="Show password"><i data-icon="eye" class="h-4 w-4"></i></button></div>
+    <p class="field-error" data-error-for="confirmPassword" hidden></p>
+  </div>
+  <div class="field"><label class="label" for="referralCode">Referral code</label><input id="referralCode" name="referralCode" class="input uppercase" /><p class="field-error" data-error-for="referralCode" hidden></p><p class="hint">Optional</p></div>
+  <div>
+    <label class="flex cursor-pointer items-start gap-2.5 text-sm text-muted select-none"><input type="checkbox" name="acceptTerms" class="checkbox" /><span class="leading-snug">I agree to the <a href="/terms" target="_blank" class="text-accent hover:underline">Terms of Service</a> and <a href="/risk-disclosure" target="_blank" class="text-accent hover:underline">Risk Disclosure</a>.</span></label>
+    <p class="field-error mt-1.5" data-error-for="acceptTerms" hidden></p>
+  </div>
+  <div data-form-error hidden></div>
+  <button type="submit" class="btn btn-primary btn-lg w-full">Create Account</button>
+  <p class="text-center text-xs text-dim">Read how we handle your data in our <a href="/privacy" class="text-muted underline-offset-2 hover:underline">Privacy Policy</a>.</p>
+</form>

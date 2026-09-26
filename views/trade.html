@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+<script>
+  // Apply the saved (or system) colour theme before first paint to avoid a flash.
+  (function () {
+    var t = "dark";
+    try {
+      var saved = localStorage.getItem("hf.theme");
+      t = saved === "light" || saved === "dark" ? saved : matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    } catch (e) {}
+    document.documentElement.setAttribute("data-theme", t);
+    var m = document.createElement("meta");
+    m.name = "theme-color";
+    m.content = t === "light" ? "#f5f6f8" : "#000000";
+    document.head.appendChild(m);
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Trade | HarborFinance Trading</title>
+<meta name="description" content="Spot trading terminal with live candlestick charts, order book and market, limit and stop-limit orders." />
+<meta name="robots" content="noindex" />
+<meta name="application-name" content="HarborFinance Trading" />
+<link rel="canonical" href="/trade" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="HarborFinance Trading" />
+<meta property="og:title" content="Trade | HarborFinance Trading" />
+<meta property="og:description" content="Spot trading terminal with live candlestick charts, order book and market, limit and stop-limit orders." />
+<meta property="og:url" content="/trade" />
+<meta property="og:image" content="/opengraph-image" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Trade | HarborFinance Trading" />
+<meta name="twitter:description" content="Spot trading terminal with live candlestick charts, order book and market, limit and stop-limit orders." />
+<meta name="twitter:image" content="/twitter-image" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-icon" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@600;700;800&family=Montserrat:wght@700;900&display=swap" />
+<link rel="stylesheet" href="/assets/css/app.css" />
+<script type="module" src="/assets/js/pages/trade.js"></script>
+
+    <script src="/vendor/lightweight-charts.standalone.js" defer></script>
+  </head>
+  <body class="flex min-h-dvh flex-col" data-layout="trade" data-path="/trade">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded-lg focus:bg-accent focus:px-3 focus:py-2 focus:text-accent-ink">Skip to content</a>
+    <div id="system-banner"></div>
+    <header class="glass sticky top-0 z-40 border-b border-line">
+      <div class="flex h-14 items-center gap-3 px-4 sm:gap-6">
+        <a href="/" class="inline-flex shrink-0 items-center gap-2.5" aria-label="HarborFinance Trading home" data-logo>
+  <svg width="36" height="36" viewBox="0 0 140 140" class="shrink-0" aria-hidden="true">
+    <rect width="140" height="140" rx="30" fill="#F4BE2C" />
+    <path d="M0 30A30 30 0 0 1 30 0H110A30 30 0 0 1 140 30V106H0Z" fill="#161616" />
+    <path d="M56.91 76L45.58 76L45.58 42.40L56.91 42.40L56.91 76ZM35.12 76L23.79 76L23.79 42.40L35.12 42.40L35.12 76ZM46.35 63.62L34.35 63.62L34.35 54.30L46.35 54.30L46.35 63.62ZM72.21 76L60.88 76L60.88 42.40L88.19 42.40L88.19 50.94L72.21 50.94L72.21 76ZM86.22 65.25L71.44 65.25L71.44 56.70L86.22 56.70L86.22 65.25ZM108.92 76L97.59 76L97.59 51.18L87.75 51.18L87.75 42.40L118.76 42.40L118.76 51.18L108.92 51.18L108.92 76Z" fill="#FFFFFF" />
+    <rect x="44" y="119" width="52" height="8" rx="4" fill="#161616" />
+  </svg>
+  <span class="logo-text flex flex-col leading-none">
+    <span class="font-logo text-[16px] font-black tracking-[0.01em] text-white">HARBORFINANCE</span>
+    <span class="mt-[5px] flex items-center gap-1.5 font-logo text-[8.5px] font-bold tracking-[0.5em] text-accent"><span class="h-[1.5px] w-3.5 bg-accent"></span>TRADING</span>
+  </span>
+</a>
+
+        <nav class="hidden items-center gap-1 md:flex" aria-label="Main" data-trade-nav>
+          <a href="/markets" class="nav-link">Markets</a>
+          <a href="/trade" class="nav-link" aria-current="page">Trade</a>
+          <a href="/investment-plans" class="nav-link">Investment Plans</a>
+          <a href="/copy-trading" class="nav-link">Copy Trading</a>
+        </nav>
+        <div class="ml-auto flex items-center gap-2" data-signed-out>
+          <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to light mode" title="Switch light / dark mode">
+  <span data-when="dark"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span>
+  <span data-when="light"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg></span>
+</button>
+
+          <a href="/login" class="btn btn-ghost btn-sm" data-login-link>Log In</a>
+          <a href="/register" class="btn btn-primary btn-sm">Create Account</a>
+        </div>
+        <div class="ml-auto flex items-center gap-1 sm:gap-2" data-signed-in hidden>
+          <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to light mode" title="Switch light / dark mode">
+  <span data-when="dark"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span>
+  <span data-when="light"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg></span>
+</button>
+
+          <span class="hidden rounded-md border border-warn/30 bg-warn-soft px-2 py-1 text-[11px] font-bold text-warn sm:inline" data-demo-chip hidden>DEMO</span>
+          <a href="/dashboard/deposit" class="btn btn-primary btn-sm hidden sm:inline-flex">Deposit</a>
+          <a href="/dashboard" class="btn btn-ghost btn-icon md:hidden" aria-label="Dashboard"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></a>
+          <div class="relative" data-bell>
+            <button type="button" class="relative grid h-9 w-9 place-items-center rounded-lg text-muted hover:bg-panel-2 hover:text-white" aria-label="Notifications" data-bell-toggle>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-[18px] w-[18px]" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg>
+              <span class="absolute top-1 right-1 grid h-4 min-w-4 place-items-center rounded-full bg-accent px-1 text-[10px] font-bold text-accent-ink" data-bell-count hidden></span>
+            </button>
+          </div>
+          <div class="relative" data-account>
+            <button type="button" class="flex items-center gap-2 rounded-lg p-1 pr-2 hover:bg-panel-2" aria-haspopup="menu" aria-expanded="false" aria-label="Account menu" data-account-toggle>
+              <span class="grid h-[30px] w-[30px] place-items-center rounded-full bg-accent/15 text-xs font-bold text-accent ring-1 ring-accent/35" data-avatar>··</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon hidden h-4 w-4 text-dim md:block" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main id="main" class="flex-1"><div id="terminal" aria-busy="true">
+  <div class="flex items-center gap-4 border-b border-line bg-base-2 px-4 py-3"><div class="skeleton h-8 w-40"></div><div class="skeleton h-6 w-28"></div></div>
+  <div class="skeleton m-4 h-[70vh]"></div>
+</div>
+<noscript><p class="p-6 text-center text-muted">The trading terminal requires JavaScript.</p></noscript>
+</main>
+  </body>
+</html>

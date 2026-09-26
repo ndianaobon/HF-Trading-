@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+<script>
+  // Apply the saved (or system) colour theme before first paint to avoid a flash.
+  (function () {
+    var t = "dark";
+    try {
+      var saved = localStorage.getItem("hf.theme");
+      t = saved === "light" || saved === "dark" ? saved : matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    } catch (e) {}
+    document.documentElement.setAttribute("data-theme", t);
+    var m = document.createElement("meta");
+    m.name = "theme-color";
+    m.content = t === "light" ? "#f5f6f8" : "#000000";
+    document.head.appendChild(m);
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Users | HarborFinance Trading</title>
+<meta name="description" content="HarborFinance admin console" />
+<meta name="robots" content="noindex" />
+<meta name="application-name" content="HarborFinance Trading" />
+<link rel="canonical" href="/admin/users" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="HarborFinance Trading" />
+<meta property="og:title" content="Users | HarborFinance Trading" />
+<meta property="og:description" content="HarborFinance admin console" />
+<meta property="og:url" content="/admin/users" />
+<meta property="og:image" content="/opengraph-image" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Users | HarborFinance Trading" />
+<meta name="twitter:description" content="HarborFinance admin console" />
+<meta name="twitter:image" content="/twitter-image" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-icon" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@600;700;800&family=Montserrat:wght@700;900&display=swap" />
+<link rel="stylesheet" href="/assets/css/app.css" />
+<script type="module" src="/assets/js/pages/admin-users.js"></script>
+
+  </head>
+  <body data-layout="admin" data-path="/admin/users">
+    <div class="flex min-h-dvh">
+      <aside class="fixed inset-y-0 left-0 z-40 hidden w-[240px] flex-col border-r border-line bg-base-2 lg:flex">
+        <div class="flex h-16 items-center gap-2 border-b border-line px-5">
+          <a href="/" class="inline-flex shrink-0 items-center gap-2.5" aria-label="HarborFinance Trading home" data-logo>
+  <svg width="36" height="36" viewBox="0 0 140 140" class="shrink-0" aria-hidden="true">
+    <rect width="140" height="140" rx="30" fill="#F4BE2C" />
+    <path d="M0 30A30 30 0 0 1 30 0H110A30 30 0 0 1 140 30V106H0Z" fill="#161616" />
+    <path d="M56.91 76L45.58 76L45.58 42.40L56.91 42.40L56.91 76ZM35.12 76L23.79 76L23.79 42.40L35.12 42.40L35.12 76ZM46.35 63.62L34.35 63.62L34.35 54.30L46.35 54.30L46.35 63.62ZM72.21 76L60.88 76L60.88 42.40L88.19 42.40L88.19 50.94L72.21 50.94L72.21 76ZM86.22 65.25L71.44 65.25L71.44 56.70L86.22 56.70L86.22 65.25ZM108.92 76L97.59 76L97.59 51.18L87.75 51.18L87.75 42.40L118.76 42.40L118.76 51.18L108.92 51.18L108.92 76Z" fill="#FFFFFF" />
+    <rect x="44" y="119" width="52" height="8" rx="4" fill="#161616" />
+  </svg>
+  <span class="logo-text flex flex-col leading-none">
+    <span class="font-logo text-[16px] font-black tracking-[0.01em] text-white">HARBORFINANCE</span>
+    <span class="mt-[5px] flex items-center gap-1.5 font-logo text-[8.5px] font-bold tracking-[0.5em] text-accent"><span class="h-[1.5px] w-3.5 bg-accent"></span>TRADING</span>
+  </span>
+</a>
+
+          <span class="rounded bg-accent-soft px-1.5 py-0.5 text-[10px] font-bold text-accent">ADMIN</span>
+        </div>
+        <nav class="flex-1 space-y-0.5 overflow-y-auto px-3 py-4" aria-label="Admin">
+  <a class="nav-link" href="/admin" data-nav="/admin" data-exact data-perm="users.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>Dashboard</a>
+  <a class="nav-link" href="/admin/users" data-nav="/admin/users" data-perm="users.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>Users</a>
+  <a class="nav-link" href="/admin/kyc" data-nav="/admin/kyc" data-perm="kyc.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>KYC</a>
+  <a class="nav-link" href="/admin/wallets" data-nav="/admin/wallets" data-perm="wallets.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>Wallets</a>
+  <a class="nav-link" href="/admin/deposits" data-nav="/admin/deposits" data-perm="deposits.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></svg>Deposits</a>
+  <a class="nav-link" href="/admin/withdrawals" data-nav="/admin/withdrawals" data-perm="withdrawals.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="m18 9-6-6-6 6"/><path d="M12 3v14"/><path d="M5 21h14"/></svg>Withdrawals</a>
+  <a class="nav-link" href="/admin/transactions" data-nav="/admin/transactions" data-perm="transactions.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M13 16H8"/><path d="M14 8H8"/><path d="M16 12H8"/><path d="M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z"/></svg>Transactions</a>
+  <a class="nav-link" href="/admin/trades" data-nav="/admin/trades" data-perm="trades.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M9 5v4"/><rect width="4" height="6" x="7" y="9" rx="1"/><path d="M9 15v2"/><path d="M17 3v2"/><rect width="4" height="8" x="15" y="5" rx="1"/><path d="M17 13v3"/><path d="M3 3v16a2 2 0 0 0 2 2h16"/></svg>Trades</a>
+  <a class="nav-link" href="/admin/markets" data-nav="/admin/markets" data-perm="trades.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>Markets</a>
+  <a class="nav-link" href="/admin/investment-plans" data-nav="/admin/investment-plans" data-perm="plans.manage"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"/><path d="M16 10h.01"/><path d="M2 8v1a2 2 0 0 0 2 2h1"/></svg>Investment Plans</a>
+  <a class="nav-link" href="/admin/copy-traders" data-nav="/admin/copy-traders" data-perm="copytraders.manage"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M18 21a6 6 0 0 0-12 0"/><circle cx="12" cy="11" r="4"/><rect width="18" height="18" x="3" y="3" rx="2"/></svg>Copy Traders</a>
+  <a class="nav-link" href="/admin/referrals" data-nav="/admin/referrals" data-perm="referrals.manage"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M12 7v14"/><path d="M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"/><path d="M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5"/><rect x="3" y="7" width="18" height="4" rx="1"/></svg>Referrals</a>
+  <a class="nav-link" href="/admin/support" data-nav="/admin/support" data-perm="support.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/></svg>Support</a>
+  <a class="nav-link" href="/admin/notifications" data-nav="/admin/notifications" data-perm="notifications.send"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"/><path d="M8 6v8"/></svg>Notifications</a>
+  <a class="nav-link" href="/admin/reports" data-nav="/admin/reports" data-perm="reports.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M8 18v-2"/><path d="M12 18v-4"/><path d="M16 18v-6"/></svg>Reports</a>
+  <a class="nav-link" href="/admin/settings" data-nav="/admin/settings" data-perm="settings.manage"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg>Settings</a>
+  <a class="nav-link" href="/admin/audit-logs" data-nav="/admin/audit-logs" data-perm="audit.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M15 12h-5"/><path d="M15 8h-5"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></svg>Audit Logs</a>
+</nav>
+
+        <a href="/dashboard" class="flex items-center gap-2 border-t border-line px-5 py-4 text-sm text-muted hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Back to app</a>
+      </aside>
+      <div id="drawer" class="fixed inset-0 z-[60] lg:hidden" hidden>
+        <div class="absolute inset-0 bg-[rgb(0_0_0/0.6)]" data-drawer-close></div>
+        <aside class="absolute inset-y-0 left-0 flex w-[270px] flex-col border-r border-line bg-base-2">
+          <div class="flex h-16 items-center justify-between border-b border-line px-4">
+            <a href="/" class="inline-flex shrink-0 items-center gap-2.5" aria-label="HarborFinance Trading home" data-logo>
+  <svg width="36" height="36" viewBox="0 0 140 140" class="shrink-0" aria-hidden="true">
+    <rect width="140" height="140" rx="30" fill="#F4BE2C" />
+    <path d="M0 30A30 30 0 0 1 30 0H110A30 30 0 0 1 140 30V106H0Z" fill="#161616" />
+    <path d="M56.91 76L45.58 76L45.58 42.40L56.91 42.40L56.91 76ZM35.12 76L23.79 76L23.79 42.40L35.12 42.40L35.12 76ZM46.35 63.62L34.35 63.62L34.35 54.30L46.35 54.30L46.35 63.62ZM72.21 76L60.88 76L60.88 42.40L88.19 42.40L88.19 50.94L72.21 50.94L72.21 76ZM86.22 65.25L71.44 65.25L71.44 56.70L86.22 56.70L86.22 65.25ZM108.92 76L97.59 76L97.59 51.18L87.75 51.18L87.75 42.40L118.76 42.40L118.76 51.18L108.92 51.18L108.92 76Z" fill="#FFFFFF" />
+    <rect x="44" y="119" width="52" height="8" rx="4" fill="#161616" />
+  </svg>
+  <span class="logo-text flex flex-col leading-none">
+    <span class="font-logo text-[16px] font-black tracking-[0.01em] text-white">HARBORFINANCE</span>
+    <span class="mt-[5px] flex items-center gap-1.5 font-logo text-[8.5px] font-bold tracking-[0.5em] text-accent"><span class="h-[1.5px] w-3.5 bg-accent"></span>TRADING</span>
+  </span>
+</a>
+
+            <button type="button" aria-label="Close menu" class="text-muted" data-drawer-close><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-5 w-5" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+          </div>
+          <nav class="flex-1 space-y-0.5 overflow-y-auto px-3 py-4" aria-label="Admin">
+  <a class="nav-link" href="/admin" data-nav="/admin" data-exact data-perm="users.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>Dashboard</a>
+  <a class="nav-link" href="/admin/users" data-nav="/admin/users" data-perm="users.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>Users</a>
+  <a class="nav-link" href="/admin/kyc" data-nav="/admin/kyc" data-perm="kyc.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>KYC</a>
+  <a class="nav-link" href="/admin/wallets" data-nav="/admin/wallets" data-perm="wallets.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>Wallets</a>
+  <a class="nav-link" href="/admin/deposits" data-nav="/admin/deposits" data-perm="deposits.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></svg>Deposits</a>
+  <a class="nav-link" href="/admin/withdrawals" data-nav="/admin/withdrawals" data-perm="withdrawals.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="m18 9-6-6-6 6"/><path d="M12 3v14"/><path d="M5 21h14"/></svg>Withdrawals</a>
+  <a class="nav-link" href="/admin/transactions" data-nav="/admin/transactions" data-perm="transactions.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M13 16H8"/><path d="M14 8H8"/><path d="M16 12H8"/><path d="M4 3a1 1 0 0 1 1-1 1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1 1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2 1 1 0 0 1-1-1z"/></svg>Transactions</a>
+  <a class="nav-link" href="/admin/trades" data-nav="/admin/trades" data-perm="trades.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M9 5v4"/><rect width="4" height="6" x="7" y="9" rx="1"/><path d="M9 15v2"/><path d="M17 3v2"/><rect width="4" height="8" x="15" y="5" rx="1"/><path d="M17 13v3"/><path d="M3 3v16a2 2 0 0 0 2 2h16"/></svg>Trades</a>
+  <a class="nav-link" href="/admin/markets" data-nav="/admin/markets" data-perm="trades.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>Markets</a>
+  <a class="nav-link" href="/admin/investment-plans" data-nav="/admin/investment-plans" data-perm="plans.manage"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M11 17h3v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3a3.16 3.16 0 0 0 2-2h1a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1a5 5 0 0 0-2-4V3a4 4 0 0 0-3.2 1.6l-.3.4H11a6 6 0 0 0-6 6v1a5 5 0 0 0 2 4v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1z"/><path d="M16 10h.01"/><path d="M2 8v1a2 2 0 0 0 2 2h1"/></svg>Investment Plans</a>
+  <a class="nav-link" href="/admin/copy-traders" data-nav="/admin/copy-traders" data-perm="copytraders.manage"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M18 21a6 6 0 0 0-12 0"/><circle cx="12" cy="11" r="4"/><rect width="18" height="18" x="3" y="3" rx="2"/></svg>Copy Traders</a>
+  <a class="nav-link" href="/admin/referrals" data-nav="/admin/referrals" data-perm="referrals.manage"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M12 7v14"/><path d="M20 11v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"/><path d="M7.5 7a1 1 0 0 1 0-5A4.8 8 0 0 1 12 7a4.8 8 0 0 1 4.5-5 1 1 0 0 1 0 5"/><rect x="3" y="7" width="18" height="4" rx="1"/></svg>Referrals</a>
+  <a class="nav-link" href="/admin/support" data-nav="/admin/support" data-perm="support.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/></svg>Support</a>
+  <a class="nav-link" href="/admin/notifications" data-nav="/admin/notifications" data-perm="notifications.send"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"/><path d="M8 6v8"/></svg>Notifications</a>
+  <a class="nav-link" href="/admin/reports" data-nav="/admin/reports" data-perm="reports.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M8 18v-2"/><path d="M12 18v-4"/><path d="M16 18v-6"/></svg>Reports</a>
+  <a class="nav-link" href="/admin/settings" data-nav="/admin/settings" data-perm="settings.manage"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg>Settings</a>
+  <a class="nav-link" href="/admin/audit-logs" data-nav="/admin/audit-logs" data-perm="audit.read"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M15 12h-5"/><path d="M15 8h-5"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></svg>Audit Logs</a>
+</nav>
+
+        </aside>
+      </div>
+      <div class="flex min-w-0 flex-1 flex-col lg:pl-[240px]">
+        <header class="glass sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-line px-4 sm:px-6">
+          <button type="button" class="grid h-9 w-9 place-items-center rounded-lg border border-line-strong lg:hidden" aria-label="Open menu" data-drawer-open><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-5 w-5" aria-hidden="true"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg></button>
+          <p class="truncate text-sm text-muted" data-admin-identity>Admin console</p>
+          <div class="ml-auto flex items-center gap-2">
+            <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to light mode" title="Switch light / dark mode">
+  <span data-when="dark"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span>
+  <span data-when="light"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg></span>
+</button>
+
+            <span class="rounded-md border border-warn/30 bg-warn-soft px-2 py-1 text-[11px] font-bold text-warn" data-demo-chip hidden>DEMO DATA</span>
+            <div class="relative" data-account>
+              <button type="button" class="flex items-center gap-2 rounded-lg p-1 pr-2 hover:bg-panel-2" aria-haspopup="menu" aria-expanded="false" aria-label="Account menu" data-account-toggle>
+                <span class="grid h-[30px] w-[30px] place-items-center rounded-full bg-accent/15 text-xs font-bold text-accent ring-1 ring-accent/35" data-avatar>··</span>
+                <span class="hidden max-w-32 truncate text-sm font-medium text-fg md:block" data-account-name>Account</span>
+              </button>
+            </div>
+          </div>
+        </header>
+        <main id="main" class="flex-1 px-4 py-6 sm:px-6">
+          <div class="mx-auto max-w-[1440px]" id="page"><div id="view" aria-busy="true"><div class="skeleton mb-6 h-9 w-64"></div><div class="grid gap-4 md:grid-cols-4"><div class="skeleton h-28 rounded-2xl"></div><div class="skeleton h-28 rounded-2xl"></div><div class="skeleton h-28 rounded-2xl"></div><div class="skeleton h-28 rounded-2xl"></div></div><div class="skeleton mt-6 h-96 rounded-2xl"></div></div>
+</div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

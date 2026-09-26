@@ -1,0 +1,91 @@
+<header id="site-header" class="sticky top-0 z-50 border-b border-transparent transition-colors">
+  <div class="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
+    <!-- @include logo -->
+    <nav class="hidden flex-1 items-center gap-1 lg:flex" aria-label="Main">
+      <div class="group relative" data-dropdown>
+        <button type="button" class="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors group-hover:text-accent group-focus-within:text-accent" aria-haspopup="true" aria-expanded="false">Trading <i data-icon="chevron-down" class="h-4 w-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180"></i></button>
+        <div class="invisible absolute top-full left-0 z-50 w-72 translate-y-1 pt-2 opacity-0 transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+          <div class="rounded-2xl border border-line bg-panel p-2 shadow-2xl">
+            <a href="/forex" data-nav="/forex" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Forex</span><span class="mt-0.5 block text-xs text-muted">Major and minor currency pairs</span></a>
+            <a href="/markets" data-nav="/markets" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Cryptocurrencies</span><span class="mt-0.5 block text-xs text-muted">Trade BTC, ETH and altcoins</span></a>
+            <a href="/shares" data-nav="/shares" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Shares</span><span class="mt-0.5 block text-xs text-muted">Global equity markets</span></a>
+            <a href="/indices" data-nav="/indices" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Indices</span><span class="mt-0.5 block text-xs text-muted">Track top market indices</span></a>
+            <a href="/markets?category=MEME" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Memecoins</span><span class="mt-0.5 block text-xs text-muted">DOGE, SHIB, PEPE and more</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="group relative" data-dropdown>
+        <button type="button" class="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors group-hover:text-accent group-focus-within:text-accent" aria-haspopup="true" aria-expanded="false">System <i data-icon="chevron-down" class="h-4 w-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180"></i></button>
+        <div class="invisible absolute top-full left-0 z-50 w-72 translate-y-1 pt-2 opacity-0 transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+          <div class="rounded-2xl border border-line bg-panel p-2 shadow-2xl">
+            <a href="/trade" data-nav="/trade" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Trade</span><span class="mt-0.5 block text-xs text-muted">Open the trading terminal</span></a>
+            <a href="/investment-plans" data-nav="/investment-plans" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Investment Plans</span><span class="mt-0.5 block text-xs text-muted">Basic, Silver, Gold and Platinum</span></a>
+            <a href="/copy-trading" data-nav="/copy-trading" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Copy Trading</span><span class="mt-0.5 block text-xs text-muted">Follow expert strategies</span></a>
+            <a href="/automated-trading" data-nav="/automated-trading" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Automated Bot Trading</span><span class="mt-0.5 block text-xs text-muted">Set rules and bots</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="group relative" data-dropdown>
+        <button type="button" class="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors group-hover:text-accent group-focus-within:text-accent" aria-haspopup="true" aria-expanded="false">Company <i data-icon="chevron-down" class="h-4 w-4 transition-transform group-hover:rotate-180 group-focus-within:rotate-180"></i></button>
+        <div class="invisible absolute top-full left-0 z-50 w-72 translate-y-1 pt-2 opacity-0 transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+          <div class="rounded-2xl border border-line bg-panel p-2 shadow-2xl">
+            <a href="/about" data-nav="/about" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">About Us</span><span class="mt-0.5 block text-xs text-muted">Our mission and team</span></a>
+            <a href="/faq" data-nav="/faq" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">FAQ</span><span class="mt-0.5 block text-xs text-muted">Answers to common questions</span></a>
+            <a href="/help" data-nav="/help" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Help Center</span><span class="mt-0.5 block text-xs text-muted">Guides and support</span></a>
+            <a href="/contact" data-nav="/contact" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Contact</span><span class="mt-0.5 block text-xs text-muted">Get in touch with our team</span></a>
+            <a href="/terms" data-nav="/terms" class="block rounded-xl border border-transparent px-4 py-3 transition-colors hover:border-accent/50 hover:bg-accent/15 focus:border-accent/50 focus:bg-accent/15 focus:outline-none"><span class="block text-sm font-bold text-white">Legal</span><span class="mt-0.5 block text-xs text-muted">Terms, privacy and risk disclosure</span></a>
+          </div>
+        </div>
+      </div>
+      <a href="/learn" data-nav="/learn" class="rounded-lg px-3 py-2 text-sm font-medium text-muted transition-colors hover:text-accent">Education</a>
+    </nav>
+    <div class="ml-auto flex items-center gap-2">
+      <!-- @include theme-toggle -->
+      <div class="hidden items-center gap-2 lg:flex" data-auth-slot>
+        <a href="/login" class="btn btn-ghost">Log In</a>
+        <a href="/register" class="btn btn-primary">Create Account</a>
+      </div>
+    </div>
+    <button type="button" id="menu-toggle" class="grid h-10 w-10 place-items-center rounded-lg border border-line-strong text-fg lg:hidden" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+      <i data-icon="menu" class="h-5 w-5"></i>
+    </button>
+  </div>
+  <div id="mobile-menu" class="h-[calc(100dvh-4rem)] animate-fade-in overflow-y-auto border-t border-line bg-base px-4 pt-4 pb-10 lg:hidden" hidden>
+    <nav class="flex flex-col" aria-label="Mobile">
+      <details class="group border-b border-line [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex cursor-pointer list-none items-center justify-between py-4 font-display text-lg font-bold text-white">Trading <i data-icon="chevron-down" class="h-5 w-5 text-muted transition-transform group-open:rotate-180"></i></summary>
+        <div class="grid gap-1 pb-4">
+          <a href="/forex" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Forex</span><span class="block text-sm text-muted">Major and minor currency pairs</span></a>
+          <a href="/markets" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Cryptocurrencies</span><span class="block text-sm text-muted">Trade BTC, ETH and altcoins</span></a>
+          <a href="/shares" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Shares</span><span class="block text-sm text-muted">Global equity markets</span></a>
+          <a href="/indices" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Indices</span><span class="block text-sm text-muted">Track top market indices</span></a>
+          <a href="/markets?category=MEME" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Memecoins</span><span class="block text-sm text-muted">DOGE, SHIB, PEPE and more</span></a>
+        </div>
+      </details>
+      <details class="group border-b border-line [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex cursor-pointer list-none items-center justify-between py-4 font-display text-lg font-bold text-white">System <i data-icon="chevron-down" class="h-5 w-5 text-muted transition-transform group-open:rotate-180"></i></summary>
+        <div class="grid gap-1 pb-4">
+          <a href="/trade" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Trade</span><span class="block text-sm text-muted">Open the trading terminal</span></a>
+          <a href="/investment-plans" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Investment Plans</span><span class="block text-sm text-muted">Basic, Silver, Gold and Platinum</span></a>
+          <a href="/copy-trading" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Copy Trading</span><span class="block text-sm text-muted">Follow expert strategies</span></a>
+          <a href="/automated-trading" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Automated Bot Trading</span><span class="block text-sm text-muted">Set rules and bots</span></a>
+        </div>
+      </details>
+      <details class="group border-b border-line [&_summary::-webkit-details-marker]:hidden">
+        <summary class="flex cursor-pointer list-none items-center justify-between py-4 font-display text-lg font-bold text-white">Company <i data-icon="chevron-down" class="h-5 w-5 text-muted transition-transform group-open:rotate-180"></i></summary>
+        <div class="grid gap-1 pb-4">
+          <a href="/about" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">About Us</span><span class="block text-sm text-muted">Our mission and team</span></a>
+          <a href="/faq" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">FAQ</span><span class="block text-sm text-muted">Answers to common questions</span></a>
+          <a href="/help" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Help Center</span><span class="block text-sm text-muted">Guides and support</span></a>
+          <a href="/contact" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Contact</span><span class="block text-sm text-muted">Get in touch with our team</span></a>
+          <a href="/terms" class="rounded-xl px-3 py-2.5 hover:bg-accent/15"><span class="block font-semibold text-white">Legal</span><span class="block text-sm text-muted">Terms, privacy and risk disclosure</span></a>
+        </div>
+      </details>
+      <a href="/learn" class="border-b border-line py-4 font-display text-lg font-bold text-white">Education</a>
+    </nav>
+    <div class="mt-6 grid gap-3" data-auth-slot-mobile>
+      <a href="/register" class="btn btn-primary btn-lg">Create Account</a>
+      <a href="/login" class="btn btn-secondary btn-lg">Log In</a>
+    </div>
+  </div>
+</header>

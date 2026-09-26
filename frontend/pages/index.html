@@ -1,0 +1,184 @@
+<!-- @page {"title": null, "description": "Trade and manage digital assets with professional market tools, portfolio analytics and secure account management.", "layout": "marketing", "script": "home"} -->
+<section class="relative overflow-hidden">
+  <div class="grid-bg absolute inset-0 [mask-image:radial-gradient(80%_70%_at_30%_20%,black,transparent)]" aria-hidden="true"></div>
+  <div class="absolute -top-40 -left-40 h-[520px] w-[520px] rounded-full bg-accent/10 blur-3xl" aria-hidden="true"></div>
+  <div class="relative mx-auto grid max-w-7xl items-center gap-12 px-4 pt-14 pb-16 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:px-8 lg:pt-20 lg:pb-24">
+    <div>
+      <span class="pill-label"><span></span>Welcome to Harbor Finance</span>
+      <h1 class="mt-6 font-display text-[2.6rem] leading-[1.05] font-extrabold tracking-tight text-white sm:text-6xl lg:text-7xl">
+        Trade Smarter.<br /><span class="bg-gradient-to-r from-accent-strong via-accent to-[#e0892a] bg-clip-text text-transparent">Manage Your Digital Assets.</span>
+      </h1>
+      <p class="mt-6 max-w-xl text-lg leading-relaxed text-muted">Harbor Finance Trading is designed to empower investors of all experience levels even those with no prior trading background to earn consistent profits. Our program stands apart by offering fixed hourly returns, guaranteed regardless of market fluctuations</p>
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+        <a href="/register" class="btn btn-primary btn-lg">Create Trading Account <i data-icon="arrow-right" class="h-4 w-4"></i></a>
+        <a href="/markets" class="btn btn-secondary btn-lg">Explore Markets</a>
+      </div>
+      <dl class="mt-10 grid max-w-lg grid-cols-3 gap-4 border-t border-line pt-6">
+        <div><dt class="sr-only">Spot markets</dt><dd class="font-display text-2xl font-extrabold text-white" data-market-count>—</dd><dd class="text-xs text-dim">spot markets</dd></div>
+        <div><dt class="sr-only">Chart timeframes</dt><dd class="font-display text-2xl font-extrabold text-white">7</dd><dd class="text-xs text-dim">chart timeframes</dd></div>
+        <div><dt class="sr-only">Order types</dt><dd class="font-display text-2xl font-extrabold text-white">3</dd><dd class="text-xs text-dim">order types</dd></div>
+      </dl>
+    </div>
+    <div class="relative">
+      <div class="absolute -inset-6 rounded-[32px] bg-[radial-gradient(60%_60%_at_60%_40%,rgba(244,190,44,0.22),transparent_70%)] blur-2xl" aria-hidden="true"></div>
+      <div class="glass relative overflow-hidden rounded-3xl border border-line-strong shadow-[var(--shadow-pop)]" id="hero-visual">
+        <div class="flex items-center justify-between border-b border-line px-5 py-3">
+          <div class="flex items-center gap-3"><span class="font-display text-sm font-bold text-white">BTC/USDT</span><span class="rounded bg-panel-3 px-1.5 py-0.5 text-[10px] font-semibold text-muted">15m</span></div>
+          <span data-hero-status></span>
+        </div>
+        <div class="grid sm:grid-cols-[1fr_180px]">
+          <div class="border-line p-5 sm:border-r">
+            <div class="flex items-end gap-3" data-hero-price><div class="skeleton h-9 w-48"></div></div>
+            <div class="mt-2 flex gap-5 text-[11px] text-dim" data-hero-stats></div>
+            <div class="mt-4 h-[210px]" data-hero-chart><div class="skeleton h-full w-full"></div></div>
+          </div>
+          <div class="hidden p-3 sm:block">
+            <p class="px-1 pb-2 text-[10px] font-bold tracking-wider text-dim uppercase">Order book</p>
+            <div class="space-y-px text-[11px]" data-hero-book></div>
+          </div>
+        </div>
+        <div class="flex items-center justify-between border-t border-line px-5 py-3 text-xs">
+          <span class="text-dim">Real market data · Not a trade confirmation</span>
+          <a href="/trade/BTC-USDT" class="font-semibold text-accent hover:text-accent-strong">Open trading view →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="relative mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8"><div id="market-cards" class="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5"></div></div>
+</section>
+
+<section class="border-t border-line bg-base-2/50 py-20">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl">
+      <span class="pill-label">Why HarborFinance</span>
+      <h2 class="mt-3 font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Built like professional financial software</h2>
+      <p class="mt-3 text-base leading-relaxed text-muted">Every part of the platform is designed around clarity, control and honest information — from how prices are sourced to how funds move.</p>
+    </div>
+    <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="group card p-6 transition-colors hover:border-accent/40"><div class="icon-tile"><i data-icon="candlestick-chart" class="h-5 w-5"></i></div><h3 class="mt-5 font-display text-lg font-bold text-white">Professional Trading Tools</h3><p class="mt-2 text-sm leading-relaxed text-muted">Candlestick charts across seven timeframes, moving averages, RSI, MACD and Bollinger Bands, plus market, limit and stop-limit orders.</p></div>
+      <div class="group card p-6 transition-colors hover:border-accent/40"><div class="icon-tile"><i data-icon="activity" class="h-5 w-5"></i></div><h3 class="mt-5 font-display text-lg font-bold text-white">Real-Time Market Data</h3><p class="mt-2 text-sm leading-relaxed text-muted">Prices stream directly from our market-data provider. When a feed is delayed or unavailable, we tell you — we never fill the gap with estimates.</p></div>
+      <div class="group card p-6 transition-colors hover:border-accent/40"><div class="icon-tile"><i data-icon="bar-chart-3" class="h-5 w-5"></i></div><h3 class="mt-5 font-display text-lg font-bold text-white">Portfolio Management</h3><p class="mt-2 text-sm leading-relaxed text-muted">See allocation, cost basis, realised and unrealised P&amp;L and performance history for every asset in one clear view.</p></div>
+      <div class="group card p-6 transition-colors hover:border-accent/40"><div class="icon-tile"><i data-icon="wallet" class="h-5 w-5"></i></div><h3 class="mt-5 font-display text-lg font-bold text-white">Flexible Funding</h3><p class="mt-2 text-sm leading-relaxed text-muted">Multi-network deposits and withdrawals for major assets, with minimums, fees and confirmation requirements shown up front.</p></div>
+      <div class="group card p-6 transition-colors hover:border-accent/40"><div class="icon-tile"><i data-icon="shield-check" class="h-5 w-5"></i></div><h3 class="mt-5 font-display text-lg font-bold text-white">Advanced Security</h3><p class="mt-2 text-sm leading-relaxed text-muted">Argon2 password hashing, authenticator-app 2FA, device session controls, withdrawal review and a full audit trail.</p></div>
+      <div class="group card p-6 transition-colors hover:border-accent/40"><div class="icon-tile"><i data-icon="smartphone" class="h-5 w-5"></i></div><h3 class="mt-5 font-display text-lg font-bold text-white">Mobile-Friendly Trading</h3><p class="mt-2 text-sm leading-relaxed text-muted">A dedicated mobile layout keeps your portfolio, markets and order ticket one tap away on any screen size.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="py-20">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div class="max-w-2xl">
+        <span class="pill-label">Live markets</span>
+        <h2 class="mt-3 font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Market overview</h2>
+        <p class="mt-3 text-muted">Track prices, 24-hour ranges and volume across major, Layer 1, DeFi, stablecoin and meme markets.</p>
+      </div>
+      <a href="/markets" class="btn btn-outline">View all markets <i data-icon="arrow-right" class="h-4 w-4"></i></a>
+    </div>
+    <div class="mt-10 overflow-hidden rounded-2xl border border-line bg-panel" id="market-table" data-categories="ALL,LAYER1,DEFI,STABLECOIN,MEME,MAJOR" data-limit="10"></div>
+  </div>
+</section>
+
+<section class="border-y border-line bg-base-2/50 py-20">
+  <div class="mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+    <div>
+      <span class="pill-label">Trading workspace</span>
+      <h2 class="mt-3 font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Everything you need on one screen</h2>
+      <p class="mt-4 text-muted">A multi-panel layout with market selector, interactive chart, order ticket and your orders and fills — the same structure used by professional desks, tuned for clarity.</p>
+      <ul class="mt-8 space-y-4">
+        <li class="flex gap-3"><span class="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-up-soft text-up"><i data-icon="check" class="h-3 w-3"></i></span><div><p class="font-semibold text-white">Candlestick &amp; volume charts</p><p class="text-sm text-muted">1m to 1W timeframes with MA, EMA, Bollinger Bands, RSI and MACD overlays.</p></div></li>
+        <li class="flex gap-3"><span class="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-up-soft text-up"><i data-icon="check" class="h-3 w-3"></i></span><div><p class="font-semibold text-white">Precise order entry</p><p class="text-sm text-muted">Market, limit and stop-limit orders with fee and total previews before you confirm.</p></div></li>
+        <li class="flex gap-3"><span class="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-up-soft text-up"><i data-icon="check" class="h-3 w-3"></i></span><div><p class="font-semibold text-white">Full order lifecycle</p><p class="text-sm text-muted">Track every order from acceptance through partial fills to completion or cancellation.</p></div></li>
+      </ul>
+      <a href="/trade/BTC-USDT" class="btn btn-secondary mt-8">Open the trading view <i data-icon="arrow-right" class="h-4 w-4"></i></a>
+    </div>
+    <div class="grid grid-cols-6 gap-3 rounded-3xl border border-line bg-panel p-3" aria-hidden="true">
+      <div class="col-span-2 space-y-2 rounded-xl border border-line bg-base-2 p-3">
+        <div class="flex justify-between text-[11px]"><span class="font-semibold text-muted">BTC/USDT</span><span class="text-up">●</span></div>
+        <div class="flex justify-between text-[11px]"><span class="font-semibold text-muted">ETH/USDT</span><span class="text-down">●</span></div>
+        <div class="flex justify-between text-[11px]"><span class="font-semibold text-muted">SOL/USDT</span><span class="text-up">●</span></div>
+        <div class="flex justify-between text-[11px]"><span class="font-semibold text-muted">BNB/USDT</span><span class="text-up">●</span></div>
+        <div class="flex justify-between text-[11px]"><span class="font-semibold text-muted">XRP/USDT</span><span class="text-down">●</span></div>
+        <div class="flex justify-between text-[11px]"><span class="font-semibold text-muted">ADA/USDT</span><span class="text-up">●</span></div>
+      </div>
+      <div class="col-span-4 rounded-xl border border-line bg-base-2 p-3">
+        <div class="flex gap-1.5 text-[10px] font-semibold"><span class="text-dim">1m</span><span class="text-dim">5m</span><span class="text-dim">15m</span><span class="rounded bg-accent-soft px-1.5 text-accent">1h</span><span class="text-dim">4h</span><span class="text-dim">1D</span><span class="text-dim">1W</span></div>
+        <svg viewBox="0 0 200 90" class="mt-3 h-36 w-full"><path d="M0 70 C20 60 30 65 45 50 S70 40 85 45 110 25 125 30 150 15 165 22 185 10 200 12" fill="none" stroke="#F4BE2C" stroke-width="1.5" /><path d="M0 75 C25 70 40 72 55 62 S85 55 100 58 130 42 145 46 170 35 200 30" fill="none" stroke="#4da2ff" stroke-width="1" opacity="0.6" /></svg>
+      </div>
+      <div class="col-span-4 rounded-xl border border-line bg-base-2 p-3">
+        <p class="text-[10px] font-bold tracking-wider text-dim uppercase">Open orders</p>
+        <div class="mt-2 flex justify-between text-[11px] text-muted"><span>BTC/USDT · Buy</span><span>Limit</span></div>
+        <div class="mt-2 flex justify-between text-[11px] text-muted"><span>ETH/USDT · Sell</span><span>Stop limit</span></div>
+      </div>
+      <div class="col-span-2 space-y-2 rounded-xl border border-line bg-base-2 p-3">
+        <div class="grid grid-cols-2 gap-1 text-center text-[10px] font-bold"><span class="rounded bg-up/90 py-1 text-[#04140d]">Buy</span><span class="rounded bg-panel-3 py-1 text-muted">Sell</span></div>
+        <div class="h-5 rounded bg-panel-3"></div><div class="h-5 rounded bg-panel-3"></div><div class="h-6 rounded bg-up/80"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-20">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="text-center"><span class="pill-label">Getting started</span><h2 class="mt-3 font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">From sign-up to first trade</h2></div>
+    <ol class="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <li class="relative card p-6"><span class="absolute top-5 right-5 font-display text-4xl font-extrabold text-line-strong">01</span><i data-icon="user-plus" class="h-6 w-6 text-accent"></i><h3 class="mt-5 font-display text-lg font-bold text-white">Create your account</h3><p class="mt-2 text-sm leading-relaxed text-muted">Register with your email and choose a strong password. It takes about two minutes.</p></li>
+      <li class="relative card p-6"><span class="absolute top-5 right-5 font-display text-4xl font-extrabold text-line-strong">02</span><i data-icon="badge-check" class="h-6 w-6 text-accent"></i><h3 class="mt-5 font-display text-lg font-bold text-white">Verify</h3><p class="mt-2 text-sm leading-relaxed text-muted">Confirm your email, enable two-factor authentication and complete identity verification when required.</p></li>
+      <li class="relative card p-6"><span class="absolute top-5 right-5 font-display text-4xl font-extrabold text-line-strong">03</span><i data-icon="landmark" class="h-6 w-6 text-accent"></i><h3 class="mt-5 font-display text-lg font-bold text-white">Fund your wallet</h3><p class="mt-2 text-sm leading-relaxed text-muted">Deposit supported assets on the network of your choice. Balances update when deposits are confirmed.</p></li>
+      <li class="relative card p-6"><span class="absolute top-5 right-5 font-display text-4xl font-extrabold text-line-strong">04</span><i data-icon="line-chart" class="h-6 w-6 text-accent"></i><h3 class="mt-5 font-display text-lg font-bold text-white">Trade and track</h3><p class="mt-2 text-sm leading-relaxed text-muted">Place orders, monitor positions and review performance from your dashboard.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="border-y border-line bg-base-2/50 py-20">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div class="max-w-2xl">
+        <span class="pill-label">Managed exposure</span>
+        <h2 class="mt-3 font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Investment plans with transparent terms</h2>
+        <p class="mt-3 text-muted">Each plan documents its strategy, duration, fees and risk. Returns are never guaranteed and can be negative.</p>
+      </div>
+      <a href="/investment-plans" class="btn btn-outline">Compare plans <i data-icon="arrow-right" class="h-4 w-4"></i></a>
+    </div>
+    <div class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4" id="plans-preview"><div class="skeleton h-52 rounded-2xl"></div><div class="skeleton h-52 rounded-2xl"></div><div class="skeleton h-52 rounded-2xl"></div><div class="skeleton h-52 rounded-2xl"></div></div>
+    <div class="mt-6 grid gap-4 lg:grid-cols-2">
+      <div class="card card-glow flex items-start gap-4 p-6"><i data-icon="users" class="mt-1 h-6 w-6 shrink-0 text-accent"></i><div><h3 class="font-display text-lg font-bold text-white">Copy trading</h3><p class="mt-1 text-sm text-muted">Review strategy, drawdown and activity before allocating to a trader. Set your own maximum allocation and stop-copy threshold.</p><a href="/copy-trading" class="mt-3 inline-flex text-sm font-semibold text-accent hover:text-accent-strong">Browse traders →</a></div></div>
+      <div class="card card-glow flex items-start gap-4 p-6"><i data-icon="layers" class="mt-1 h-6 w-6 shrink-0 text-accent"></i><div><h3 class="font-display text-lg font-bold text-white">Clear, published fees</h3><p class="mt-1 text-sm text-muted">Trading, network and plan fees are listed in one place and shown again before every confirmation.</p><a href="/fees" class="mt-3 inline-flex text-sm font-semibold text-accent hover:text-accent-strong">See the fee schedule →</a></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="py-20">
+  <div class="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.2fr] lg:items-center lg:px-8">
+    <div>
+      <span class="pill-label">Security</span>
+      <h2 class="mt-3 font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Protection built into every layer</h2>
+      <p class="mt-4 text-muted">Security isn't a badge on the footer. It's how sign-in, sessions, balances and withdrawals are engineered — with every sensitive administrative action recorded in an audit log.</p>
+      <a href="/help#security" class="btn btn-secondary mt-8">How we protect accounts</a>
+    </div>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div class="rounded-2xl border border-line bg-panel p-5"><i data-icon="lock" class="h-5 w-5 text-up"></i><h3 class="mt-4 font-semibold text-white">Encrypted secrets</h3><p class="mt-1.5 text-sm leading-relaxed text-muted">Two-factor secrets and identity numbers are encrypted at rest with AES-256-GCM.</p></div>
+      <div class="rounded-2xl border border-line bg-panel p-5"><i data-icon="fingerprint" class="h-5 w-5 text-up"></i><h3 class="mt-4 font-semibold text-white">Two-factor authentication</h3><p class="mt-1.5 text-sm leading-relaxed text-muted">Protect sign-in and withdrawals with an authenticator app and single-use backup codes.</p></div>
+      <div class="rounded-2xl border border-line bg-panel p-5"><i data-icon="key-round" class="h-5 w-5 text-up"></i><h3 class="mt-4 font-semibold text-white">Session control</h3><p class="mt-1.5 text-sm leading-relaxed text-muted">Review every active device and sign out of any session instantly.</p></div>
+      <div class="rounded-2xl border border-line bg-panel p-5"><i data-icon="file-search" class="h-5 w-5 text-up"></i><h3 class="mt-4 font-semibold text-white">Reviewed withdrawals</h3><p class="mt-1.5 text-sm leading-relaxed text-muted">Outgoing transfers pass step-up verification and review before funds leave the platform.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="border-t border-line bg-base-2/50 py-20">
+  <div class="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:px-8">
+    <div>
+      <span class="pill-label">FAQ</span>
+      <h2 class="mt-3 font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Common questions</h2>
+      <p class="mt-3 text-muted">More answers in the <a href="/faq" class="text-accent hover:underline">full FAQ</a> and <a href="/help" class="text-accent hover:underline">Help Center</a>.</p>
+    </div>
+    <div class="divide-y divide-line rounded-2xl border border-line bg-panel">
+      <details class="group px-5 py-4 [&_summary::-webkit-details-marker]:hidden"><summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-white">Where do HarborFinance prices come from?<span class="grid h-6 w-6 shrink-0 place-items-center rounded-full border border-line-strong text-muted transition-transform group-open:rotate-45">+</span></summary><div class="mt-3 text-sm leading-relaxed text-muted">Prices are streamed from our configured market-data provider. If the feed is delayed or unavailable, the interface labels it clearly and trading against stale prices is blocked.</div></details>
+      <details class="group px-5 py-4 [&_summary::-webkit-details-marker]:hidden"><summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-white">Are investment plan returns guaranteed?<span class="grid h-6 w-6 shrink-0 place-items-center rounded-full border border-line-strong text-muted transition-transform group-open:rotate-45">+</span></summary><div class="mt-3 text-sm leading-relaxed text-muted">No. Plans are managed strategies with documented risk. Results can be positive or negative and are only known when a subscription is settled.</div></details>
+      <details class="group px-5 py-4 [&_summary::-webkit-details-marker]:hidden"><summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-white">What is demo mode?<span class="grid h-6 w-6 shrink-0 place-items-center rounded-full border border-line-strong text-muted transition-transform group-open:rotate-45">+</span></summary><div class="mt-3 text-sm leading-relaxed text-muted">Demo mode lets you explore the full platform with simulated balances. Demo deposits, withdrawals and fills are labelled and never move real funds.</div></details>
+      <details class="group px-5 py-4 [&_summary::-webkit-details-marker]:hidden"><summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold text-white">How are withdrawals protected?<span class="grid h-6 w-6 shrink-0 place-items-center rounded-full border border-line-strong text-muted transition-transform group-open:rotate-45">+</span></summary><div class="mt-3 text-sm leading-relaxed text-muted">Withdrawals require step-up verification (2FA code or password), reserve your funds immediately, and pass review before they're processed.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- @include cta -->

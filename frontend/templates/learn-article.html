@@ -1,0 +1,18 @@
+<div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+  <article class="mx-auto max-w-3xl">
+    <a href="/learn" class="inline-flex items-center gap-1.5 text-sm text-muted hover:text-white"><i data-icon="arrow-left" class="h-4 w-4"></i> All guides</a>
+    <div class="mt-6 flex items-center gap-3 text-xs text-dim">
+      <span class="badge badge-accent">{{articleCategory}}</span>
+      <span class="badge badge-neutral">{{articleLevel}}</span>
+      <span class="inline-flex items-center gap-1"><i data-icon="clock" class="h-3.5 w-3.5"></i> {{articleMinutes}} min read</span>
+    </div>
+    <h1 class="mt-4 font-display text-4xl font-extrabold tracking-tight text-white">{{articleTitle}}</h1>
+    <p class="mt-3 text-lg text-muted">{{articleSummary}}</p>
+    <div class="prose-legal mt-8 border-t border-line pt-2">{{articleSections}}</div>
+    <p class="mt-10 rounded-xl border border-line bg-panel p-4 text-xs leading-relaxed text-dim">This guide is general education, not investment advice. Digital assets are volatile and you can lose money.</p>
+  </article>
+  <div class="mx-auto mt-14 max-w-3xl">
+    <h2 class="font-display text-lg font-bold text-white">Keep reading</h2>
+    <div class="mt-4 grid gap-3 sm:grid-cols-3">{{articleMore}}</div>
+  </div>
+</div>

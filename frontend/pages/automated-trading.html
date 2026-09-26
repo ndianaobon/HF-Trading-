@@ -1,0 +1,38 @@
+<!-- @page {"title": "Automated Bot Trading", "description": "Automate recurring buys and sells, or place an order automatically when a price is reached.", "layout": "marketing"} -->
+<section class="relative overflow-hidden border-b border-line">
+  <!-- @include page-hero-start -->
+  <div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+    <p class="text-xs font-bold tracking-[0.2em] text-accent uppercase">Automated bot trading</p>
+    <h1 class="mt-3 max-w-3xl font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl">Set your rules. Let the bot place the orders.</h1>
+    <p class="mt-4 max-w-2xl text-lg leading-relaxed text-muted">Create bots that buy or sell on a schedule, or act the moment a coin reaches your price. Every order runs through the same trading engine as a manual trade, and you can pause or stop a bot at any time.</p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="/dashboard/bots" class="btn btn-primary btn-lg">Create a bot <i data-icon="arrow-right" class="h-4 w-4"></i></a>
+      <a href="/markets" class="btn btn-secondary btn-lg">Explore markets</a>
+    </div>
+  </div>
+</section>
+<div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+  <div class="grid gap-5 md:grid-cols-2">
+    <div class="rounded-2xl border border-line bg-panel p-7">
+      <span class="icon-tile"><i data-icon="repeat" class="h-5 w-5"></i></span>
+      <h2 class="mt-5 font-display text-xl font-extrabold text-white">Recurring bot (DCA)</h2>
+      <p class="mt-2 text-sm leading-relaxed text-muted">Buy or sell a fixed USDT amount every hour, 4 hours, day or week. Set a number of runs or let it continue until you stop it.</p>
+      <p class="mt-4 rounded-xl border border-line bg-base-2 p-3 text-sm text-white">Example: <span class="text-muted">buy 50 USDT of BTC every week, 12 times.</span></p>
+    </div>
+    <div class="rounded-2xl border border-line bg-panel p-7">
+      <span class="icon-tile"><i data-icon="crosshair" class="h-5 w-5"></i></span>
+      <h2 class="mt-5 font-display text-xl font-extrabold text-white">Price-trigger bot</h2>
+      <p class="mt-2 text-sm leading-relaxed text-muted">Place one order automatically when a coin rises to or above, or falls to or below, the price you choose. The bot checks the live price every 15 seconds.</p>
+      <p class="mt-4 rounded-xl border border-line bg-base-2 p-3 text-sm text-white">Example: <span class="text-muted">buy 200 USDT of ETH if it falls to 2,400.</span></p>
+    </div>
+  </div>
+  <div class="mt-14 grid gap-10 lg:grid-cols-[1fr_1.6fr]">
+    <div><h2 class="font-display text-2xl font-extrabold text-white">How bots work</h2><p class="mt-2 text-sm text-muted">From setup to your order history.</p></div>
+    <ol class="space-y-4">
+      <li class="flex gap-4 rounded-2xl border border-line bg-panel p-5"><span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent/15 font-bold text-accent">1</span><div><p class="font-semibold text-white">Choose a market and a rule</p><p class="mt-1 text-sm text-muted">Pick any crypto market, buy or sell, the amount per order, and a schedule or trigger price.</p></div></li>
+      <li class="flex gap-4 rounded-2xl border border-line bg-panel p-5"><span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent/15 font-bold text-accent">2</span><div><p class="font-semibold text-white">The bot places market orders</p><p class="mt-1 text-sm text-muted">Each run is a normal market order from your wallet at the current price, with the usual trading fee, and appears in your order history.</p></div></li>
+      <li class="flex gap-4 rounded-2xl border border-line bg-panel p-5"><span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent/15 font-bold text-accent">3</span><div><p class="font-semibold text-white">You stay in control</p><p class="mt-1 text-sm text-muted">You get a notification after every run. Pause, resume or stop a bot at any time. If an order can't be placed, for example because your balance is too low, the bot pauses and tells you why.</p></div></li>
+    </ol>
+  </div>
+</div>
+<!-- @include cta -->

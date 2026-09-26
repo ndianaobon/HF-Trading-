@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+<script>
+  // Apply the saved (or system) colour theme before first paint to avoid a flash.
+  (function () {
+    var t = "dark";
+    try {
+      var saved = localStorage.getItem("hf.theme");
+      t = saved === "light" || saved === "dark" ? saved : matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    } catch (e) {}
+    document.documentElement.setAttribute("data-theme", t);
+    var m = document.createElement("meta");
+    m.name = "theme-color";
+    m.content = t === "light" ? "#f5f6f8" : "#000000";
+    document.head.appendChild(m);
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Log In | HarborFinance Trading</title>
+<meta name="description" content="Log in to your HarborFinance Trading account." />
+<meta name="robots" content="noindex" />
+<meta name="application-name" content="HarborFinance Trading" />
+<link rel="canonical" href="/login" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="HarborFinance Trading" />
+<meta property="og:title" content="Log In | HarborFinance Trading" />
+<meta property="og:description" content="Log in to your HarborFinance Trading account." />
+<meta property="og:url" content="/login" />
+<meta property="og:image" content="/opengraph-image" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Log In | HarborFinance Trading" />
+<meta name="twitter:description" content="Log in to your HarborFinance Trading account." />
+<meta name="twitter:image" content="/twitter-image" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-icon" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@600;700;800&family=Montserrat:wght@700;900&display=swap" />
+<link rel="stylesheet" href="/assets/css/app.css" />
+<script type="module" src="/assets/js/pages/auth-login.js"></script>
+
+  </head>
+  <body class="flex min-h-dvh flex-col" data-layout="auth" data-path="/login">
+    <div id="system-banner"></div>
+    <div class="grid flex-1 lg:grid-cols-[1fr_minmax(480px,560px)]">
+      <aside class="relative hidden overflow-hidden border-r border-line bg-base-2 lg:flex lg:flex-col">
+        <div class="grid-bg absolute inset-0 [mask-image:radial-gradient(70%_60%_at_40%_30%,black,transparent)]" aria-hidden="true"></div>
+        <div class="absolute -top-32 -left-24 h-96 w-96 rounded-full bg-accent/15 blur-3xl" aria-hidden="true"></div>
+        <div class="relative flex flex-1 flex-col p-10 xl:p-14">
+          <a href="/" class="inline-flex shrink-0 items-center gap-2.5" aria-label="HarborFinance Trading home" data-logo>
+  <svg width="36" height="36" viewBox="0 0 140 140" class="shrink-0" aria-hidden="true">
+    <rect width="140" height="140" rx="30" fill="#F4BE2C" />
+    <path d="M0 30A30 30 0 0 1 30 0H110A30 30 0 0 1 140 30V106H0Z" fill="#161616" />
+    <path d="M56.91 76L45.58 76L45.58 42.40L56.91 42.40L56.91 76ZM35.12 76L23.79 76L23.79 42.40L35.12 42.40L35.12 76ZM46.35 63.62L34.35 63.62L34.35 54.30L46.35 54.30L46.35 63.62ZM72.21 76L60.88 76L60.88 42.40L88.19 42.40L88.19 50.94L72.21 50.94L72.21 76ZM86.22 65.25L71.44 65.25L71.44 56.70L86.22 56.70L86.22 65.25ZM108.92 76L97.59 76L97.59 51.18L87.75 51.18L87.75 42.40L118.76 42.40L118.76 51.18L108.92 51.18L108.92 76Z" fill="#FFFFFF" />
+    <rect x="44" y="119" width="52" height="8" rx="4" fill="#161616" />
+  </svg>
+  <span class="logo-text flex flex-col leading-none">
+    <span class="font-logo text-[16px] font-black tracking-[0.01em] text-white">HARBORFINANCE</span>
+    <span class="mt-[5px] flex items-center gap-1.5 font-logo text-[8.5px] font-bold tracking-[0.5em] text-accent"><span class="h-[1.5px] w-3.5 bg-accent"></span>TRADING</span>
+  </span>
+</a>
+
+          <div class="my-auto max-w-lg py-12">
+            <h2 class="font-display text-4xl leading-tight font-extrabold tracking-tight text-white">Your digital assets. One professional platform.</h2>
+            <p class="mt-4 text-muted">Monitor markets, manage your portfolio and access powerful trading tools from a secure, modern platform designed for digital-asset users.</p>
+            <ul class="mt-8 space-y-4 text-sm text-fg">
+              <li class="flex items-center gap-3"><span class="grid h-8 w-8 place-items-center rounded-lg border border-accent/20 bg-accent-soft text-accent"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></svg></span>Live market data with honest status indicators</li>
+              <li class="flex items-center gap-3"><span class="grid h-8 w-8 place-items-center rounded-lg border border-accent/20 bg-accent-soft text-accent"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></svg></span>Portfolio analytics with cost basis and P&amp;L</li>
+              <li class="flex items-center gap-3"><span class="grid h-8 w-8 place-items-center rounded-lg border border-accent/20 bg-accent-soft text-accent"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span>Two-factor authentication and session control</li>
+            </ul>
+          </div>
+          <div class="glass rounded-2xl border border-line p-4" id="auth-markets">
+            <div class="mb-3 flex items-center justify-between"><span class="text-xs font-bold tracking-wider text-dim uppercase">Markets</span><span data-feed-status></span></div>
+            <div class="grid grid-cols-3 gap-3" data-auth-tickers></div>
+          </div>
+        </div>
+      </aside>
+      <main id="main" class="flex flex-col px-4 py-8 sm:px-10">
+        <div class="flex items-center justify-between"><div class="lg:hidden"><a href="/" class="inline-flex shrink-0 items-center gap-2.5" aria-label="HarborFinance Trading home" data-logo>
+  <svg width="36" height="36" viewBox="0 0 140 140" class="shrink-0" aria-hidden="true">
+    <rect width="140" height="140" rx="30" fill="#F4BE2C" />
+    <path d="M0 30A30 30 0 0 1 30 0H110A30 30 0 0 1 140 30V106H0Z" fill="#161616" />
+    <path d="M56.91 76L45.58 76L45.58 42.40L56.91 42.40L56.91 76ZM35.12 76L23.79 76L23.79 42.40L35.12 42.40L35.12 76ZM46.35 63.62L34.35 63.62L34.35 54.30L46.35 54.30L46.35 63.62ZM72.21 76L60.88 76L60.88 42.40L88.19 42.40L88.19 50.94L72.21 50.94L72.21 76ZM86.22 65.25L71.44 65.25L71.44 56.70L86.22 56.70L86.22 65.25ZM108.92 76L97.59 76L97.59 51.18L87.75 51.18L87.75 42.40L118.76 42.40L118.76 51.18L108.92 51.18L108.92 76Z" fill="#FFFFFF" />
+    <rect x="44" y="119" width="52" height="8" rx="4" fill="#161616" />
+  </svg>
+  <span class="logo-text flex flex-col leading-none">
+    <span class="font-logo text-[16px] font-black tracking-[0.01em] text-white">HARBORFINANCE</span>
+    <span class="mt-[5px] flex items-center gap-1.5 font-logo text-[8.5px] font-bold tracking-[0.5em] text-accent"><span class="h-[1.5px] w-3.5 bg-accent"></span>TRADING</span>
+  </span>
+</a>
+</div><div class="ml-auto"><button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch to light mode" title="Switch light / dark mode">
+  <span data-when="dark"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span>
+  <span data-when="light"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg></span>
+</button>
+</div></div>
+        <div class="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-10"><h1 class="font-display text-3xl font-extrabold tracking-tight text-white">Welcome back</h1>
+<p class="mt-2 text-sm text-muted">New to HarborFinance? <a href="/register" class="font-semibold text-accent hover:text-accent-strong">Create an account</a></p>
+<div id="login-notice" class="mt-6" hidden></div>
+<form method="post" id="login-form" class="mt-8 space-y-5" novalidate>
+  <div class="field">
+    <label class="label" for="email">Email</label>
+    <div class="input-wrap"><span class="input-prefix"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg></span><input id="email" name="email" type="email" class="input" autocomplete="email" /></div>
+    <p class="field-error" data-error-for="email" hidden></p>
+  </div>
+  <div class="field">
+    <div class="flex items-center justify-between"><label class="label" for="password">Password</label><a href="/forgot-password" class="text-xs font-medium text-accent hover:text-accent-strong">Forgot password?</a></div>
+    <div class="input-wrap"><span class="input-prefix"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><input id="password" name="password" type="password" class="input pr-12" autocomplete="current-password" /><button type="button" class="toggle-pw" data-toggle-pw aria-label="Show password"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon h-4 w-4" aria-hidden="true"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+    <p class="field-error" data-error-for="password" hidden></p>
+  </div>
+  <label class="flex cursor-pointer items-start gap-2.5 text-sm text-muted select-none"><input type="checkbox" name="remember" class="checkbox" /><span>Remember me for 30 days</span></label>
+  <div data-form-error hidden></div>
+  <button type="submit" class="btn btn-primary btn-lg w-full">Log In</button>
+</form>
+<p class="mt-8 text-center text-xs leading-relaxed text-dim">Protected by rate limiting and optional two-factor authentication. Never share your password or 2FA codes with anyone.</p>
+</div>
+        <p class="text-center text-xs text-dim"><a href="/terms" class="hover:text-muted">Terms</a> · <a href="/privacy" class="hover:text-muted">Privacy</a> · <a href="/risk-disclosure" class="hover:text-muted">Risk Disclosure</a></p>
+      </main>
+    </div>
+  </body>
+</html>

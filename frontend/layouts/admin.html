@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- @include head -->
+  </head>
+  <body data-layout="admin" data-path="{{path}}">
+    <div class="flex min-h-dvh">
+      <aside class="fixed inset-y-0 left-0 z-40 hidden w-[240px] flex-col border-r border-line bg-base-2 lg:flex">
+        <div class="flex h-16 items-center gap-2 border-b border-line px-5">
+          <!-- @include logo -->
+          <span class="rounded bg-accent-soft px-1.5 py-0.5 text-[10px] font-bold text-accent">ADMIN</span>
+        </div>
+        <!-- @include admin-nav -->
+        <a href="/dashboard" class="flex items-center gap-2 border-t border-line px-5 py-4 text-sm text-muted hover:text-white"><i data-icon="arrow-left"></i> Back to app</a>
+      </aside>
+      <div id="drawer" class="fixed inset-0 z-[60] lg:hidden" hidden>
+        <div class="absolute inset-0 bg-[rgb(0_0_0/0.6)]" data-drawer-close></div>
+        <aside class="absolute inset-y-0 left-0 flex w-[270px] flex-col border-r border-line bg-base-2">
+          <div class="flex h-16 items-center justify-between border-b border-line px-4">
+            <!-- @include logo -->
+            <button type="button" aria-label="Close menu" class="text-muted" data-drawer-close><i data-icon="x" class="h-5 w-5"></i></button>
+          </div>
+          <!-- @include admin-nav -->
+        </aside>
+      </div>
+      <div class="flex min-w-0 flex-1 flex-col lg:pl-[240px]">
+        <header class="glass sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-line px-4 sm:px-6">
+          <button type="button" class="grid h-9 w-9 place-items-center rounded-lg border border-line-strong lg:hidden" aria-label="Open menu" data-drawer-open><i data-icon="menu" class="h-5 w-5"></i></button>
+          <p class="truncate text-sm text-muted" data-admin-identity>Admin console</p>
+          <div class="ml-auto flex items-center gap-2">
+            <!-- @include theme-toggle -->
+            <span class="rounded-md border border-warn/30 bg-warn-soft px-2 py-1 text-[11px] font-bold text-warn" data-demo-chip hidden>DEMO DATA</span>
+            <div class="relative" data-account>
+              <button type="button" class="flex items-center gap-2 rounded-lg p-1 pr-2 hover:bg-panel-2" aria-haspopup="menu" aria-expanded="false" aria-label="Account menu" data-account-toggle>
+                <span class="grid h-[30px] w-[30px] place-items-center rounded-full bg-accent/15 text-xs font-bold text-accent ring-1 ring-accent/35" data-avatar>··</span>
+                <span class="hidden max-w-32 truncate text-sm font-medium text-fg md:block" data-account-name>Account</span>
+              </button>
+            </div>
+          </div>
+        </header>
+        <main id="main" class="flex-1 px-4 py-6 sm:px-6">
+          <div class="mx-auto max-w-[1440px]" id="page">{{content}}</div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
