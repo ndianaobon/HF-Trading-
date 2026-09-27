@@ -4,7 +4,7 @@ out
 .env
 .env.local
 .pgdata
-storage
+/storage
 *.tsbuildinfo
 next-env.d.ts
 .DS_Store
@@ -13,3 +13,4 @@ npm-debug.log*
 
 # Production secrets for Hostinger
 hostinger-env.private.txt
+hostinger.env
