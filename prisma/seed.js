@@ -632,7 +632,8 @@ async function main() {
     });
   }
 
-  // ── Copy traders (DEMO statistics) ─────────────────────────
+  // ── Lead traders (copy trading) ────────────────────────────
+  // Profiles only: performance is calculated from signals issued in the admin console.
   const traders = [
     {
       slug: "northwind-quant",
@@ -697,27 +698,6 @@ async function main() {
   ];
   const traderIds = {};
   for (const t of traders) {
-    const vol = { LOW: 0.006, MEDIUM: 0.012, HIGH: 0.02, VERY_HIGH: 0.03 }[t.risk];
-    const series = [];
-    let v = 100,
-      peak = 100,
-      maxDd = 0;
-    for (let d = 365; d >= 0; d--) {
-      v *= 1 + (rand() - 0.49) * vol * 2;
-      peak = Math.max(peak, v);
-      maxDd = Math.max(maxDd, (peak - v) / peak);
-      if (d % 3 === 0) series.push({ t: ago(d).toISOString(), v: Number(v.toFixed(2)) });
-    }
-    const at = (days) => series[Math.max(0, series.length - 1 - Math.round(days / 3))].v;
-    const last = series[series.length - 1].v;
-    const pct = (base) => Number((((last - base) / base) * 100).toFixed(2));
-    const markets = t.assets.filter((a) => a !== "USDC");
-    const recent = Array.from({ length: 12 }, (_, i) => ({
-      t: ago(i * 2 + rand() * 2).toISOString(),
-      market: `${markets[Math.floor(rand() * markets.length)]}-USDT`,
-      side: rand() > 0.45 ? "BUY" : "SELL",
-      pnlPct: Number(((rand() - 0.45) * vol * 400).toFixed(2)),
-    }));
     const row = await prisma.copyTrader.create({
       data: {
         slug: t.slug,
@@ -728,47 +708,26 @@ async function main() {
         strategyTags: t.tags,
         assets: t.assets,
         riskLevel: t.risk,
-        aum: D(Math.round(150_000 + rand() * 2_400_000)),
-        followers: Math.round(40 + rand() * 900),
-        maxDrawdownPct: D((maxDd * 100).toFixed(2)),
-        winRatePct: D((45 + rand() * 20).toFixed(1)),
-        tradesPerWeek: D((t.risk === "VERY_HIGH" ? 40 + rand() * 60 : 2 + rand() * 12).toFixed(1)),
-        returns: { "30d": pct(at(30)), "90d": pct(at(90)), "180d": pct(at(180)), "1y": pct(series[0].v) },
-        performanceSeries: series,
-        recentTrades: recent,
+        status: "ACTIVE",
         minAllocation: D(t.risk === "LOW" ? 100 : 250),
-        profitSharePct: D(t.risk === "LOW" ? 10 : 15),
-        isDemo: true,
+        maxAllocation: D(25_000),
       },
     });
     traderIds[t.slug] = row.id;
   }
-  {
-    const amt = D(1000);
-    L.debit("USDT", amt);
-    const sub = await prisma.copySubscription.create({
-      data: {
-        userId: demo.id,
-        traderId: traderIds["tidewater-macro"],
-        allocation: amt,
-        maxAllocation: D(2500),
-        stopLossPct: D(15),
-        isDemo: true,
-        startedAt: ago(18),
-        createdAt: ago(18),
-      },
-    });
-    await tx({
+  // The demo trader follows one lead trader; funds stay in their wallet until a signal executes.
+  await prisma.copySubscription.create({
+    data: {
       userId: demo.id,
-      type: "COPY_TRADING",
-      direction: "DEBIT",
-      assetId: assetIds.USDT,
-      amount: amt,
-      description: "Copy allocation: Tidewater Macro",
-      metadata: { subscriptionId: sub.id },
+      traderId: traderIds["tidewater-macro"],
+      allocation: D(1000),
+      amountPerTrade: D(100),
+      stopLossPct: D(15),
+      isDemo: true,
+      startedAt: ago(18),
       createdAt: ago(18),
-    });
-  }
+    },
+  });
 
   // Pending withdrawal (funds locked)
   {

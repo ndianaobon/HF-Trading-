@@ -1,20 +1,20 @@
-// Copy-trader directory with risk/strategy/asset filters and return period.
+// Lead-trader directory with risk/strategy/asset filters and return period.
+// Every figure is calculated from the trader's recorded signals.
 import { html, $, on, mount } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { api } from "../core/api.js";
-import { segmented, riskBadge, demoBadge, avatar, sparkline, skeleton, emptyState, errorState } from "../core/ui.js";
-import { formatCompact, formatPercent } from "../core/format.js";
+import { segmented, riskBadge, sparkline, skeleton, emptyState, errorState } from "../core/ui.js";
+import { formatPercent } from "../core/format.js";
+import { traderAvatar } from "./copy-bits.js";
 
 const PERIODS = [
-  { value: "30d", label: "30D" },
-  { value: "90d", label: "90D" },
-  { value: "180d", label: "180D" },
-  { value: "1y", label: "1Y" },
+  { value: "return30dPct", label: "30D" },
+  { value: "return90dPct", label: "90D" },
+  { value: "totalReturnPct", label: "All" },
 ];
 
 export function mountTraderDirectory(el, { profileBase }) {
-  const f = { risk: "", strategy: "", asset: "", period: "90d" };
-  let all = [];
+  const f = { risk: "", strategy: "", asset: "", period: "return90dPct" };
   let list = null;
 
   mount(
@@ -27,7 +27,7 @@ export function mountTraderDirectory(el, { profileBase }) {
         </div>
         <div data-periods></div>
       </div>
-      <p class="mt-4 text-xs text-warn" data-demo-note hidden>Profiles marked “Demo statistics” show illustrative data for the development environment and are not real trading records.</p>
+      <p class="mt-4 text-xs text-dim">Returns are the compounded price move of each trader's closed signals, measured from execution to close at live market prices.</p>
       <div class="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3" data-grid>${Array.from({ length: 6 }, () => skeleton("h-72 rounded-2xl"))}</div>`,
   );
 
@@ -39,20 +39,22 @@ export function mountTraderDirectory(el, { profileBase }) {
   const draw = () => {
     const grid = $("[data-grid]", el);
     if (!list) return;
-    $("[data-demo-note]", el).hidden = !list.some((t) => t.isDemo);
     if (!list.length) return mount(grid, html`<div class="md:col-span-2 xl:col-span-3">${emptyState({ title: "No traders match these filters", description: "Try widening the risk level or strategy." })}</div>`);
-    const sorted = [...list].sort((a, b) => (b.returns[f.period] ?? -Infinity) - (a.returns[f.period] ?? -Infinity));
+    const val = (t) => t.stats[f.period];
+    const sorted = [...list].sort((a, b) => (val(b) ?? -Infinity) - (val(a) ?? -Infinity));
+    const label = PERIODS.find((p) => p.value === f.period).label;
     mount(
       grid,
       sorted.map((t) => {
-        const ret = t.returns[f.period];
+        const s = t.stats;
+        const ret = val(t);
         return html`<a href="${profileBase}/${t.slug}" class="group flex flex-col rounded-2xl border border-line bg-panel p-5 transition-all hover:-translate-y-0.5 hover:border-line-strong">
-          <div class="flex items-start justify-between gap-3"><div class="flex items-center gap-3">${avatar(t.displayName, t.avatarColor, 44)}<div><p class="font-display font-bold text-white">${t.displayName}</p><p class="text-xs text-dim">${t.strategy}</p></div></div>${riskBadge(t.riskLevel)}</div>
-          <div class="mt-4 flex items-end justify-between"><div><p class="text-[11px] font-semibold tracking-wide text-dim uppercase">${f.period} return</p><p class="num font-display text-2xl font-extrabold ${ret === undefined ? "text-dim" : ret >= 0 ? "text-up" : "text-down"}">${ret === undefined ? "—" : formatPercent(ret)}</p></div>${sparkline(t.sparkline, 120, 40)}</div>
+          <div class="flex items-start justify-between gap-3"><div class="flex items-center gap-3">${traderAvatar(t, 44)}<div><p class="font-display font-bold text-white">${t.displayName}</p><p class="text-xs text-dim">${t.strategy}</p></div></div>${riskBadge(t.riskLevel)}</div>
+          <div class="mt-4 flex items-end justify-between"><div><p class="text-[11px] font-semibold tracking-wide text-dim uppercase">${label} signal return</p><p class="num font-display text-2xl font-extrabold ${ret === null ? "text-dim" : ret >= 0 ? "text-up" : "text-down"}">${ret === null ? "—" : formatPercent(ret)}</p></div>${sparkline(s.sparkline, 120, 40)}</div>
           <dl class="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 border-t border-line pt-4 text-xs">
-            ${stat("wallet", "AUM", `$${formatCompact(t.aum)}`)}${stat("trending-down", "Max drawdown", `${Number(t.maxDrawdownPct).toFixed(1)}%`)}${stat("users", "Followers", t.followers.toLocaleString())}${stat("activity", "Trades / week", Number(t.tradesPerWeek).toFixed(1))}
+            ${stat("target", "Win rate", s.winRatePct === null ? "—" : `${s.winRatePct.toFixed(0)}%`)}${stat("activity", "Signals", s.totalSignals.toLocaleString())}${stat("users", "Followers", s.activeFollowers.toLocaleString())}${stat("radio", "Open now", s.openSignals.toLocaleString())}
           </dl>
-          <div class="mt-4 flex flex-wrap items-center gap-1.5">${t.assets.slice(0, 4).map((a) => html`<span class="rounded bg-panel-3 px-1.5 py-0.5 text-[10px] font-semibold text-muted">${a}</span>`)}${t.isDemo ? demoBadge("Demo statistics", "ml-auto") : ""}</div>
+          <div class="mt-4 flex flex-wrap items-center gap-1.5">${t.assets.slice(0, 4).map((a) => html`<span class="rounded bg-panel-3 px-1.5 py-0.5 text-[10px] font-semibold text-muted">${a}</span>`)}${t.copyEnabled ? "" : html`<span class="ml-auto text-[11px] text-warn">Not accepting new copiers</span>`}</div>
         </a>`;
       }),
     );
@@ -69,8 +71,7 @@ export function mountTraderDirectory(el, { profileBase }) {
   };
 
   api("/api/copy-trading/traders", { allowAnonymous: true })
-    .then((data) => {
-      all = data;
+    .then((all) => {
       const tags = [...new Set(all.flatMap((t) => t.strategyTags))].sort();
       const assets = [...new Set(all.flatMap((t) => t.assets))].sort();
       $('[data-f="strategy"]', el).insertAdjacentHTML("beforeend", String(html`${tags.map((t) => html`<option>${t}</option>`)}`));

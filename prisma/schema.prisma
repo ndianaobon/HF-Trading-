@@ -152,7 +152,30 @@ enum RiskLevel {
 enum CopyStatus {
   ACTIVE
   PAUSED
+  SUSPENDED
   STOPPED
+}
+
+enum LeadTraderStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum SignalStatus {
+  CREATED
+  ACTIVE
+  EXECUTED
+  CLOSED
+  CANCELLED
+}
+
+enum CopyTradeStatus {
+  PENDING
+  OPEN
+  CLOSED
+  FAILED
+  CANCELLED
 }
 
 enum ReferralStatus {
@@ -241,39 +264,42 @@ model User {
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
 
-  profile           Profile?
-  sessions          Session[]
-  loginHistory      LoginHistory[]
-  tokens            VerificationToken[]
-  twoFactor         TwoFactorAuth?
-  kycApplications   KycApplication[]   @relation("KycApplicant")
-  kycReviews        KycApplication[]   @relation("KycReviewer")
-  wallets           Wallet[]
-  assignedAddresses WalletAddress[]
-  orders            Order[]
-  trades            Trade[]
-  positions         Position[]
-  portfolio         Portfolio?
-  transactions      Transaction[]
-  deposits          Deposit[]          @relation("DepositOwner")
-  depositReviews    Deposit[]          @relation("DepositReviewer")
-  withdrawals       Withdrawal[]       @relation("WithdrawalOwner")
-  withdrawalReviews Withdrawal[]       @relation("WithdrawalReviewer")
-  investments       InvestmentSubscription[]
-  copySubscriptions CopySubscription[]
-  referralsMade     Referral[]         @relation("Referrer")
-  referredBy        Referral?          @relation("Referred")
-  referralRewards   ReferralReward[]
-  notifications     Notification[]
-  tickets           SupportTicket[]    @relation("TicketOwner")
-  assignedTickets   SupportTicket[]    @relation("TicketAssignee")
-  supportMessages   SupportMessage[]
-  adminUser         AdminUser?
-  auditLogs         AuditLog[]
-  favoriteMarkets   FavoriteMarket[]
-  apiKeys           ApiKey[]
-  tradingBots       TradingBot[]
-  settingsUpdated   SystemSetting[]
+  profile            Profile?
+  sessions           Session[]
+  loginHistory       LoginHistory[]
+  tokens             VerificationToken[]
+  twoFactor          TwoFactorAuth?
+  kycApplications    KycApplication[]         @relation("KycApplicant")
+  kycReviews         KycApplication[]         @relation("KycReviewer")
+  wallets            Wallet[]
+  assignedAddresses  WalletAddress[]
+  orders             Order[]
+  trades             Trade[]
+  positions          Position[]
+  portfolio          Portfolio?
+  transactions       Transaction[]
+  deposits           Deposit[]                @relation("DepositOwner")
+  depositReviews     Deposit[]                @relation("DepositReviewer")
+  withdrawals        Withdrawal[]             @relation("WithdrawalOwner")
+  withdrawalReviews  Withdrawal[]             @relation("WithdrawalReviewer")
+  investments        InvestmentSubscription[]
+  copySubscriptions  CopySubscription[]
+  copyTrades         CopyTrade[]
+  autoBotParticipant AutoBotParticipant?
+  autoBotTrades      AutoBotTrade[]
+  referralsMade      Referral[]               @relation("Referrer")
+  referredBy         Referral?                @relation("Referred")
+  referralRewards    ReferralReward[]
+  notifications      Notification[]
+  tickets            SupportTicket[]          @relation("TicketOwner")
+  assignedTickets    SupportTicket[]          @relation("TicketAssignee")
+  supportMessages    SupportMessage[]
+  adminUser          AdminUser?
+  auditLogs          AuditLog[]
+  favoriteMarkets    FavoriteMarket[]
+  apiKeys            ApiKey[]
+  tradingBots        TradingBot[]
+  settingsUpdated    SystemSetting[]
 
   @@index([status])
   @@index([createdAt])
@@ -426,31 +452,31 @@ model KycDocument {
 // ───────────────────────────── Assets & wallets ─────────────────────────────
 
 model Asset {
-  id             String    @id @default(cuid())
-  symbol         String    @unique
-  name           String
-  type           AssetType @default(CRYPTO)
-  decimals       Int       @default(8)
-  categories     String[]
-  color          String    @default("#8892a6")
-  isActive       Boolean   @default(true)
-  depositEnabled Boolean   @default(true)
-  withdrawEnabled Boolean  @default(true)
-  sortOrder      Int       @default(100)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  symbol          String    @unique
+  name            String
+  type            AssetType @default(CRYPTO)
+  decimals        Int       @default(8)
+  categories      String[]
+  color           String    @default("#8892a6")
+  isActive        Boolean   @default(true)
+  depositEnabled  Boolean   @default(true)
+  withdrawEnabled Boolean   @default(true)
+  sortOrder       Int       @default(100)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  networks      Network[]
-  wallets       Wallet[]
-  baseMarkets   Market[]         @relation("BaseAsset")
-  quoteMarkets  Market[]         @relation("QuoteAsset")
-  positions     Position[]
-  transactions  Transaction[]
-  deposits      Deposit[]
-  withdrawals   Withdrawal[]
-  plans         InvestmentPlan[]
-  rewards       ReferralReward[]
-  fees          FeeConfiguration[]
+  networks     Network[]
+  wallets      Wallet[]
+  baseMarkets  Market[]           @relation("BaseAsset")
+  quoteMarkets Market[]           @relation("QuoteAsset")
+  positions    Position[]
+  transactions Transaction[]
+  deposits     Deposit[]
+  withdrawals  Withdrawal[]
+  plans        InvestmentPlan[]
+  rewards      ReferralReward[]
+  fees         FeeConfiguration[]
 
   @@index([isActive, sortOrder])
 }
@@ -537,13 +563,17 @@ model Market {
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
 
-  baseAsset  Asset            @relation("BaseAsset", fields: [baseAssetId], references: [id])
-  quoteAsset Asset            @relation("QuoteAsset", fields: [quoteAssetId], references: [id])
-  orders     Order[]
-  trades     Trade[]
-  favorites  FavoriteMarket[]
-  fees       FeeConfiguration[]
-  bots       TradingBot[]
+  baseAsset      Asset              @relation("BaseAsset", fields: [baseAssetId], references: [id])
+  quoteAsset     Asset              @relation("QuoteAsset", fields: [quoteAssetId], references: [id])
+  orders         Order[]
+  trades         Trade[]
+  favorites      FavoriteMarket[]
+  fees           FeeConfiguration[]
+  bots           TradingBot[]
+  copySignals    CopySignal[]
+  copyTrades     CopyTrade[]
+  autoBotSignals AutoBotSignal[]
+  autoBotTrades  AutoBotTrade[]
 
   @@index([status, sortOrder])
 }
@@ -647,11 +677,11 @@ model Position {
 }
 
 model Portfolio {
-  id           String              @id @default(cuid())
-  userId       String              @unique
-  baseCurrency String              @default("USDT")
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  baseCurrency String   @default("USDT")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   snapshots PortfolioSnapshot[]
@@ -826,60 +856,151 @@ model InvestmentSubscription {
 
 // ───────────────────────────── Copy trading ─────────────────────────────
 
+/// Lead trader profile. Created and managed by administrators only; users can
+/// follow a lead trader but never create one. Performance is never stored here:
+/// it is calculated from the trader's signals and the copy trades they produced.
 model CopyTrader {
-  id               String    @id @default(cuid())
-  slug             String    @unique
-  displayName      String
-  avatarColor      String    @default("#F2B544")
-  bio              String
-  strategy         String
-  strategyTags     String[]
-  assets           String[]
-  riskLevel        RiskLevel
-  aum              Decimal   @db.Decimal(36, 18)
-  followers        Int       @default(0)
-  maxDrawdownPct   Decimal   @db.Decimal(10, 4)
-  winRatePct       Decimal   @db.Decimal(10, 4)
-  tradesPerWeek    Decimal   @db.Decimal(10, 2)
-  /// { "30d": n, "90d": n, "180d": n, "1y": n } — percent
-  returns          Json
-  /// [{ t: iso, v: equity index }]
-  performanceSeries Json
-  /// [{ t, market, side, price, pnlPct }]
-  recentTrades     Json
-  minAllocation    Decimal   @db.Decimal(36, 18)
-  profitSharePct   Decimal   @db.Decimal(10, 4)
-  /// Demo statistics must be labelled as such in the UI.
-  isDemo           Boolean   @default(true)
-  isActive         Boolean   @default(true)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  id            String           @id @default(cuid())
+  slug          String           @unique
+  displayName   String
+  avatarColor   String           @default("#F2B544")
+  /// Storage key of the uploaded profile image (served by /api/copy-trading/traders/:id/avatar)
+  avatarKey     String?
+  bio           String
+  strategy      String
+  strategyTags  String[]
+  assets        String[]
+  riskLevel     RiskLevel
+  status        LeadTraderStatus @default(INACTIVE)
+  /// When false, existing followers keep copying but nobody new can start.
+  copyEnabled   Boolean          @default(true)
+  minAllocation Decimal          @db.Decimal(36, 18)
+  maxAllocation Decimal?         @db.Decimal(36, 18)
+  /// Soft delete: removed traders keep their signal and trade history.
+  deletedAt     DateTime?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
 
   subscriptions CopySubscription[]
+  signals       CopySignal[]
+  copyTrades    CopyTrade[]
 
-  @@index([isActive, riskLevel])
+  @@index([status])
 }
 
+/// A user following a lead trader. `allocation` is the most the user lets this
+/// relationship have in open copy trades at once; each signal opens a position
+/// worth `amountPerTrade` × the signal's size multiplier. Funds stay in the
+/// user's own wallet — only open copy positions are reserved.
 model CopySubscription {
-  id            String     @id @default(cuid())
-  userId        String
-  traderId      String
-  allocation    Decimal    @db.Decimal(36, 18)
-  maxAllocation Decimal    @db.Decimal(36, 18)
-  stopLossPct   Decimal    @db.Decimal(10, 4)
-  status        CopyStatus @default(ACTIVE)
-  pnl           Decimal    @default(0) @db.Decimal(36, 18)
-  isDemo        Boolean    @default(false)
-  startedAt     DateTime   @default(now())
-  stoppedAt     DateTime?
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  id             String     @id @default(cuid())
+  userId         String
+  traderId       String
+  allocation     Decimal    @db.Decimal(36, 18)
+  amountPerTrade Decimal    @db.Decimal(36, 18)
+  stopLossPct    Decimal    @db.Decimal(10, 4)
+  status         CopyStatus @default(ACTIVE)
+  /// Realised net P&L of this relationship's closed copy trades (cache of CopyTrade.netPnl).
+  pnl            Decimal    @default(0) @db.Decimal(36, 18)
+  /// Funds held by the pre-signal copy model; returned when copying stops.
+  escrowed       Decimal    @default(0) @db.Decimal(36, 18)
+  isDemo         Boolean    @default(false)
+  startedAt      DateTime   @default(now())
+  stoppedAt      DateTime?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 
-  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  trader CopyTrader @relation(fields: [traderId], references: [id])
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trader     CopyTrader  @relation(fields: [traderId], references: [id])
+  copyTrades CopyTrade[]
 
   @@index([userId, status])
   @@index([traderId, status])
+}
+
+/// Trading signal issued by an administrator on behalf of a lead trader.
+///   CREATED → ACTIVE → EXECUTED → CLOSED,  or  CREATED/ACTIVE → CANCELLED
+/// executedPrice/closePrice are the live market prices at those moments.
+model CopySignal {
+  id             String       @id @default(cuid())
+  traderId       String
+  marketId       String
+  side           OrderSide
+  /// Null = execute at market as soon as the signal is active.
+  entryPrice     Decimal?     @db.Decimal(36, 18)
+  takeProfit     Decimal?     @db.Decimal(36, 18)
+  stopLoss       Decimal?     @db.Decimal(36, 18)
+  sizeMultiplier Decimal      @default(1) @db.Decimal(10, 4)
+  note           String?
+  status         SignalStatus @default(CREATED)
+  executedPrice  Decimal?     @db.Decimal(36, 18)
+  closePrice     Decimal?     @db.Decimal(36, 18)
+  /// TAKE_PROFIT | STOP_LOSS | MANUAL
+  closeReason    String?
+  /// Price move from executedPrice to closePrice in the signal's direction, percent.
+  resultPct      Decimal?     @db.Decimal(18, 8)
+  createdById    String?
+  activatedAt    DateTime?
+  executedAt     DateTime?
+  closedAt       DateTime?
+  cancelledAt    DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  trader     CopyTrader  @relation(fields: [traderId], references: [id])
+  market     Market      @relation(fields: [marketId], references: [id])
+  copyTrades CopyTrade[]
+
+  @@index([traderId, status])
+  @@index([status])
+}
+
+/// One follower's position opened from a signal, executed through the normal
+/// order pipeline. P&L comes from the actual fills: entryValue/exitValue are
+/// quote amounts including fees (cost for buys, net proceeds for sells).
+model CopyTrade {
+  id             String          @id @default(cuid())
+  signalId       String
+  subscriptionId String
+  userId         String
+  traderId       String
+  marketId       String
+  side           OrderSide
+  status         CopyTradeStatus @default(PENDING)
+  /// Quote amount the engine aimed to trade.
+  notional       Decimal         @db.Decimal(36, 18)
+  quantity       Decimal         @default(0) @db.Decimal(36, 18)
+  entryOrderId   String?
+  exitOrderId    String?
+  entryPrice     Decimal?        @db.Decimal(36, 18)
+  exitPrice      Decimal?        @db.Decimal(36, 18)
+  entryValue     Decimal?        @db.Decimal(36, 18)
+  exitValue      Decimal?        @db.Decimal(36, 18)
+  fees           Decimal         @default(0) @db.Decimal(36, 18)
+  grossPnl       Decimal?        @db.Decimal(36, 18)
+  netPnl         Decimal?        @db.Decimal(36, 18)
+  /// Amount reserved in the wallet while the position is open (base for buys, quote for sells).
+  heldAmount     Decimal         @default(0) @db.Decimal(36, 18)
+  failReason     String?
+  lastError      String?
+  /// Set while a closing order is in flight, so concurrent closers don't both sell.
+  closingAt      DateTime?
+  isDemo         Boolean         @default(false)
+  openedAt       DateTime?
+  closedAt       DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  signal       CopySignal       @relation(fields: [signalId], references: [id])
+  subscription CopySubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trader       CopyTrader       @relation(fields: [traderId], references: [id])
+  market       Market           @relation(fields: [marketId], references: [id])
+
+  @@unique([signalId, subscriptionId])
+  @@index([userId, status])
+  @@index([traderId, status])
+  @@index([status])
 }
 
 // ───────────────────────────── Referrals ─────────────────────────────
@@ -977,12 +1098,12 @@ model SupportMessage {
 // ───────────────────────────── Administration ─────────────────────────────
 
 model AdminUser {
-  id          String    @id @default(cuid())
-  userId      String    @unique
-  role        AdminRole
-  isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        String    @id @default(cuid())
+  userId    String    @unique
+  role      AdminRole
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -1115,4 +1236,158 @@ model TradingBotRun {
   bot TradingBot @relation(fields: [botId], references: [id], onDelete: Cascade)
 
   @@index([botId, createdAt])
+}
+
+// ───────────────────────────── Automated trading (SMC / ICT bot) ─────────────────────────────
+
+enum AutoBotStatus {
+  RUNNING
+  PAUSED
+  STOPPED
+}
+
+enum AutoBotSignalStatus {
+  WATCHING
+  EXECUTED
+  REJECTED
+  EXPIRED
+}
+
+enum AutoBotTradeStatus {
+  PENDING
+  OPEN
+  CLOSED
+  FAILED
+  REJECTED
+}
+
+enum AutoBotParticipantStatus {
+  ACTIVE
+  PAUSED
+  STOPPED
+}
+
+/// Singleton ("default"). `settings` is validated by lib/autobot/config.js.
+model AutoBotConfig {
+  id              String        @id @default("default")
+  status          AutoBotStatus @default(STOPPED)
+  statusReason    String?
+  statusChangedAt DateTime?
+  statusChangedBy String?
+  settings        Json          @default("{}")
+  /// Engine health: last cycle time, data availability, consecutive critical errors.
+  health          Json          @default("{}")
+  updatedAt       DateTime      @updatedAt
+}
+
+/// Latest market analysis per enabled instrument (overwritten every cycle).
+model AutoBotAnalysis {
+  symbol    String   @id
+  data      Json
+  updatedAt DateTime @updatedAt
+}
+
+/// Every setup the strategy engine detects, with the explicit condition checklist
+/// and the decision taken. WATCHING = setup formed, waiting for price to reach the
+/// entry zone with lower-timeframe confirmation.
+model AutoBotSignal {
+  id         String              @id @default(cuid())
+  setupKey   String              @unique
+  marketId   String
+  symbol     String
+  side       OrderSide
+  status     AutoBotSignalStatus @default(WATCHING)
+  strategy   String              @default("SMC_ICT")
+  /// { bias: ["4h","1h"], setup: "15m", entry: "5m" }
+  timeframes Json
+  htfBias    String
+  /// [{ key, label, passed, detail }]
+  conditions Json
+  zoneLow    Decimal?            @db.Decimal(36, 18)
+  zoneHigh   Decimal?            @db.Decimal(36, 18)
+  entryPrice Decimal?            @db.Decimal(36, 18)
+  stopLoss   Decimal?            @db.Decimal(36, 18)
+  takeProfit Decimal?            @db.Decimal(36, 18)
+  riskReward Decimal?            @db.Decimal(18, 8)
+  reason     String?
+  detectedAt DateTime            @default(now())
+  decidedAt  DateTime?
+  expiresAt  DateTime?
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+
+  market Market         @relation(fields: [marketId], references: [id])
+  trades AutoBotTrade[]
+
+  @@index([status, createdAt])
+  @@index([symbol, createdAt])
+}
+
+/// A user's participation in the automated trading bot.
+model AutoBotParticipant {
+  id           String                   @id @default(cuid())
+  userId       String                   @unique
+  status       AutoBotParticipantStatus @default(ACTIVE)
+  /// USER (opted in) or ADMIN (enrolled by an administrator)
+  enabledBy    String                   @default("USER")
+  /// Account value when joining — base for return % and drawdown.
+  startEquity  Decimal                  @db.Decimal(36, 18)
+  statusReason String?
+  joinedAt     DateTime                 @default(now())
+  createdAt    DateTime                 @default(now())
+  updatedAt    DateTime                 @updatedAt
+
+  user   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trades AutoBotTrade[]
+
+  @@index([status])
+}
+
+/// One participant's position from a bot signal, executed through the normal
+/// order pipeline (see lib/trading/managed-position.js). REJECTED rows record a
+/// failed per-account risk check; FAILED rows an order the platform rejected.
+model AutoBotTrade {
+  id            String             @id @default(cuid())
+  signalId      String
+  participantId String
+  userId        String
+  marketId      String
+  side          OrderSide
+  status        AutoBotTradeStatus @default(PENDING)
+  riskPct       Decimal            @db.Decimal(10, 4)
+  riskAmount    Decimal            @default(0) @db.Decimal(36, 18)
+  notional      Decimal            @default(0) @db.Decimal(36, 18)
+  quantity      Decimal            @default(0) @db.Decimal(36, 18)
+  stopLoss      Decimal            @db.Decimal(36, 18)
+  takeProfit    Decimal            @db.Decimal(36, 18)
+  entryOrderId  String?
+  exitOrderId   String?
+  entryPrice    Decimal?           @db.Decimal(36, 18)
+  exitPrice     Decimal?           @db.Decimal(36, 18)
+  entryValue    Decimal?           @db.Decimal(36, 18)
+  exitValue     Decimal?           @db.Decimal(36, 18)
+  fees          Decimal            @default(0) @db.Decimal(36, 18)
+  grossPnl      Decimal?           @db.Decimal(36, 18)
+  netPnl        Decimal?           @db.Decimal(36, 18)
+  heldAmount    Decimal            @default(0) @db.Decimal(36, 18)
+  /// TAKE_PROFIT | STOP_LOSS | MANUAL | PARTICIPANT_LEFT
+  closeReason   String?
+  failReason    String?
+  lastError     String?
+  closingAt     DateTime?
+  isDemo        Boolean            @default(false)
+  openedAt      DateTime?
+  closedAt      DateTime?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  signal      AutoBotSignal      @relation(fields: [signalId], references: [id])
+  participant AutoBotParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  market      Market             @relation(fields: [marketId], references: [id])
+
+  @@unique([signalId, userId])
+  @@index([userId, status])
+  @@index([status])
+  @@index([createdAt])
 }

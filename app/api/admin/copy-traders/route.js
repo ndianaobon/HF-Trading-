@@ -1,40 +1,22 @@
 import { route } from "@/lib/api/route";
+import { AppError } from "@/lib/api/errors";
 import { prisma } from "@/lib/db/prisma";
-import { isDemoMode } from "@/lib/config";
+import { D } from "@/lib/db/decimal";
 import { audit } from "@/lib/services/audit";
+import { traderProfile, traderStats } from "@/lib/services/copy-stats";
 import { traderSchema } from "@/lib/validation/admin";
 
 export const GET = route({ admin: "copytraders.manage" }, async () => {
-  const [traders, subs] = await Promise.all([
-    prisma.copyTrader.findMany({ orderBy: { createdAt: "asc" } }),
-    prisma.copySubscription.groupBy({ by: ["traderId", "status"], _sum: { allocation: true }, _count: { _all: true } }),
-  ]);
-  return traders.map(({ performanceSeries: _p, recentTrades: _r, ...t }) => {
-    const s = subs.filter((x) => x.traderId === t.id && x.status !== "STOPPED");
-    return { ...t, copiers: s.reduce((a, x) => a + x._count._all, 0), copiedAllocation: s.reduce((a, x) => a + (x._sum.allocation?.toNumber() ?? 0), 0) };
-  });
+  const traders = await prisma.copyTrader.findMany({ where: { deletedAt: null }, orderBy: { createdAt: "asc" } });
+  const stats = await traderStats(traders.map((t) => t.id));
+  return traders.map((t) => ({ ...traderProfile(t), stats: stats.get(t.id) }));
 });
 
-/**
- * Creates a trader profile. Performance statistics start empty and must be
- * populated from verified trading records — never entered as marketing copy.
- */
+/** Creates a lead trader. Performance is never entered: it is calculated from signals. */
 export const POST = route({ admin: "copytraders.manage", body: traderSchema }, async ({ session, body, ip }) => {
-  const t = await prisma.copyTrader.create({
-    data: {
-      ...body,
-      aum: 0,
-      followers: 0,
-      maxDrawdownPct: 0,
-      winRatePct: 0,
-      tradesPerWeek: 0,
-      returns: {},
-      performanceSeries: [],
-      recentTrades: [],
-      isDemo: isDemoMode(),
-      isActive: false,
-    },
-  });
-  await audit({ actorId: session.user.id, actorEmail: session.user.email, ip, action: "copytrader.create", targetType: "CopyTrader", targetId: t.id });
-  return t;
+  if (body.maxAllocation && D(body.maxAllocation).lt(body.minAllocation)) throw new AppError("VALIDATION_ERROR", "Maximum copy amount must be at least the minimum.");
+  if (await prisma.copyTrader.findUnique({ where: { slug: body.slug } })) throw new AppError("CONFLICT", "That profile address (slug) is already in use.");
+  const t = await prisma.copyTrader.create({ data: { ...body, maxAllocation: body.maxAllocation || null } });
+  await audit({ actorId: session.user.id, actorEmail: session.user.email, ip, action: "copytrader.create", targetType: "CopyTrader", targetId: t.id, metadata: { displayName: t.displayName } });
+  return traderProfile(t);
 });

@@ -1,9 +1,9 @@
 import { route } from "@/lib/api/route";
 import { AppError } from "@/lib/api/errors";
-import { prisma } from "@/lib/db/prisma";
+import { traderDetail } from "@/lib/services/copy-stats";
 
-export const GET = route({ auth: "none" }, async ({ params }) => {
-  const trader = await prisma.copyTrader.findFirst({ where: { OR: [{ id: params.id }, { slug: params.id }], isActive: true } });
+export const GET = route({ auth: "optional" }, async ({ params, session }) => {
+  const trader = await traderDetail(params.id, session?.user.id);
   if (!trader) throw new AppError("NOT_FOUND");
   return trader;
 });

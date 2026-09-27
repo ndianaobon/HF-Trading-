@@ -13,7 +13,8 @@ const STATUS_TONES = {
   COMPLETED: "up", FILLED: "up", ACTIVE: "up", APPROVED: "up", RESOLVED: "up",
   CONFIRMING: "info", PROCESSING: "info", IN_PROGRESS: "info", PARTIALLY_FILLED: "info", ACCEPTED: "info",
   PENDING: "warn", PENDING_REVIEW: "warn", PENDING_VERIFICATION: "warn", WAITING_FOR_USER: "warn",
-  OPEN: "accent",
+  OPEN: "accent", EXECUTED: "accent",
+  PAUSED: "warn",
   FAILED: "down", REJECTED: "down", SUSPENDED: "down", BANNED: "down", HALTED: "down",
 };
 const RISK_TONES = { LOW: "up", MEDIUM: "info", HIGH: "warn", VERY_HIGH: "down" };

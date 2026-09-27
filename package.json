@@ -5,6 +5,7 @@
   "description": "HarborFinance Trading — digital asset trading and portfolio platform",
   "scripts": {
     "dev": "node scripts/dev.js",
+    "dev:lan": "node scripts/dev.js -p 3100 -H 0.0.0.0",
     "build": "node scripts/build-frontend.js && next build",
     "start": "next start",
     "build:frontend": "node scripts/build-frontend.js",
@@ -16,6 +17,7 @@
     "db:seed": "prisma db seed",
     "db:reset": "prisma migrate reset --force",
     "db:studio": "prisma studio",
+    "setup:prod": "node scripts/setup-production.mjs",
     "postinstall": "prisma generate"
   },
   "prisma": {

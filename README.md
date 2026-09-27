@@ -122,6 +122,30 @@ Company details appear publicly only once an administrator marks the company pro
 
 ---
 
+## Copy trading
+
+Admin-created lead traders → admin-issued signals → automatic copy trades → the normal order pipeline → P&L from actual fills.
+
+- **Lead traders** are created and managed only in **Admin → Copy Trading** (`copytraders.manage`). Users can follow them but never create one; there is no "become a lead trader" flow. Status: *Active* (visible, copyable), *Inactive* (hidden), *Suspended* (visible, no new signals execute). A separate switch stops new copiers without affecting existing ones. Removing a trader keeps its history and stops every follower.
+- **Signals** (`CopySignal`): `CREATED` (draft) → `ACTIVE` (waiting for the entry price, or immediate at market when there is none) → `EXECUTED` (followers' positions open) → `CLOSED` at take-profit, stop-loss or by the admin; or `CANCELLED` before execution.
+- **Copy engine** (`lib/services/copy-trading.js`, scheduler job `copy-engine`, every 5 s, never on stale prices): when a signal executes, every *Active* follower gets a `CopyTrade` placed as a MARKET order through `placeOrder()` — same balances, fees, ledger and positions as a manual order. Size = the follower's *amount per trade* × the signal's size multiplier, capped by their *copy amount* still free. While open, the bought asset (or, for sells, the proceeds) is reserved in the wallet and released just before the closing order. Sell signals need the follower to hold the asset (spot only).
+- **P&L** is never entered: gross = (exit − entry) × size; net = exit proceeds − entry cost, both including fees. Lead-trader statistics (return, win rate, followers, followers' P&L) are calculated from closed signals and copy trades (`lib/services/copy-stats.js`).
+- Followers set a copy amount, an amount per trade and a stop-copy threshold; reaching the threshold (realised + open loss) stops copying and closes their positions. Stopping manually does the same.
+- Orders are filled by the internal simulator until a real execution venue is connected (`lib/trading/venue.js`), and are labelled *Simulated*.
+
+## Automated trading bot (SMC / ICT)
+
+An additional strategy/execution module on top of the existing order, wallet, position and P&L systems. **Admin → Automated Trading** (`autobot.manage`) controls everything; users see their own trades under **Dashboard → Automated Trading**.
+
+- **Strategy engine** (`lib/autobot/smc.js`, pure functions, no I/O): multi-timeframe analysis — bias timeframes (default 4h + 1h market structure) → setup timeframe (15m) → entry timeframe (5m). A buy requires, as explicit conditions: HTF bias, a sell-side liquidity sweep (swing low, equal lows, previous-day low or Asian low, wicked through and closed back), displacement (body ≥ N×ATR), a break of structure, an entry zone (fair value gap and/or order block), a discount entry, a retrace into the zone, lower-timeframe confirmation, and a target at resting opposing liquidity (or a fixed R) meeting the minimum risk/reward. Sells are the exact mirror. Stop = beyond the sweep extreme.
+- **Signal log** (`AutoBotSignal`): every detected setup with its checklist (✔/✘ + detail) and the decision — `WATCHING`, `EXECUTED`, `REJECTED` (reason) or `EXPIRED`.
+- **Gates** before execution: bot status, spot direction, enabled trading sessions (UTC, optional per-instrument hours), news windows (events entered by the admin), execution venue.
+- **Risk engine** (`lib/autobot/risk.js`, per account): risk per trade (% of account value, entry→stop), max open trades, max daily loss, max drawdown (pauses the account), max exposure per instrument and in total, max consecutive losses per day, stop loss always required, minimum risk/reward **after round-trip fees**, 1× leverage (spot). Sized positions are capped by exposure limits and available USDT; failures are recorded as `REJECTED` trades with the reason.
+- **Execution** (`lib/autobot/engine.js`, jobs `autobot-scan` every 30 s and `autobot-exits` every 5 s): positions open and close through `placeOrder()` via `lib/trading/managed-position.js` (shared with copy trading); P&L comes from the actual fills. Stop-loss/take-profit exits keep running while the bot is paused or stopped. Circuit breakers: no analysis or trades on stale market data; auto-pause after repeated execution errors.
+- **Controls**: start, pause, resume, emergency **STOP BOT** (no new trades, positions stay open and visible), close one / all positions, enable instruments, risk, sessions, strategy parameters, news events, participation (users opt in, or administrators only).
+- **Instruments**: the platform trades crypto spot pairs against USDT (BTCUSD = BTC-USDT). Gold, silver and forex pairs are listed as unavailable: there is no tradable market, execution venue or reliable real-time feed for them, and spot trading cannot sell short. Bearish setups are therefore logged and rejected.
+- `POST /api/dev/auto-trading/inject` (development only, 404 in production) pushes a synthetic setup through the same gates, risk engine and execution for testing.
+
 ## Brand
 
 The logo is the **HFT** mark on a dark tile with a yellow base band (`#F4BE2C`), beside the *HARBORFINANCE / TRADING* wordmark.

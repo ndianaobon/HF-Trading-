@@ -13,6 +13,8 @@ const INVALIDATIONS = {
   "withdrawal.updated": ["/api/withdrawals", "/api/transactions", "/api/wallets"],
   "support.message": ["/api/support"],
   "bot.updated": ["/api/bots"],
+  "copy.updated": ["/api/copy-trading"],
+  "autobot.updated": ["/api/auto-trading"],
 };
 const POLL_KEYS = ["/api/notifications", "/api/wallets", "/api/orders", "/api/deposits", "/api/withdrawals", "/api/support", "/api/bots"];
 
