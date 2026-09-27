@@ -91,7 +91,7 @@ export function mountOrderPanel(el, { market, user }) {
         <div class="mt-auto pt-4">
           <p class="mb-2 text-xs text-down" role="alert" data-err hidden></p>
           <div data-action></div>
-          <p class="mt-2 flex items-center justify-center gap-1.5 text-[11px] text-warn" data-sim hidden>${icon("flask-conical", "h-3 w-3")} Demo: filled by simulator at live prices</p>
+          <p class="mt-2.5 flex items-start gap-1.5 rounded-lg border border-warn/30 bg-warn-soft px-2.5 py-2 text-[11px] leading-snug text-warn" data-sim hidden>${icon("flask-conical", "mt-px h-3.5 w-3.5 shrink-0")}<span><b>Simulated trading</b> — orders are filled by the HarborFinance simulator at live market prices and are not sent to an exchange.</span></p>
         </div>
       </div>`,
     );

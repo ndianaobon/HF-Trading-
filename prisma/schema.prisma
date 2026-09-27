@@ -32,6 +32,7 @@ enum UserStatus {
   PENDING_VERIFICATION
   ACTIVE
   SUSPENDED
+  BANNED
   CLOSED
 }
 
@@ -236,6 +237,7 @@ model User {
   failedLoginCount  Int        @default(0)
   lockedUntil       DateTime?
   isDemo            Boolean    @default(false)
+  signalStrength    Int        @default(0)
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
 

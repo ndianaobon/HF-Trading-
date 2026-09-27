@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db/prisma";
 
 const query = z.object({
   q: z.string().trim().max(80).optional(),
-  status: z.enum(["PENDING_VERIFICATION", "ACTIVE", "SUSPENDED", "CLOSED"]).optional(),
+  status: z.enum(["PENDING_VERIFICATION", "ACTIVE", "SUSPENDED", "BANNED", "CLOSED"]).optional(),
   staff: z.enum(["true", "false"]).optional(),
   ...paginationSchema,
 });

@@ -1,5 +1,5 @@
 import { html, $, on, mount } from "../core/dom.js";
-import { pageHeader, statusBadge, smallDemo, segmented, emptyState } from "../core/ui.js";
+import { pageHeader, statusBadge, smallSim, segmented, emptyState } from "../core/ui.js";
 import { formatDate, formatNumber, formatPrice, titleCase } from "../core/format.js";
 import { adminPage, adminTable } from "../components/admin-kit.js";
 
@@ -12,7 +12,7 @@ const common = [
   { key: "d", header: "Date", cell: (r) => html`<span class="text-xs text-muted">${formatDate(r.createdAt)}</span>` },
   { key: "u", header: "User", cell: (r) => r.user.email },
   { key: "m", header: "Market", cell: (r) => html`<span class="font-semibold text-white">${r.market.symbol}</span>` },
-  { key: "s", header: "Side", cell: (r) => html`<span class="flex items-center gap-1.5"><span class="${r.side === "BUY" ? "text-up" : "text-down"}">${r.side}</span>${r.isDemo ? smallDemo() : ""}</span>` },
+  { key: "s", header: "Side", cell: (r) => html`<span class="flex items-center gap-1.5"><span class="${r.side === "BUY" ? "text-up" : "text-down"}">${r.side}</span>${r.isDemo ? smallSim() : ""}</span>` },
 ];
 const COLUMNS = {
   orders: [

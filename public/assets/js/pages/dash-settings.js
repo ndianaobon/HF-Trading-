@@ -129,6 +129,7 @@ function securitySection() {
     mount(
       panel,
       html`<div class="space-y-6">
+        ${user.admin && !tfa.enabled ? notice("warn", { title: "Two-factor authentication required", body: "Staff accounts must turn on 2FA before they can open the admin console." }) : ""}
         <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           ${tile("clock", "Last login", data.lastLogin ? timeAgo(data.lastLogin.at) : "—", data.lastLogin ? `${data.lastLogin.device} · ${data.lastLogin.ip ?? ""}` : "")}
           ${tile(tfa.enabled ? "shield-check" : "shield-alert", "2FA status", tfa.enabled ? "Enabled" : "Disabled", tfa.enabled ? `${tfa.backupCodesRemaining} backup codes left` : "Recommended", tfa.enabled ? "text-up" : "text-warn")}

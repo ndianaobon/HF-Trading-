@@ -11,7 +11,7 @@ adminTable(view.querySelector("[data-list]"), {
   endpoint: "/api/admin/users",
   filters: [
     { name: "q", type: "search", placeholder: "Search email, name, ID or referral code", cls: "md:w-96" },
-    { name: "status", type: "select", options: statusOptions(["ACTIVE", "PENDING_VERIFICATION", "SUSPENDED", "CLOSED"]) },
+    { name: "status", type: "select", options: statusOptions(["ACTIVE", "PENDING_VERIFICATION", "SUSPENDED", "BANNED", "CLOSED"]) },
     { name: "staff", type: "select", label: "Account type", options: [["", "All accounts"], ["false", "Customers"], ["true", "Staff"]] },
   ],
   onRowClick: (u) => (location.href = `/admin/users/${u.id}`),

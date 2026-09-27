@@ -39,8 +39,8 @@ export const POST = route({ auth: "none", body: loginSchema, rateLimit: RATE_LIM
     }
     throw new AppError("INVALID_CREDENTIALS");
   }
-  if (user.status === "SUSPENDED" || user.status === "CLOSED") {
-    await prisma.loginHistory.create({ data: { userId: user.id, ip, userAgent, success: false, reason: "suspended" } });
+  if (["SUSPENDED", "BANNED", "CLOSED"].includes(user.status)) {
+    await prisma.loginHistory.create({ data: { userId: user.id, ip, userAgent, success: false, reason: user.status.toLowerCase() } });
     throw new AppError("ACCOUNT_SUSPENDED");
   }
 

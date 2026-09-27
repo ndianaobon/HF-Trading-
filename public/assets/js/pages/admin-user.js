@@ -3,7 +3,7 @@ import { icon } from "../core/icons.js";
 import { api } from "../core/api.js";
 import { watch, invalidate } from "../core/store.js";
 import { card, badge, demoBadge, smallDemo, statusBadge, errorState, emptyState, skeleton, toast, DataTable } from "../core/ui.js";
-import { countryName } from "../core/countries.js";
+import { countryName, COUNTRIES } from "../core/countries.js";
 import { formatDate, formatNumber, titleCase } from "../core/format.js";
 import { adminPage, actionModal, kv } from "../components/admin-kit.js";
 
@@ -12,8 +12,25 @@ const id = location.pathname.split("/").pop();
 const key = `/api/admin/users/${id}`;
 
 const ACTIONS = {
-  suspend: { title: "Suspend account", label: "Suspend", danger: true, reason: "required", icon: "ban" },
+  suspend: { title: "Suspend account", label: "Suspend", danger: true, reason: "required", icon: "pause-circle" },
+  ban: {
+    title: "Ban account",
+    label: "Ban",
+    danger: true,
+    reason: "required",
+    icon: "ban",
+    warning: "Banning signs the user out everywhere and blocks sign-in and password resets. Any remaining balance still has to be returned or handled under your compliance process.",
+  },
   activate: { title: "Activate account", label: "Activate", icon: "check-circle-2" },
+  edit_profile: { title: "Edit profile", label: "Edit profile", reason: "required", reasonLabel: "Reason for change", icon: "user-pen" },
+  send_password_reset: {
+    title: "Send password reset link",
+    label: "Send reset link",
+    icon: "key-round",
+    warning: "The user gets an email with a one-time link to choose a new password. Staff never see or set passwords.",
+  },
+  set_status: { title: "Change account status", label: "Change status", reason: "optional", icon: "user-cog" },
+  set_signal: { title: "Set signal strength", label: "Signal strength", icon: "activity" },
   reset_kyc: { title: "Reset verification", label: "Reset KYC", danger: true, reason: "required", icon: "rotate-ccw" },
   revoke_sessions: { title: "Sign out all sessions", label: "Revoke sessions", icon: "log-out" },
   verify_email: { title: "Mark email verified", label: "Verify email", icon: "mail-check" },
@@ -45,8 +62,10 @@ watch(key, ({ data: u, error }) => {
         </div>
         ${admin.can("users.manage")
           ? html`<div class="flex flex-wrap gap-2">
-              ${u.status === "SUSPENDED" ? btn("activate", "btn-primary") : btn("suspend", "btn-danger")}
-              ${btn("revoke_sessions")}${btn("reset_kyc")}${!u.emailVerifiedAt ? btn("verify_email") : ""}${u.lockedUntil ? btn("unlock") : ""}
+              ${u.status === "SUSPENDED" || u.status === "BANNED" ? btn("activate", "btn-primary") : btn("suspend", "btn-danger")}
+              ${u.status !== "BANNED" ? btn("ban", "btn-danger") : ""}
+              ${btn("edit_profile")}${u.status !== "BANNED" && u.status !== "CLOSED" ? btn("send_password_reset") : ""}
+              ${btn("set_status")}${btn("set_signal")}${btn("revoke_sessions")}${btn("reset_kyc")}${!u.emailVerifiedAt ? btn("verify_email") : ""}${u.lockedUntil ? btn("unlock") : ""}
             </div>`
           : ""}
       </div>
@@ -59,6 +78,7 @@ watch(key, ({ data: u, error }) => {
             ["Phone", u.profile?.phone ?? "—"],
             ["Joined", formatDate(u.createdAt)],
             ["Last login", u.lastLoginAt ? `${formatDate(u.lastLoginAt)} (${u.lastLoginIp ?? "?"})` : "Never"],
+            ["Signal strength", `${u.signalStrength ?? 0}%`],
             ["Referral code", u.referralCode],
             ["Referred by", u.referredBy?.referrer.email ?? "—"],
             ["Orders / trades", `${u._count.orders} / ${u._count.trades}`],
@@ -122,16 +142,50 @@ watch(key, ({ data: u, error }) => {
   }).set(u.loginHistory);
 });
 
+const STATUSES = ["ACTIVE", "PENDING_VERIFICATION", "SUSPENDED", "BANNED", "CLOSED"];
+const PROFILE_FIELDS = [
+  ["firstName", "First name", "given-name"],
+  ["lastName", "Last name", "family-name"],
+  ["phone", "Phone", "tel"],
+  ["city", "City", "address-level2"],
+  ["addressLine", "Address", "street-address"],
+  ["postalCode", "Postal code", "postal-code"],
+];
+const profileFields = () => {
+  const p = current?.profile ?? {};
+  return html`<div class="grid gap-3 sm:grid-cols-2">
+    ${PROFILE_FIELDS.map(([name, label, ac]) => html`<div class="field"><label class="label" for="am-${name}">${label}</label><input id="am-${name}" name="${name}" class="input" autocomplete="${ac}" value="${p[name] ?? ""}" /></div>`)}
+    <div class="field sm:col-span-2"><label class="label" for="am-country">Country</label><select id="am-country" name="country" class="select">${COUNTRIES.map(([code, n]) => html`<option value="${code}" ${code === p.country && "selected"}>${n}</option>`)}</select></div>
+  </div>
+  <p class="text-xs text-dim">Email address can't be changed here. The user is notified of every profile change.</p>`;
+};
+const profileBody = (form) => Object.fromEntries([...PROFILE_FIELDS.map(([n]) => n), "country"].map((n) => [n, form[n].value.trim()]));
+
+const extraFieldsFor = (action) =>
+  action === "edit_profile"
+    ? profileFields()
+    : action === "set_status"
+    ? html`<div class="field"><label class="label" for="am-status">Account status</label><select id="am-status" name="status" class="select">${STATUSES.map((s) => html`<option value="${s}" ${s === current?.status && "selected"}>${titleCase(s)}</option>`)}</select><p class="mt-1 text-xs text-dim">Suspended or closed accounts are signed out of every session.</p></div>`
+    : action === "set_signal"
+      ? html`<div class="field"><label class="label" for="am-signal">Signal strength (%)</label><input id="am-signal" name="signalStrength" type="number" min="0" max="100" step="1" inputmode="numeric" class="input" value="${current?.signalStrength ?? 0}" /><p class="mt-1 text-xs text-dim">Shown on the user's dashboard under Trading Analysis.</p></div>`
+      : "";
+
 on(view, "click", "[data-act]", async (_e, b) => {
   const action = b.dataset.act;
   const meta = ACTIONS[action];
   const ok = await actionModal({
+    extraFields: extraFieldsFor(action),
     title: meta.title,
     description: current?.email,
     confirmLabel: meta.label,
     tone: meta.danger ? "danger" : "primary",
     reason: meta.reason,
-    onConfirm: ({ reason }) => api(key, { body: { action, reason } }),
+    reasonLabel: meta.reasonLabel,
+    warning: meta.warning,
+    onConfirm: ({ reason, form }) =>
+      action === "edit_profile"
+        ? api(key, { method: "PATCH", body: { ...profileBody(form), reason } })
+        : api(key, { body: { action, reason, status: form.status?.value, signalStrength: form.signalStrength?.value } }),
   });
   if (ok) {
     toast.success("Action completed", meta.title);

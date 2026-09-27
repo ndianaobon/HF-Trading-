@@ -1083,6 +1083,12 @@ html[data-theme="light"] body {
       display: none !important; /* beats the element's own `flex` utility */
     }
   }
+  /* Mobile dashboard header logo sits beside the menu button: icon only on phones. */
+  @media (max-width: 479px) {
+    .header-logo [data-logo] .logo-text {
+      display: none !important;
+    }
+  }
   /* Coin badges: darken brand-coloured letters so light colours stay legible on white. */
   html[data-theme="light"] .asset-icon {
     color: color-mix(in srgb, var(--c) 55%, #000) !important;

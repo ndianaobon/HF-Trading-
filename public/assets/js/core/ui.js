@@ -14,7 +14,7 @@ const STATUS_TONES = {
   CONFIRMING: "info", PROCESSING: "info", IN_PROGRESS: "info", PARTIALLY_FILLED: "info", ACCEPTED: "info",
   PENDING: "warn", PENDING_REVIEW: "warn", PENDING_VERIFICATION: "warn", WAITING_FOR_USER: "warn",
   OPEN: "accent",
-  FAILED: "down", REJECTED: "down", SUSPENDED: "down", HALTED: "down",
+  FAILED: "down", REJECTED: "down", SUSPENDED: "down", BANNED: "down", HALTED: "down",
 };
 const RISK_TONES = { LOW: "up", MEDIUM: "info", HIGH: "warn", VERY_HIGH: "down" };
 
@@ -23,6 +23,8 @@ export const statusBadge = (status, label) => html`<span class="badge badge-dot 
 export const riskBadge = (level) => badge(`${titleCase(level)} risk`, RISK_TONES[level] ?? "neutral");
 export const demoBadge = (label = "Demo", cls = "") => badge(label, "warn", cls);
 export const smallDemo = () => demoBadge("Demo", "px-1.5 py-0 text-[9px]");
+/** Orders and trades filled by the internal simulator (no exchange is connected). */
+export const smallSim = () => demoBadge("Simulated", "px-1.5 py-0 text-[9px]");
 
 /* ───────────── Display ───────────── */
 

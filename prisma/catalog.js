@@ -70,6 +70,10 @@ export const NETWORKS = [
     confirmations: 15,
     addressPattern: EVM,
   },
+  { asset: "USDT", code: "SOL", name: "Solana", minDeposit: "10", minWithdrawal: "10", withdrawalFee: "1", confirmations: 1, addressPattern: SOLANA },
+  { asset: "USDT", code: "POL", name: "Polygon POS", minDeposit: "10", minWithdrawal: "10", withdrawalFee: "0.8", confirmations: 128, addressPattern: EVM },
+  { asset: "USDT", code: "APT", name: "Aptos", minDeposit: "10", minWithdrawal: "10", withdrawalFee: "0.5", confirmations: 1, addressPattern: "^0x[a-fA-F0-9]{1,64}$" },
+  { asset: "USDT", code: "PLASMA", name: "Plasma", minDeposit: "10", minWithdrawal: "10", withdrawalFee: "0.5", confirmations: 1, addressPattern: EVM },
   { asset: "USDC", code: "ERC20", name: "Ethereum (ERC20)", minDeposit: "10", minWithdrawal: "30", withdrawalFee: "4", confirmations: 12, addressPattern: EVM },
   { asset: "USDC", code: "SOL", name: "Solana", minDeposit: "5", minWithdrawal: "10", withdrawalFee: "1", confirmations: 1, addressPattern: SOLANA },
   {

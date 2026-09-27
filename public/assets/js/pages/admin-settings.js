@@ -49,7 +49,7 @@ watch("/api/admin/settings", ({ data, error }) => {
       cls: "mb-6",
       iconName: data.mode === "demo" ? "flask-conical" : "info",
       title: `Platform mode: ${data.mode.toUpperCase()}`,
-      body: data.mode === "demo" ? "Demo mode is controlled by the APP_MODE environment variable. Balances, deposits and fills are simulated." : "Live mode: real funds only move through configured payment providers and execution venues.",
+      body: data.mode === "demo" ? "Demo mode is controlled by the APP_MODE environment variable. Balances, deposits and fills are simulated." : "Live mode: real funds only move through configured payment providers. No exchange is connected, so trading runs on the simulator and orders are labelled as simulated.",
     }),
   );
   // Don't wipe a form someone is editing on background refresh.

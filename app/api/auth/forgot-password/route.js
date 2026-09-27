@@ -8,7 +8,7 @@ import { emails } from "@/lib/email/mailer";
 /** Always responds identically so account existence is not disclosed. */
 export const POST = route({ auth: "none", body: forgotPasswordSchema, rateLimit: RATE_LIMITS.auth }, async ({ body }) => {
   const user = await prisma.user.findUnique({ where: { email: body.email } });
-  if (user && user.status !== "CLOSED") {
+  if (user && user.status !== "CLOSED" && user.status !== "BANNED") {
     try {
       await enforceRateLimit(RATE_LIMITS.emailSend, `reset:${user.id}`);
       const token = await issueToken(user.id, "PASSWORD_RESET");

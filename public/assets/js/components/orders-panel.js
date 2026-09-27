@@ -5,7 +5,7 @@ import { html, $, on, mount, cx } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { api } from "../core/api.js";
 import { watch, invalidate } from "../core/store.js";
-import { tabs, emptyState, statusBadge, smallDemo, toast, openModal, skeleton, DataTable } from "../core/ui.js";
+import { tabs, emptyState, statusBadge, smallSim, toast, openModal, skeleton, DataTable } from "../core/ui.js";
 import { formatDate, formatNumber, formatPrice, titleCase } from "../core/format.js";
 
 export function mountOrdersPanel(el, { market, user }) {
@@ -45,7 +45,7 @@ export function mountOrdersPanel(el, { market, user }) {
   }
 
   const pair = (o) => html`<a href="/trade/${o.market.symbol}" class="font-semibold text-white hover:text-accent">${o.market.symbol.replace("-", "/")}</a>`;
-  const sideCell = (o) => html`<span class="flex items-center gap-1.5"><span class="${cx("font-semibold", o.side === "BUY" ? "text-up" : "text-down")}">${o.side === "BUY" ? "Buy" : "Sell"}</span>${o.isDemo ? smallDemo() : ""}</span>`;
+  const sideCell = (o) => html`<span class="flex items-center gap-1.5"><span class="${cx("font-semibold", o.side === "BUY" ? "text-up" : "text-down")}">${o.side === "BUY" ? "Buy" : "Sell"}</span>${o.isDemo ? smallSim() : ""}</span>`;
   const typeLabel = (o) => (o.type === "STOP_LIMIT" ? `Stop limit${o.triggered ? " · triggered" : ""}` : titleCase(o.type));
   const date = (o) => html`<span class="text-xs text-muted">${formatDate(o.createdAt)}</span>`;
 
@@ -145,7 +145,7 @@ async function showOrder(id) {
       ["Filled", o.filledQuantity],
       ["Avg. fill price", o.avgFillPrice ?? "—"],
       ["Fees", o.feeTotal],
-      ["Environment", o.isDemo ? "Demo (simulated)" : "Live"],
+      ["Execution", o.isDemo ? "Simulated (HarborFinance simulator)" : "Exchange"],
     ];
     m.setBody(html`<div class="space-y-5">
       <dl class="grid grid-cols-2 gap-3 text-sm">${rows.map(([k, v]) => html`<div><dt class="text-xs text-dim">${k}</dt><dd class="num text-white">${v}</dd></div>`)}</dl>

@@ -13,6 +13,17 @@
       "runtimeArgs": ["next", "dev", "-p", "3200"],
       "env": { "NEXT_DIST_DIR": ".next-preview" },
       "port": 3200
+    },
+    {
+      "name": "harborfinance-localdb",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["next", "dev", "-p", "3300"],
+      "env": {
+        "NEXT_DIST_DIR": ".next-localdb",
+        "DATABASE_URL": "postgresql://harbor:harbor_dev_only@localhost:5433/harborfinance",
+        "DIRECT_URL": "postgresql://harbor:harbor_dev_only@localhost:5433/harborfinance"
+      },
+      "port": 3300
     }
   ]
 }

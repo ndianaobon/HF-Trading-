@@ -14,7 +14,13 @@ mount(
   view,
   html`${pageHeader({ title: "Wallets", description: "Customer balances (platform liabilities), funding networks and deposit addresses." })}
     ${card({ title: "Customer balances by asset", description: "Sum of all customer wallets", body: html`<div data-balances></div>` })}
-    ${card({ cls: "mt-6", title: "Funding networks", description: "Limits, fees and confirmation requirements shown to users. Processing time is only displayed when set here.", body: html`<div data-networks></div>` })}
+    ${card({
+      cls: "mt-6",
+      title: "Funding networks",
+      description: "Limits, fees and confirmation requirements shown to users. Processing time is only displayed when set here.",
+      action: canManage ? html`<button type="button" class="btn btn-secondary btn-sm" data-add-network>${icon("plus", "h-4 w-4")} Add network</button>` : "",
+      body: html`<div data-networks></div>`,
+    })}
     ${card({
       cls: "mt-6",
       title: "Deposit addresses",
@@ -139,4 +145,66 @@ on(view, "click", "[data-add]", () => {
     m.close();
     invalidate("/api/admin/wallets");
   });
+});
+
+const ADDRESS_FORMATS = [
+  ["^0x[a-fA-F0-9]{40}$", "EVM (0x…, 40 hex) — BSC, Ethereum, Polygon, Plasma, Arbitrum"],
+  ["^T[1-9A-HJ-NP-Za-km-z]{33}$", "TRON (T…)"],
+  ["^[1-9A-HJ-NP-Za-km-z]{32,44}$", "Solana (base58)"],
+  ["^0x[a-fA-F0-9]{1,64}$", "Aptos (0x…, up to 64 hex)"],
+  ["", "Any format (no validation)"],
+];
+
+on(view, "click", "[data-add-network]", () => {
+  if (!data) return;
+  const assets = [...new Set([...data.networks.map((n) => n.asset), ...data.balances.map((b) => b.symbol)])].sort();
+  const m = openModal({
+    title: "Add funding network",
+    description: "Users can choose this network when depositing once an address is registered for it.",
+    body: html`<form id="new-net-form" class="grid gap-4 sm:grid-cols-2" novalidate>
+      <div class="field"><label class="label" for="nn-a">Asset</label><select id="nn-a" name="asset" class="select">${assets.map((a) => html`<option ${a === "USDT" ? raw("selected") : ""}>${a}</option>`)}</select></div>
+      ${field({ name: "code", label: "Network code", placeholder: "e.g. POL", hint: "Short code: BEP20, TRC20, ERC20, SOL, POL, APT, PLASMA…" })}
+      ${field({ name: "name", label: "Display name", placeholder: "e.g. Polygon POS", cls: "sm:col-span-2" })}
+      ${field({ name: "minDeposit", label: "Minimum deposit", inputmode: "decimal", value: "10" })}
+      ${field({ name: "confirmations", label: "Confirmations", type: "number", value: "12", attrs: html`min="1" max="1000"` })}
+      ${field({ name: "minWithdrawal", label: "Minimum withdrawal", inputmode: "decimal", value: "10" })}
+      ${field({ name: "withdrawalFee", label: "Withdrawal fee", inputmode: "decimal", value: "1" })}
+      ${field({ name: "processingTime", label: "Estimated arrival", placeholder: "e.g. 1 mins", hint: "Shown as \"Est. arrival ≈ …\". Leave empty to hide.", cls: "sm:col-span-2" })}
+      <div class="field sm:col-span-2"><label class="label" for="nn-p">Address format</label><select id="nn-p" name="addressPattern" class="select">${ADDRESS_FORMATS.map(([v, l]) => html`<option value="${v}">${l}</option>`)}</select></div>
+      ${switchRow("memoRequired", "Memo / tag required", false)}
+      <div class="sm:col-span-2" data-form-error hidden></div>
+    </form>`,
+    footer: html`<button type="button" class="btn btn-secondary" data-close>Cancel</button><button type="submit" form="new-net-form" class="btn btn-primary">Add network</button>`,
+  });
+  const dec = (label) => [rules.required(label), rules.pattern(/^\d+(\.\d+)?$/, `Enter a valid ${label.toLowerCase()}`)];
+  bindForm(
+    $("#new-net-form", m.el),
+    {
+      code: [rules.required("Network code"), rules.pattern(/^[A-Za-z0-9_-]{2,20}$/, "Use 2–20 letters or digits")],
+      name: [rules.required("Display name")],
+      minDeposit: dec("Minimum deposit"),
+      minWithdrawal: dec("Minimum withdrawal"),
+      withdrawalFee: dec("Withdrawal fee"),
+      confirmations: [rules.pattern(/^\d+$/, "Enter a whole number")],
+    },
+    async (v) => {
+      await api("/api/admin/networks", {
+        body: {
+          asset: v.asset,
+          code: v.code.trim().toUpperCase(),
+          name: v.name.trim(),
+          minDeposit: v.minDeposit,
+          minWithdrawal: v.minWithdrawal,
+          withdrawalFee: v.withdrawalFee,
+          confirmations: Number(v.confirmations),
+          processingTime: v.processingTime.trim() || undefined,
+          addressPattern: v.addressPattern || undefined,
+          memoRequired: v.memoRequired,
+        },
+      });
+      toast.success("Network added", "Register a deposit address for it to make it live.");
+      m.close();
+      invalidate("/api/admin/wallets");
+    },
+  );
 });

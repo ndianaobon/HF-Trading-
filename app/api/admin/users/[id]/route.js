@@ -10,6 +10,10 @@ import { audit } from "@/lib/services/audit";
 import { notify } from "@/lib/notifications/service";
 import { describeUserAgent } from "@/lib/security/request";
 import { actorOf } from "@/lib/api/admin";
+import { issueToken } from "@/lib/auth/tokens";
+import { emails } from "@/lib/email/mailer";
+import { enforceRateLimit, RATE_LIMITS } from "@/lib/security/rate-limit";
+import { profileSchema } from "@/lib/validation/schemas";
 
 export const GET = route({ admin: "users.read" }, async ({ session, params, ip }) => {
   const user = await prisma.user.findUnique({
@@ -48,8 +52,10 @@ export const GET = route({ admin: "users.read" }, async ({ session, params, ip }
 });
 
 const actionSchema = z.object({
-  action: z.enum(["suspend", "activate", "reset_kyc", "revoke_sessions", "verify_email", "unlock"]),
+  action: z.enum(["suspend", "ban", "activate", "set_status", "set_signal", "reset_kyc", "revoke_sessions", "verify_email", "unlock", "send_password_reset"]),
   reason: z.string().trim().max(500).optional(),
+  status: z.enum(["PENDING_VERIFICATION", "ACTIVE", "SUSPENDED", "BANNED", "CLOSED"]).optional(),
+  signalStrength: z.coerce.number().int().min(0).max(100).optional(),
 });
 
 export const POST = route({ admin: "users.manage", body: actionSchema }, async ({ session, params, body, ip, userAgent }) => {
@@ -57,8 +63,10 @@ export const POST = route({ admin: "users.manage", body: actionSchema }, async (
   if (!user) throw new AppError("NOT_FOUND");
   if (user.id === session.user.id) throw new AppError("FORBIDDEN", "You cannot perform account actions on yourself.");
   if (user.adminUser && session.user.adminUser?.role !== "SUPER_ADMIN") throw new AppError("FORBIDDEN", "Only a super admin can manage staff accounts.");
-  if ((body.action === "suspend" || body.action === "reset_kyc") && !body.reason)
+  if (["suspend", "ban", "reset_kyc"].includes(body.action) && !body.reason)
     throw new AppError("VALIDATION_ERROR", "A reason is required for this action.");
+  if (body.action === "set_status" && !body.status) throw new AppError("VALIDATION_ERROR", "Choose a status.");
+  if (body.action === "set_signal" && body.signalStrength === undefined) throw new AppError("VALIDATION_ERROR", "Enter a signal strength between 0 and 100.");
   const actor = actorOf(session, ip, userAgent);
 
   switch (body.action) {
@@ -66,8 +74,32 @@ export const POST = route({ admin: "users.manage", body: actionSchema }, async (
       await prisma.user.update({ where: { id: user.id }, data: { status: "SUSPENDED" } });
       await revokeAllSessions(user.id);
       break;
+    case "ban":
+      await prisma.user.update({ where: { id: user.id }, data: { status: "BANNED" } });
+      await revokeAllSessions(user.id);
+      break;
+    case "send_password_reset": {
+      if (user.status === "BANNED" || user.status === "CLOSED") throw new AppError("CONFLICT", "Reactivate the account before sending a reset link.");
+      await enforceRateLimit(RATE_LIMITS.emailSend, `reset:${user.id}`);
+      const token = await issueToken(user.id, "PASSWORD_RESET");
+      await emails.passwordReset(user.email, token);
+      await notify({
+        userId: user.id,
+        type: "SECURITY_ALERT",
+        title: "Password reset link sent",
+        body: "Our support team sent a password reset link to your email. If you didn't ask for this, contact support.",
+      });
+      break;
+    }
     case "activate":
       await prisma.user.update({ where: { id: user.id }, data: { status: user.emailVerifiedAt ? "ACTIVE" : "PENDING_VERIFICATION" } });
+      break;
+    case "set_status":
+      await prisma.user.update({ where: { id: user.id }, data: { status: body.status } });
+      if (["SUSPENDED", "BANNED", "CLOSED"].includes(body.status)) await revokeAllSessions(user.id);
+      break;
+    case "set_signal":
+      await prisma.user.update({ where: { id: user.id }, data: { signalStrength: body.signalStrength } });
       break;
     case "reset_kyc":
       await resetKyc(user.id, actor);
@@ -101,8 +133,42 @@ export const POST = route({ admin: "users.manage", body: actionSchema }, async (
       action: `user.${body.action}`,
       targetType: "User",
       targetId: user.id,
-      metadata: { reason: body.reason },
+      metadata: { reason: body.reason, from: body.action === "set_status" ? user.status : body.action === "set_signal" ? user.signalStrength : undefined, to: body.status ?? body.signalStrength },
     });
   }
   return { ok: true };
 });
+
+const PROFILE_FIELDS = ["firstName", "lastName", "phone", "country", "city", "addressLine", "postalCode", "timezone"];
+
+export const PATCH = route(
+  { admin: "users.manage", body: profileSchema.partial().extend({ reason: z.string().trim().min(3).max(500) }) },
+  async ({ session, params, body, ip, userAgent }) => {
+    const user = await prisma.user.findUnique({ where: { id: params.id }, include: { adminUser: true, profile: true } });
+    if (!user) throw new AppError("NOT_FOUND");
+    if (user.adminUser && session.user.adminUser?.role !== "SUPER_ADMIN") throw new AppError("FORBIDDEN", "Only a super admin can manage staff accounts.");
+
+    const { reason, ...fields } = body;
+    const next = Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, v === "" ? null : v]));
+    const changes = Object.fromEntries(
+      PROFILE_FIELDS.filter((k) => k in next && (user.profile?.[k] ?? null) !== next[k]).map((k) => [k, { from: user.profile?.[k] ?? null, to: next[k] }]),
+    );
+    if (!Object.keys(changes).length) return { ok: true, changed: 0 };
+
+    if (user.profile) {
+      await prisma.profile.update({ where: { userId: user.id }, data: next });
+    } else {
+      const full = profileSchema.parse(fields);
+      await prisma.profile.create({ data: { userId: user.id, ...Object.fromEntries(Object.entries(full).map(([k, v]) => [k, v === "" ? null : v])) } });
+    }
+    await audit({ actorId: session.user.id, actorEmail: session.user.email, ip, userAgent, action: "user.edit_profile", targetType: "User", targetId: user.id, metadata: { reason, changes } });
+    await notify({
+      userId: user.id,
+      type: "SECURITY_ALERT",
+      title: "Your profile was updated",
+      body: `Our support team updated: ${Object.keys(changes).join(", ")}. Contact support if this wasn't requested.`,
+      link: "/dashboard/settings",
+    });
+    return { ok: true, changed: Object.keys(changes).length };
+  },
+);

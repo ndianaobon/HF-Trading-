@@ -3,7 +3,7 @@ import { icon } from "../core/icons.js";
 import { watch } from "../core/store.js";
 import { initApp } from "../core/app-shell.js";
 import { subscribeMarkets, marketState } from "../core/tickers.js";
-import { notice, errorState, emptyState, skeleton, skeletonRows, assetIcon, statusBadge, smallDemo, copyButton, feedStatus } from "../core/ui.js";
+import { notice, errorState, emptyState, skeleton, skeletonRows, assetIcon, statusBadge, smallSim, copyButton, feedStatus } from "../core/ui.js";
 import { donut } from "../core/charts.js";
 import { formatNumber, formatPercent, formatPrice, formatUsd, formatDate, timeAgo } from "../core/format.js";
 import { txRow, openTransferModal } from "../components/wallet-bits.js";
@@ -27,6 +27,9 @@ const head = (iconName, title, sub, action = "", solid = false) =>
   </div>`;
 const viewAll = (href, label = "View all") => html`<a href="${href}" class="shrink-0 pt-1 text-sm font-semibold text-accent hover:text-accent-strong">${label}</a>`;
 const name = user.firstName ? `${user.firstName} ${user.lastName ?? ""}`.trim() : "Trader";
+const ACCOUNT_STATUS = { ACTIVE: "Account Active", PENDING_VERIFICATION: "Pending Verification", SUSPENDED: "Account Suspended", BANNED: "Account Banned", CLOSED: "Account Closed" };
+const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+const stamp = (d) => `${d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} ${d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`;
 
 mount(
   view,
@@ -34,7 +37,9 @@ mount(
     <section class="card card-glow p-5 sm:p-7">
       <span class="pill-label">Trading dashboard</span>
       <h1 class="mt-4 font-display text-[1.9rem] leading-tight font-extrabold tracking-tight text-white sm:text-4xl">Welcome back, <span class="text-accent">${name}</span></h1>
-      <p class="mt-2 max-w-2xl text-[15px] leading-relaxed text-muted">Monitor live crypto markets, place trades and manage your HarborFinance account.</p>
+      <p class="mt-2 text-[15px] text-muted">${today}</p>
+      <div class="mt-3">${statusBadge(user.status, `Status: ${ACCOUNT_STATUS[user.status] ?? "Unknown"}`)}</div>
+      <p class="mt-4 max-w-2xl text-[15px] leading-relaxed text-muted">Monitor live crypto markets, place trades and manage your HarborFinance account.</p>
       <div class="mt-5 grid grid-cols-2 gap-2.5 sm:flex sm:flex-wrap">
         <a href="/dashboard/deposit" class="btn btn-primary">${icon("circle-arrow-down", "h-4 w-4")} Deposit</a>
         <a href="/dashboard/withdraw" class="btn btn-secondary">${icon("circle-arrow-up", "h-4 w-4")} Withdraw</a>
@@ -50,12 +55,22 @@ mount(
           ${head("wallet", "Account Balance", "Total across all wallets", html`<a href="/dashboard/wallets" class="pt-1 text-accent" aria-label="Open wallets">${icon("arrow-up-right", "h-5 w-5")}</a>`)}
           <div class="px-5 pb-5 sm:px-6 sm:pb-6">
             <p class="num font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl" data-total>${skeleton("h-12 w-56")}</p>
+            <p class="mt-2 text-sm text-dim" data-updated></p>
             <div class="mt-5 grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-3" data-tiles>${Array.from({ length: 6 }, () => skeleton("h-[74px] w-full rounded-2xl"))}</div>
             <div class="mt-3 grid gap-3 md:grid-cols-2">
               <div class="tile bg-[linear-gradient(180deg,rgba(244,190,44,0.06),transparent)]" data-net></div>
               <div class="tile" data-stats></div>
             </div>
             <p class="mt-4 flex items-center gap-2 text-xs text-dim">${icon("trending-up", "h-4 w-4 text-accent")} Balances update as deposits, withdrawals and trades settle.</p>
+          </div>
+        </section>
+
+        <section class="card overflow-hidden">
+          ${head("line-chart", "Trading Analysis", "Signal strength set for your account")}
+          <div class="px-5 pb-5 sm:px-6 sm:pb-6">
+            <div class="flex items-center justify-between gap-3"><p class="font-semibold text-muted">Signal Strength</p><p class="num font-display text-xl font-extrabold text-up" data-signal-pct></p></div>
+            <div class="mt-3 h-2.5 overflow-hidden rounded-full bg-panel-3" role="progressbar" aria-label="Signal strength" aria-valuemin="0" aria-valuemax="100" data-signal-bar><div class="h-full rounded-full bg-up transition-[width] duration-700" data-signal-fill></div></div>
+            <div class="mt-5 h-[300px] overflow-hidden rounded-2xl border border-line sm:h-[340px]" data-analysis-chart></div>
           </div>
         </section>
 
@@ -130,6 +145,7 @@ function drawPortfolio() {
     ${p.totalValue === null ? notice("warn", { title: "Valuation unavailable", body: "Live prices are temporarily unavailable, so portfolio values can't be calculated. Balances are still accurate." }) : ""}`,
   );
   $("[data-total]", view).textContent = p.totalValue !== null ? formatUsd(p.totalValue) : "—";
+  $("[data-updated]", view).textContent = `Last updated: ${stamp(new Date())}`;
   const sign = (v) => (v !== null && v !== undefined ? formatUsd(v, { sign: true }) : "—");
   mount(
     $("[data-tiles]", view),
@@ -155,6 +171,16 @@ watch(
   },
   { refresh: 30000 },
 );
+
+/* ── Trading analysis (signal strength is set per user by an admin) ── */
+function drawSignal(value) {
+  const pct = Math.max(0, Math.min(100, Number(value) || 0));
+  $("[data-signal-pct]", view).textContent = `${pct}%`;
+  $("[data-signal-fill]", view).style.width = `${pct}%`;
+  $("[data-signal-bar]", view).setAttribute("aria-valuenow", String(pct));
+}
+drawSignal(user.signalStrength);
+watch("/api/auth/me", ({ data }) => data && drawSignal(data.signalStrength), { refresh: 60000 });
 
 /* ── Trading stats ── */
 let openCount = null;
@@ -236,6 +262,8 @@ subscribeMarkets((s) => {
   if (!started) {
     started = true;
     selectPair(selected);
+    const btc = s.markets.find((m) => m.symbol === "BTC-USDT");
+    if (btc) createTradeChart($("[data-analysis-chart]", view), { symbol: btc.symbol, interval: "1h", pricePrecision: btc.pricePrecision, indicators: new Set(["ma"]) });
   }
   drawPairs();
   const t = s.tickers[selected];
@@ -258,7 +286,7 @@ watch("/api/trades?pageSize=5", ({ data }) => {
     !data.items.length
       ? html`<div class="flex flex-col items-center py-6 text-center"><span class="grid h-16 w-16 place-items-center rounded-full bg-panel-3 text-dim">${icon("trending-up", "h-7 w-7")}</span><p class="mt-4 text-muted">No trades yet</p><a href="/trade" class="btn btn-primary mt-4">Start Trading</a></div>`
       : html`<ul class="divide-y divide-line/60">${data.items.map(
-          (t) => html`<li class="flex items-center justify-between gap-3 py-3"><div class="min-w-0"><p class="flex items-center gap-2 text-sm font-bold"><span class="${t.side === "BUY" ? "text-up" : "text-down"}">${t.side === "BUY" ? "Buy" : "Sell"}</span><span class="text-white">${t.market.symbol.replace("-", "/")}</span>${t.isDemo ? smallDemo() : ""}</p><p class="text-xs text-dim">${formatDate(t.createdAt)}</p></div><div class="text-right"><p class="num text-sm font-semibold text-white">${formatNumber(t.quantity, 6)}</p><p class="num text-xs text-muted">@ ${formatPrice(t.price, t.market.pricePrecision)}</p></div></li>`,
+          (t) => html`<li class="flex items-center justify-between gap-3 py-3"><div class="min-w-0"><p class="flex items-center gap-2 text-sm font-bold"><span class="${t.side === "BUY" ? "text-up" : "text-down"}">${t.side === "BUY" ? "Buy" : "Sell"}</span><span class="text-white">${t.market.symbol.replace("-", "/")}</span>${t.isDemo ? smallSim() : ""}</p><p class="text-xs text-dim">${formatDate(t.createdAt)}</p></div><div class="text-right"><p class="num text-sm font-semibold text-white">${formatNumber(t.quantity, 6)}</p><p class="num text-xs text-muted">@ ${formatPrice(t.price, t.market.pricePrecision)}</p></div></li>`,
         )}</ul>`,
   );
 });
