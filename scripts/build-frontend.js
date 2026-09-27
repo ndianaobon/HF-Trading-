@@ -18,6 +18,7 @@ import path from "node:path";
 import { createRequire } from "node:module";
 import { spawnSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
+import { createHash } from "node:crypto";
 
 const require = createRequire(import.meta.url);
 const ROOT = process.cwd();
@@ -54,6 +55,24 @@ function walk(dir, ext) {
 }
 
 const read = (p) => fs.readFileSync(p, "utf8");
+
+/**
+ * Asset version: a hash of everything that shapes the browser JS and CSS. Pages
+ * load /assets/v/<version>/…, which next.config.js rewrites to /assets/… and
+ * marks immutable, so the CDN and browsers can cache assets for a year while
+ * every deploy that changes them gets new URLs.
+ */
+let ASSET_VERSION = "dev";
+function computeAssetVersion() {
+  const h = createHash("sha1");
+  const files = [
+    ...walk(JS_DIR, ".js").filter((f) => !f.endsWith("icon-data.js")),
+    ...walk(FRONTEND, ".html"),
+    ...walk(FRONTEND, ".css"),
+  ].sort();
+  for (const f of files) h.update(path.relative(ROOT, f)).update(fs.readFileSync(f));
+  return h.digest("hex").slice(0, 12);
+}
 const partial = (name) => read(path.join(FRONTEND, "partials", `${name}.html`));
 
 function resolveIncludes(html, depth = 0) {
@@ -78,6 +97,7 @@ function renderPage(body, meta, relPath) {
     description: escAttr(meta.description ?? "Trade and manage digital assets with professional market tools, portfolio analytics and secure account management."),
     robots: meta.robots ?? "index, follow",
     path: urlPath === "/" ? "/" : urlPath,
+    assetBase: `/assets/v/${ASSET_VERSION}`,
     script: meta.script ?? "site",
     bodyClass: meta.bodyClass ?? "",
     content: body,
@@ -197,7 +217,10 @@ export function buildCss({ watch = false } = {}) {
 export async function buildHtml() {
   // Retries cover a concurrent rebuild from the dev watcher (Windows ENOTEMPTY).
   fs.rmSync(VIEWS, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+  ASSET_VERSION = computeAssetVersion();
   await buildViews();
+  // Read by next.config.js at build time: only this version is cached as immutable.
+  fs.writeFileSync(path.join(VIEWS, "asset-version.json"), JSON.stringify({ version: ASSET_VERSION }) + "\n");
   const n = buildIconModule();
   return n;
 }

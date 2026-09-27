@@ -34,7 +34,16 @@ export function startRealtime() {
 
   const connect = () => {
     es = new EventSource("/api/realtime");
+    // Some proxies/CDNs hold the stream open without passing events through, so
+    // neither "ready" nor an error ever arrives: fall back to polling if the
+    // stream hasn't confirmed within 8 s, and try streaming again later.
+    const watchdog = setTimeout(() => {
+      es.close();
+      startPolling();
+      setTimeout(connect, 5 * 60_000);
+    }, 8000);
     es.addEventListener("ready", () => {
+      clearTimeout(watchdog);
       failures = 0;
       clearInterval(poll);
       poll = null;
@@ -52,6 +61,7 @@ export function startRealtime() {
     };
     es.onerror = () => {
       if (++failures >= 3) {
+        clearTimeout(watchdog);
         es.close();
         startPolling();
         setTimeout(() => {

@@ -998,6 +998,7 @@ model CopyTrade {
   market       Market           @relation(fields: [marketId], references: [id])
 
   @@unique([signalId, subscriptionId])
+  @@index([subscriptionId, status])
   @@index([userId, status])
   @@index([traderId, status])
   @@index([status])
@@ -1387,6 +1388,7 @@ model AutoBotTrade {
   market      Market             @relation(fields: [marketId], references: [id])
 
   @@unique([signalId, userId])
+  @@index([participantId, status])
   @@index([userId, status])
   @@index([status])
   @@index([createdAt])
