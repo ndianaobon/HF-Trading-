@@ -10,3 +10,6 @@ next-env.d.ts
 .DS_Store
 npm-debug.log*
 /.next-*/
+
+# Production secrets for Hostinger
+hostinger-env.private.txt
