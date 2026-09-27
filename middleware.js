@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 
-const SESSION_COOKIE = "hf_session";
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 
 /**
@@ -8,8 +7,10 @@ const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
  *  1. CSRF: state-changing API requests must come from our own origin
  *     (cookies are SameSite=Lax as a second layer). API-key requests carry no
  *     cookies and are exempt.
- *  2. Fast redirect to /login for protected areas when no session cookie is
- *     present. Real authorisation happens server-side on every request.
+ *
+ * Signed-out visitors to /dashboard and /admin are redirected to /login by the
+ * page router (lib/views/serve-page.js), with a relative Location so the
+ * redirect stays on the public domain behind a proxy.
  */
 export function middleware(req) {
   const { pathname } = req.nextUrl;
@@ -33,16 +34,9 @@ export function middleware(req) {
     }
   }
 
-  if ((pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) && !req.cookies.get(SESSION_COOKIE)) {
-    const url = req.nextUrl.clone();
-    url.pathname = "/login";
-    url.search = `?next=${encodeURIComponent(pathname + req.nextUrl.search)}`;
-    return NextResponse.redirect(url);
-  }
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/api/:path*", "/dashboard/:path*", "/admin/:path*"],
+  matcher: ["/api/:path*"],
 };
