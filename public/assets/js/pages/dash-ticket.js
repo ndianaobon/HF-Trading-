@@ -5,7 +5,7 @@ import { watch, invalidate } from "../core/store.js";
 import { initApp } from "../core/app-shell.js";
 import { badge, notice, errorState, skeleton, statusBadge, toast, confirmDialog, withBusy } from "../core/ui.js";
 import { formatDate, titleCase } from "../core/format.js";
-import { attachmentPicker } from "../components/support-bits.js";
+import { attachmentPicker, attachmentList, editedLabel } from "../components/support-bits.js";
 
 await initApp();
 const view = $("#view");
@@ -61,9 +61,9 @@ watch(
       $("[data-messages]", view),
       data.messages.map(
         (m) => html`<article class="${cx("card p-4", m.isStaff && "border-accent/25")}">
-          <div class="flex items-center justify-between text-xs"><span class="${cx("font-semibold", m.isStaff ? "text-accent" : "text-white")}">${m.authorName}</span><span class="text-dim">${formatDate(m.createdAt)}</span></div>
-          <p class="mt-2 text-sm leading-relaxed whitespace-pre-wrap text-fg">${m.body}</p>
-          ${m.attachments?.length ? html`<div class="mt-3 flex flex-wrap gap-2">${m.attachments.map((a) => html`<a href="/api/files?key=${encodeURIComponent(a.key)}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 rounded-md bg-panel-2 px-2 py-1 text-xs text-muted hover:text-white">${icon("paperclip", "h-3 w-3")} ${a.name}</a>`)}</div>` : ""}
+          <div class="flex items-center justify-between text-xs"><span class="${cx("font-semibold", m.isStaff ? "text-accent" : "text-white")}">${m.authorName}</span><span class="flex items-center gap-1.5 text-dim">${editedLabel(m)} ${formatDate(m.createdAt)}</span></div>
+          ${m.body ? html`<p class="mt-2 text-sm leading-relaxed whitespace-pre-wrap text-fg">${m.body}</p>` : ""}
+          ${attachmentList(m.attachments, "mt-3")}
         </article>`,
       ),
     );

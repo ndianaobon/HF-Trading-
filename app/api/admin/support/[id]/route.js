@@ -2,9 +2,8 @@ import { z } from "zod";
 import { route } from "@/lib/api/route";
 import { AppError } from "@/lib/api/errors";
 import { prisma } from "@/lib/db/prisma";
-import { addMessage } from "@/lib/services/support";
+import { addMessage, readMessageRequest, uploadAttachments } from "@/lib/services/support";
 import { audit } from "@/lib/services/audit";
-import { messageSchema } from "@/lib/validation/schemas";
 
 export const GET = route({ admin: "support.read" }, async ({ params }) => {
   const t = await prisma.supportTicket.findUnique({
@@ -19,11 +18,14 @@ export const GET = route({ admin: "support.read" }, async ({ params }) => {
   return t;
 });
 
-export const POST = route({ admin: "support.reply", body: messageSchema }, async ({ session, params, body }) => {
+/** Staff reply: text and/or up to 3 files (multipart "files"), stored with the customer's files. */
+export const POST = route({ admin: "support.reply" }, async ({ session, params, req }) => {
   const t = await prisma.supportTicket.findUnique({ where: { id: params.id } });
   if (!t) throw new AppError("NOT_FOUND");
+  const { body, files } = await readMessageRequest(req);
+  const attachments = await uploadAttachments(t.userId, files);
   if (!t.assignedToId) await prisma.supportTicket.update({ where: { id: t.id }, data: { assignedToId: session.user.id } });
-  return addMessage(params.id, { id: session.user.id, isStaff: true }, body.body);
+  return addMessage(params.id, { id: session.user.id, isStaff: true }, body, attachments);
 });
 
 const patch = z.object({

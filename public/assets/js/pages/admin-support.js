@@ -2,9 +2,10 @@ import { html, raw, $, on, mount, cx, param } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { api } from "../core/api.js";
 import { watch, invalidate } from "../core/store.js";
-import { pageHeader, statusBadge, badge, emptyState, errorState, skeleton, toast } from "../core/ui.js";
+import { pageHeader, statusBadge, badge, emptyState, errorState, skeleton, toast, openModal } from "../core/ui.js";
 import { formatDate, timeAgo, titleCase } from "../core/format.js";
 import { adminPage, adminTable } from "../components/admin-kit.js";
+import { attachmentList, attachmentPicker, editedLabel } from "../components/support-bits.js";
 
 const { user: admin, view } = await adminPage();
 const canReply = admin.can("support.reply");
@@ -31,7 +32,12 @@ const list = adminTable($("[data-list]", view), {
   rowClass: (t) => (t.id === selected ? "bg-panel-2" : ""),
   empty: emptyState({ title: "No tickets" }),
   columns: [
-    { key: "s", header: "Ticket", cell: (t) => html`<div><p class="font-medium text-white">#${t.number} ${t.subject}</p><p class="text-xs text-dim">${t.user.email} · ${titleCase(t.category)}</p></div>` },
+    {
+      key: "s",
+      header: "Conversation",
+      cell: (t) =>
+        html`<div><p class="flex items-center gap-2 font-medium text-white">${t.category === "LIVE_CHAT" ? badge("Live chat", "accent") : html`<span class="text-dim">#${t.number}</span>`} ${t.subject}</p><p class="text-xs text-dim">${t.user.email}${["OPEN", "IN_PROGRESS"].includes(t.status) ? html` · <span class="font-semibold text-warn">waiting ${timeAgo(t.lastMessageAt).replace(" ago", "")}</span>` : ""}</p></div>`,
+    },
     { key: "p", header: "Priority", cell: (t) => badge(titleCase(t.priority), t.priority === "URGENT" ? "down" : t.priority === "HIGH" ? "warn" : "neutral") },
     { key: "st", header: "Status", cell: (t) => statusBadge(t.status) },
     { key: "u", header: "Updated", align: "right", cell: (t) => html`<span class="text-xs text-dim">${timeAgo(t.lastMessageAt)}</span>` },
@@ -41,6 +47,8 @@ const list = adminTable($("[data-list]", view), {
 const detail = $("[data-detail]", view);
 let unsub = null;
 let draft = "";
+let picker = null;
+let pendingFiles = [];
 
 function select(id) {
   selected = id;
@@ -67,16 +75,18 @@ function select(id) {
           ${!d.messages.length ? html`<p class="text-sm text-dim">No messages yet.</p>` : ""}
           ${d.messages.map(
             (m) => html`<div class="${cx("rounded-xl border p-3", m.isStaff ? "border-accent/25 bg-accent/[0.04]" : "border-line bg-base-2")}">
-              <div class="flex justify-between text-xs"><span class="${m.isStaff ? "font-semibold text-accent" : "font-semibold text-white"}">${m.isStaff ? `${m.author.email} (staff)` : m.author.email}</span><span class="text-dim">${formatDate(m.createdAt)}</span></div>
-              <p class="mt-1.5 text-sm whitespace-pre-wrap text-fg">${m.body}</p>
-              ${(m.attachments ?? []).map((a) => html`<a href="/api/files?key=${encodeURIComponent(a.key)}" target="_blank" rel="noopener" class="mt-2 mr-2 inline-flex items-center gap-1 rounded-md bg-panel-2 px-2 py-1 text-xs text-muted hover:text-white">${icon("paperclip", "h-3 w-3")} ${a.name}</a>`)}
+              <div class="flex items-center justify-between gap-2 text-xs"><span class="${m.isStaff ? "font-semibold text-accent" : "font-semibold text-white"}">${m.isStaff ? `${m.author.email} (staff)` : m.author.email}</span><span class="flex items-center gap-2 text-dim">${editedLabel(m)} ${formatDate(m.createdAt)}${m.isStaff && canReply ? html`<button type="button" class="font-semibold text-accent hover:text-accent-strong" data-edit-msg="${m.id}">Edit</button>` : ""}</span></div>
+              ${m.body ? html`<p class="mt-1.5 text-sm whitespace-pre-wrap text-fg" data-body="${m.id}">${m.body}</p>` : ""}
+              ${attachmentList(m.attachments)}
             </div>`,
           )}
         </div>
-        ${canReply ? html`<form class="border-t border-line p-4" data-reply novalidate><textarea rows="3" class="textarea" placeholder="Write a reply… Never ask users for passwords or 2FA codes." aria-label="Reply" maxlength="5000"></textarea><div class="mt-2 flex justify-end"><button type="submit" class="btn btn-primary">${icon("send", "h-4 w-4")} Send reply</button></div></form>` : ""}`,
+        ${canReply ? html`<form class="border-t border-line p-4" data-reply novalidate><textarea rows="3" class="textarea" placeholder="Write a reply… Never ask users for passwords or 2FA codes." aria-label="Reply" maxlength="5000"></textarea><div class="mt-2 flex flex-wrap items-start justify-between gap-2"><div data-attach></div><button type="submit" class="btn btn-primary">${icon("send", "h-4 w-4")} Send reply</button></div></form>` : ""}`,
       );
       const ta = $("[data-reply] textarea", detail);
       if (ta) ta.value = draft;
+      const attachEl = $("[data-attach]", detail);
+      if (attachEl) picker = attachmentPicker(attachEl, { initial: pendingFiles, onChange: (f) => (pendingFiles = f) });
       const thread = $("[data-thread]", detail);
       thread.scrollTop = thread.scrollHeight;
     },
@@ -95,17 +105,53 @@ const patch = async (body) => {
 };
 on(detail, "change", "[data-patch]", (_e, s) => patch({ [s.dataset.patch]: s.value }));
 on(detail, "click", "[data-assign]", () => patch({ assignToMe: true }));
+on(detail, "click", "[data-edit-msg]", (_e, b) => {
+  const id = b.dataset.editMsg;
+  const current = $(`[data-body="${id}"]`, detail)?.textContent ?? "";
+  const m = openModal({
+    title: "Edit reply",
+    description: "The customer sees the updated text marked as edited. The original stays in the audit log.",
+    body: html`<textarea rows="6" class="textarea" maxlength="5000" data-edit-text aria-label="Reply text">${current}</textarea><div data-edit-err></div>`,
+    footer: html`<button type="button" class="btn btn-secondary" data-close>Cancel</button><button type="button" class="btn btn-primary" data-save-edit>Save changes</button>`,
+  });
+  $("[data-save-edit]", m.el).addEventListener("click", async (ev) => {
+    const text = $("[data-edit-text]", m.el).value.trim();
+    if (!text) return;
+    ev.currentTarget.disabled = true;
+    try {
+      await api(`/api/admin/support/messages/${id}`, { method: "PATCH", body: { body: text } });
+      toast.success("Reply updated");
+      m.close();
+      invalidate("/api/admin/support");
+    } catch (err) {
+      ev.currentTarget.disabled = false;
+      toast.error("Could not update", err.message);
+    }
+  });
+});
+
 on(detail, "submit", "[data-reply]", async (e, form) => {
   e.preventDefault();
   const ta = $("textarea", form);
   const body = ta.value.trim();
-  if (!body) return;
+  const files = picker?.files() ?? [];
+  if (!body && !files.length) return;
+  if (picker?.tooLarge()) return toast.error("File too large", "Each file must be 8 MB or smaller.");
   const btn = $("[type=submit]", form);
   btn.disabled = true;
   try {
-    await api(`/api/admin/support/${selected}`, { body: { body } });
+    if (files.length) {
+      const fd = new FormData();
+      fd.append("body", body);
+      files.forEach((f) => fd.append("files", f));
+      await api(`/api/admin/support/${selected}`, { form: fd });
+    } else {
+      await api(`/api/admin/support/${selected}`, { body: { body } });
+    }
     ta.value = "";
     draft = "";
+    picker?.clear();
+    pendingFiles = [];
     invalidate("/api/admin/support");
   } catch (err) {
     toast.error("Reply failed", err.message);

@@ -15,8 +15,10 @@ import { notificationIcon } from "../components/notification-icon.js";
 
 const initials = (u) => `${u.firstName?.[0] ?? ""}${u.lastName?.[0] ?? ""}`.toUpperCase() || u.email[0].toUpperCase();
 
+const loginPath = () => (location.pathname.startsWith("/admin") ? "/admin/login" : "/login");
+
 function redirectToLogin(expired) {
-  location.href = `/login?${expired ? "expired=1&" : ""}next=${encodeURIComponent(location.pathname + location.search)}`;
+  location.href = `${loginPath()}?${expired ? "expired=1&" : ""}next=${encodeURIComponent(location.pathname + location.search)}`;
 }
 
 async function loadUser() {
@@ -71,7 +73,7 @@ function initAccountMenu(user) {
 
 export async function logout() {
   await api("/api/auth/logout", { method: "POST" }).catch(() => {});
-  location.href = "/login";
+  location.href = loginPath();
 }
 
 function initBell() {
@@ -309,5 +311,28 @@ export async function initAdmin() {
   const id = $("[data-admin-identity]");
   if (id) mount(id, html`Signed in as <span class="font-semibold text-white">${user.email}</span> · <span class="text-accent">${titleCase(user.admin?.role ?? "")}</span>`);
   user.can = (p) => perms.has(p);
+  if (user.can("support.read")) watchSupportQueue();
   return user;
+}
+
+/** Badge on the Support menu item (and tab title) with conversations waiting for a reply. */
+function watchSupportQueue() {
+  const link = $('a[data-nav="/admin/support"]');
+  const baseTitle = document.title.replace(/^\(\d+\) /, "");
+  const update = async () => {
+    if (document.visibilityState !== "visible") return;
+    try {
+      const s = await api("/api/admin/support/summary");
+      link?.querySelector("[data-support-count]")?.remove();
+      if (link && s.awaitingReply > 0) {
+        link.insertAdjacentHTML("beforeend", String(html`<span data-support-count class="ml-auto rounded-full bg-down px-2 py-0.5 text-[10px] font-bold text-white" title="${s.liveChat} live chat · ${s.tickets} tickets waiting">${s.awaitingReply}</span>`));
+      }
+      document.title = s.awaitingReply > 0 ? `(${s.awaitingReply}) ${document.title.replace(/^\(\d+\) /, "")}` : document.title.replace(/^\(\d+\) /, "") || baseTitle;
+      window.dispatchEvent(new CustomEvent("hf:support-queue", { detail: s }));
+    } catch {
+      /* ignore: the next poll retries */
+    }
+  };
+  void update();
+  setInterval(update, 20_000);
 }

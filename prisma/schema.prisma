@@ -1081,14 +1081,16 @@ model SupportTicket {
 }
 
 model SupportMessage {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   ticketId    String
   authorId    String
-  isStaff     Boolean  @default(false)
+  isStaff     Boolean   @default(false)
   body        String
   /// [{ key, name, size, type }]
-  attachments Json     @default("[]")
-  createdAt   DateTime @default(now())
+  attachments Json      @default("[]")
+  /// Set when staff edit their reply (the original is kept in the audit log).
+  editedAt    DateTime?
+  createdAt   DateTime  @default(now())
 
   ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   author User          @relation(fields: [authorId], references: [id], onDelete: Cascade)

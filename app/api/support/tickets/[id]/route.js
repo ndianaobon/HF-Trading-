@@ -22,6 +22,7 @@ export const GET = route({ auth: "user" }, async ({ session, params }) => {
       body: m.body,
       isStaff: m.isStaff,
       attachments: m.attachments,
+      editedAt: m.editedAt,
       createdAt: m.createdAt,
       authorName: m.isStaff ? `${m.author.profile?.firstName ?? "Support"} · HarborFinance` : "You",
     })),

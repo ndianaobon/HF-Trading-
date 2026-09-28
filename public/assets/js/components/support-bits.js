@@ -10,9 +10,27 @@ import { formatDate } from "../core/format.js";
 const MAX_FILES = 3;
 const MAX_SIZE = 8 * 1024 * 1024;
 
-/** Mounts an attachment picker into `el`; returns { files(), clear() }. */
-export function attachmentPicker(el) {
-  let files = [];
+const fileUrl = (a) => `/api/files?key=${encodeURIComponent(a.key)}`;
+const isImage = (a) => /^image\//.test(a.type ?? "") || /\.(jpe?g|png|webp)$/i.test(a.key ?? "");
+
+/** Attachments: images as thumbnails (open full size), other files as links. */
+export function attachmentList(list = [], cls = "") {
+  if (!list?.length) return "";
+  return html`<div class="${cx("mt-2 flex flex-wrap gap-2", cls)}">${list.map((a) =>
+    isImage(a)
+      ? html`<a href="${fileUrl(a)}" target="_blank" rel="noopener" class="block overflow-hidden rounded-lg border border-line bg-panel-2" title="${a.name}"><img src="${fileUrl(a)}" alt="${a.name}" loading="lazy" class="h-28 w-auto max-w-[220px] object-cover" /></a>`
+      : html`<a href="${fileUrl(a)}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 rounded-md bg-panel-2 px-2 py-1 text-xs text-muted hover:text-white">${icon("paperclip", "h-3 w-3")} ${a.name}</a>`,
+  )}</div>`;
+}
+
+export const editedLabel = (m) => (m.editedAt ? html`<span class="text-[10px] text-dim italic" title="Edited ${formatDate(m.editedAt)}">edited</span>` : "");
+
+/**
+ * Mounts an attachment picker into `el`; returns { files(), clear() }.
+ * `initial` / `onChange` let a re-rendered view keep the selection.
+ */
+export function attachmentPicker(el, { initial = [], onChange } = {}) {
+  let files = [...initial];
   const draw = () =>
     mount(
       el,
@@ -23,10 +41,12 @@ export function attachmentPicker(el) {
   el.addEventListener("change", (e) => {
     if (!e.target.matches("[data-files]")) return;
     files = [...files, ...Array.from(e.target.files ?? [])].slice(0, MAX_FILES);
+    onChange?.(files);
     draw();
   });
   on(el, "click", "[data-remove]", (_e, b) => {
     files = files.filter((_, i) => i !== Number(b.dataset.remove));
+    onChange?.(files);
     draw();
   });
   draw();
@@ -56,7 +76,12 @@ export function openLiveChat() {
     <div class="flex-1 space-y-3 overflow-y-auto px-4 py-4" data-messages aria-live="polite"></div>
     <form class="border-t border-line p-3" data-chat-form>
       <p class="mb-2 text-xs text-down" data-chat-error hidden></p>
-      <div class="flex gap-2"><input name="body" maxlength="5000" placeholder="Type a message…" aria-label="Message" autocomplete="off" class="input h-10 flex-1" /><button type="submit" class="grid h-10 w-10 place-items-center rounded-lg bg-accent text-accent-ink disabled:opacity-50" aria-label="Send">${icon("send", "h-4 w-4")}</button></div>
+      <div class="mb-2 flex flex-wrap gap-2" data-previews></div>
+      <div class="flex gap-2">
+        <label class="grid h-10 w-10 shrink-0 cursor-pointer place-items-center rounded-lg border border-line-strong text-muted hover:text-white" title="Attach a photo or PDF"><span class="sr-only">Attach a photo or PDF</span>${icon("image-plus", "h-4 w-4")}<input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" multiple class="sr-only" data-chat-files /></label>
+        <input name="body" maxlength="5000" placeholder="Type a message…" aria-label="Message" autocomplete="off" class="input h-10 flex-1" />
+        <button type="submit" class="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-accent text-accent-ink disabled:opacity-50" aria-label="Send">${icon("send", "h-4 w-4")}</button>
+      </div>
     </form>`);
   document.body.appendChild(chatEl);
   const list = $("[data-messages]", chatEl);
@@ -74,7 +99,7 @@ export function openLiveChat() {
         list,
         html`<div class="max-w-[85%] rounded-2xl rounded-tl-sm bg-panel-3 px-3 py-2 text-sm text-fg">Hi! Describe what you need help with and a member of our team will reply here. Never share your password or 2FA codes.</div>
         ${data.messages.map(
-          (m) => html`<div class="${cx("flex flex-col", m.isStaff ? "items-start" : "items-end")}"><div class="${cx("max-w-[85%] rounded-2xl px-3 py-2 text-sm whitespace-pre-wrap", m.isStaff ? "rounded-tl-sm bg-panel-3 text-fg" : "rounded-tr-sm bg-accent text-accent-ink")}">${m.body}</div><span class="mt-1 text-[10px] text-dim">${m.isStaff ? "Support · " : ""}${formatDate(m.createdAt, "time")}</span></div>`,
+          (m) => html`<div class="${cx("flex flex-col", m.isStaff ? "items-start" : "items-end")}">${m.body ? html`<div class="${cx("max-w-[85%] rounded-2xl px-3 py-2 text-sm whitespace-pre-wrap", m.isStaff ? "rounded-tl-sm bg-panel-3 text-fg" : "rounded-tr-sm bg-accent text-accent-ink")}">${m.body}</div>` : ""}${attachmentList(m.attachments, m.isStaff ? "" : "justify-end")}<span class="mt-1 flex items-center gap-1 text-[10px] text-dim">${m.isStaff ? "Support · " : ""}${formatDate(m.createdAt, "time")} ${editedLabel(m)}</span></div>`,
         )}`,
       );
       if (data.messages.length !== count) {
@@ -94,17 +119,53 @@ export function openLiveChat() {
   const onKey = (e) => e.key === "Escape" && close();
   document.addEventListener("keydown", onKey);
   $("[data-close-chat]", chatEl).addEventListener("click", close);
+  // Photos / PDFs to send with the next message.
+  let files = [];
+  const err = $("[data-chat-error]", form);
+  const previews = $("[data-previews]", form);
+  const drawPreviews = () =>
+    mount(
+      previews,
+      files.map(
+        (f, i) =>
+          html`<span class="relative inline-block">${f.type.startsWith("image/") ? html`<img src="${URL.createObjectURL(f)}" alt="${f.name}" class="h-14 w-14 rounded-lg border border-line object-cover" />` : html`<span class="grid h-14 w-14 place-items-center rounded-lg border border-line bg-panel-2 text-[10px] text-muted">PDF</span>`}<button type="button" data-unfile="${i}" class="absolute -top-1.5 -right-1.5 grid h-5 w-5 place-items-center rounded-full bg-panel-3 text-fg" aria-label="Remove ${f.name}">${icon("x", "h-3 w-3")}</button></span>`,
+      ),
+    );
+  on(form, "change", "[data-chat-files]", (_e, input) => {
+    const picked = Array.from(input.files ?? []);
+    input.value = "";
+    const big = picked.find((f) => f.size > MAX_SIZE);
+    if (big) {
+      err.textContent = `${big.name} is larger than 8 MB.`;
+      err.hidden = false;
+    }
+    files = [...files, ...picked.filter((f) => f.size <= MAX_SIZE)].slice(0, MAX_FILES);
+    drawPreviews();
+  });
+  on(form, "click", "[data-unfile]", (_e, b) => {
+    files = files.filter((_, i) => i !== Number(b.dataset.unfile));
+    drawPreviews();
+  });
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const text = form.body.value.trim();
-    if (!text) return;
+    if (!text && !files.length) return;
     const btn = form.querySelector("[type=submit]");
-    const err = $("[data-chat-error]", form);
     btn.disabled = true;
     err.hidden = true;
     try {
-      await api("/api/support/chat", { body: { body: text } });
+      if (files.length) {
+        const fd = new FormData();
+        fd.append("body", text);
+        files.forEach((f) => fd.append("files", f));
+        await api("/api/support/chat", { form: fd });
+      } else {
+        await api("/api/support/chat", { body: { body: text } });
+      }
       form.body.value = "";
+      files = [];
+      drawPreviews();
       invalidate("/api/support/chat");
     } catch (ex) {
       err.textContent = ex.message ?? "Message not sent.";
