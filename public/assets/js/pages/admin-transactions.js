@@ -20,7 +20,7 @@ const list = adminTable($("[data-list]", view), {
   extraParams: { userId },
   filters: [
     { name: "q", type: "search", placeholder: "Search reference, ID or email" },
-    { name: "type", type: "select", options: statusOptions(["DEPOSIT", "WITHDRAWAL", "TRADE", "TRANSFER", "INVESTMENT", "COPY_TRADING", "REFERRAL", "FEE", "ADJUSTMENT"], "All types") },
+    { name: "type", type: "select", options: statusOptions(["DEPOSIT", "WITHDRAWAL", "TRADE", "TRANSFER", "INVESTMENT", "COPY_TRADING", "REFERRAL", "FEE", "ADJUSTMENT", "PROFIT"], "All types") },
     { name: "status", type: "select", options: statusOptions(["PENDING", "CONFIRMING", "COMPLETED", "FAILED", "CANCELLED", "EXPIRED"]) },
   ],
   empty: emptyState({ title: "No transactions" }),

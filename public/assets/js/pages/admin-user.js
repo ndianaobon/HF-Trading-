@@ -186,9 +186,9 @@ on(view, "click", "[data-adjust]", async () => {
     tone: "danger",
     reason: "required",
     reasonLabel: "Internal reason (audit log only)",
-    warning: "The adjustment is recorded in the user's account statement as a balance adjustment and in the audit log with your name. Debits can't take the available balance below zero.",
+    warning: "Credits and debits appear in the user's statement as a balance adjustment; Profit appears as trading profit and counts toward their realized P&L. Every entry is kept in the audit log with your name. Debits can't take the available balance below zero.",
     extraFields: html`<div class="grid gap-3 sm:grid-cols-3">
-        <div class="field"><label class="label" for="adj-dir">Type</label><select id="adj-dir" name="direction" class="select"><option value="CREDIT">Credit (+)</option><option value="DEBIT">Debit (−)</option></select></div>
+        <div class="field"><label class="label" for="adj-dir">Type</label><select id="adj-dir" name="direction" class="select"><option value="CREDIT">Credit (+)</option><option value="PROFIT">Profit (+)</option><option value="DEBIT">Debit (−)</option></select></div>
         <div class="field"><label class="label" for="adj-asset">Asset</label><select id="adj-asset" name="asset" class="select">${[...new Set(assets)].map((s) => html`<option value="${s}">${s}</option>`)}</select></div>
         <div class="field"><label class="label" for="adj-amount">Amount</label><input id="adj-amount" name="amount" class="input" inputmode="decimal" placeholder="0.00" /></div>
       </div>
@@ -197,7 +197,7 @@ on(view, "click", "[data-adjust]", async () => {
       const amount = form.amount.value.trim();
       if (!/^\d+(\.\d+)?$/.test(amount) || Number(amount) <= 0) throw new Error("Enter an amount greater than zero.");
       const r = await api(`${key}/balance`, { body: { direction: form.direction.value, asset: form.asset.value, amount, reason, note: form.note.value.trim() || undefined } });
-      toast.success("Balance adjusted", `Reference ${r.reference}`);
+      toast.success(form.direction.value === "PROFIT" ? "Profit credited" : "Balance adjusted", `Reference ${r.reference}`);
     },
   });
   if (ok) invalidate(key);

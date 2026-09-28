@@ -258,6 +258,7 @@ async function main() {
     REFERRAL: "REF",
     FEE: "FEE",
     ADJUSTMENT: "ADJ",
+    PROFIT: "PRF",
   };
   const tx = async (data) => prisma.transaction.create({ data: { ...data, reference: ref(PREFIX[data.type]), isDemo: true } });
 

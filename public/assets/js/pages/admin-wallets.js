@@ -62,6 +62,7 @@ const addresses = new DataTable($("[data-addresses]", view), {
     { key: "u", header: "Assigned to", cell: (a) => a.assignedTo ?? badge("Shared") },
     { key: "c", header: "Added", hideOnMobile: true, cell: (a) => html`<span class="text-xs text-muted">${formatDate(a.createdAt, "date")}</span>` },
     { key: "s", header: "Active", align: "right", cell: (a) => (canManage ? html`<button type="button" role="switch" class="switch" aria-label="Active" aria-checked="${a.isActive ? "true" : "false"}" data-toggle="${a.id}"></button>` : statusBadge(a.isActive ? "ACTIVE" : "DISABLED")) },
+    { key: "e", header: html`<span class="sr-only">Edit</span>`, align: "right", cell: (a) => (canManage ? html`<button type="button" class="btn btn-ghost btn-sm" data-edit-address="${a.id}">Edit</button>` : "") },
   ],
 });
 [balances, networks, addresses].forEach((t) => t.set(undefined, { loading: true }));
@@ -85,6 +86,28 @@ on(view, "click", "[data-toggle]", async (_e, b) => {
     toast.error("Could not update address", err.message);
     b.disabled = false;
   }
+});
+
+on(view, "click", "[data-edit-address]", (_e, b) => {
+  const a = data?.addresses.find((x) => x.id === b.dataset.editAddress);
+  if (!a) return;
+  const m = openModal({
+    title: `Edit ${a.asset} · ${a.network} address`,
+    body: html`<form id="addr-edit-form" class="space-y-4" novalidate>
+      ${notice("warn", { iconName: "info", body: "Users see the new address immediately. Deposits already sent to the old address still arrive there, so keep it under your control." })}
+      ${field({ name: "address", label: "Address", value: a.address, cls: "font-mono", autocomplete: "off" })}
+      <div class="grid gap-4 sm:grid-cols-2">${field({ name: "memo", label: "Memo / tag", value: a.memo ?? "", hint: "Leave empty to clear" })}${field({ name: "label", label: "Label", value: a.label ?? "" })}</div>
+      ${field({ name: "userEmail", label: "Assign to user (email)", type: "email", value: a.assignedTo ?? "", hint: "Leave empty for a shared address" })}
+      <div data-form-error hidden></div>
+    </form>`,
+    footer: html`<button type="button" class="btn btn-secondary" data-close>Cancel</button><button type="submit" form="addr-edit-form" class="btn btn-primary">Save</button>`,
+  });
+  bindForm($("#addr-edit-form", m.el), { address: [rules.min(10, "Enter the deposit address")], userEmail: [rules.optional(rules.email())] }, async (v) => {
+    const r = await api(`/api/admin/wallet-addresses/${a.id}`, { method: "PATCH", body: { address: v.address.trim(), memo: v.memo.trim(), label: v.label.trim(), userEmail: v.userEmail.trim() } });
+    toast.success(r.changed ? "Address updated" : "No changes");
+    m.close();
+    invalidate("/api/admin/wallets");
+  });
 });
 
 const switchRow = (name, label, checked) => html`<label class="flex items-center justify-between rounded-xl border border-line p-3 text-sm">${label}<input type="checkbox" class="checkbox" name="${name}" ${checked ? raw("checked") : ""} /></label>`;

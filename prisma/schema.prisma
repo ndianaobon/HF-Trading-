@@ -97,6 +97,7 @@ enum TransactionType {
   REFERRAL
   FEE
   ADJUSTMENT
+  PROFIT
 }
 
 enum TransactionDirection {
