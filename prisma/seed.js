@@ -820,7 +820,7 @@ async function main() {
           rejectionReason: kyc === "REJECTED" ? "Document image was unreadable." : null,
         },
       });
-      for (const type of ["GOVERNMENT_ID", "PROOF_OF_ADDRESS"]) {
+      for (const type of ["GOVERNMENT_ID", "GOVERNMENT_ID_BACK"]) {
         const key = `kyc/${u.id}/seed-${type.toLowerCase()}.pdf`;
         writeDemoDoc(key);
         await prisma.kycDocument.create({
@@ -1102,7 +1102,7 @@ async function main() {
   await prisma.supportTicket.create({
     data: {
       userId: others[2].id,
-      subject: "Unable to upload proof of address",
+      subject: "Unable to upload the back of my ID",
       category: "KYC",
       priority: "HIGH",
       status: "OPEN",

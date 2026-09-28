@@ -49,7 +49,10 @@ enum KycStatus {
 }
 
 enum KycDocumentType {
+  /// Front of the government ID
   GOVERNMENT_ID
+  GOVERNMENT_ID_BACK
+  /// No longer requested; kept for older applications
   PROOF_OF_ADDRESS
   SELFIE
 }
@@ -416,8 +419,8 @@ model KycApplication {
   country         String
   addressLine     String
   city            String
-  postalCode      String
-  /// AES-256-GCM encrypted document number
+  postalCode      String?
+  /// AES-256-GCM encrypted document number (optional)
   idNumberEnc     String?
   idType          String
   submittedAt     DateTime  @default(now())

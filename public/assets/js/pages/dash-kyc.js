@@ -6,15 +6,15 @@ import { initApp } from "../core/app-shell.js";
 import { card, notice, errorState, skeleton, pageHeader, statusBadge, toast } from "../core/ui.js";
 import { field, selectField, bindForm, rules } from "../core/forms.js";
 import { COUNTRIES } from "../core/countries.js";
-import { formatDate, titleCase } from "../core/format.js";
+import { formatDate, kycDocLabel } from "../core/format.js";
 
 const user = await initApp();
 const view = $("#view");
 view.removeAttribute("aria-busy");
 
 const DOCS = [
-  { key: "GOVERNMENT_ID", label: "Government ID", hint: "Passport, national ID card or driving licence. All corners visible." },
-  { key: "PROOF_OF_ADDRESS", label: "Proof of address", hint: "Utility bill or bank statement from the last 3 months." },
+  { key: "GOVERNMENT_ID", label: "ID — front", hint: "Front of your passport, national ID card or driving licence. All corners visible." },
+  { key: "GOVERNMENT_ID_BACK", label: "ID — back", hint: "Back of the same ID. For a passport, upload the page opposite your photo." },
   { key: "SELFIE", label: "Selfie", hint: "A clear photo of your face holding your ID." },
 ];
 const MAX_FILE = 8 * 1024 * 1024;
@@ -73,7 +73,7 @@ watch("/api/users/me/kyc", ({ data, error }) => {
   );
   mount(
     $("[data-docs]", view),
-    data.application?.documents.length ? card({ title: "Submitted documents", body: html`<div class="card-body space-y-2 text-sm">${data.application.documents.map((d) => html`<div class="flex items-center gap-2 text-muted">${icon("file-up", "h-4 w-4 text-dim")} ${titleCase(d.type)} — ${d.fileName}</div>`)}</div>` }) : "",
+    data.application?.documents.length ? card({ title: "Submitted documents", body: html`<div class="card-body space-y-2 text-sm">${data.application.documents.map((d) => html`<div class="flex items-center gap-2 text-muted">${icon("file-up", "h-4 w-4 text-dim")} ${kycDocLabel(d.type)} — ${d.fileName}</div>`)}</div>` }) : "",
   );
 
   // Only re-render the form when the status changes, so typing isn't lost on refresh.
@@ -97,8 +97,8 @@ watch("/api/users/me/kyc", ({ data, error }) => {
             ${field({ name: "fullName", label: "Full legal name", value: `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim(), autocomplete: "name" })}
             <div class="grid gap-4 sm:grid-cols-2">${field({ name: "dateOfBirth", label: "Date of birth", type: "date", autocomplete: "bday" })}${selectField({ name: "country", label: "Country", options: COUNTRIES, value: user.country })}</div>
             ${field({ name: "addressLine", label: "Residential address", autocomplete: "street-address" })}
-            <div class="grid gap-4 sm:grid-cols-2">${field({ name: "city", label: "City", autocomplete: "address-level2" })}${field({ name: "postalCode", label: "Postal code", autocomplete: "postal-code" })}</div>
-            <div class="grid gap-4 sm:grid-cols-2">${selectField({ name: "idType", label: "ID type", options: [["PASSPORT", "Passport"], ["NATIONAL_ID", "National ID card"], ["DRIVERS_LICENSE", "Driving licence"]], value: "PASSPORT" })}${field({ name: "idNumber", label: "ID number", hint: "Encrypted at rest", autocomplete: "off" })}</div>
+            <div class="grid gap-4 sm:grid-cols-2">${field({ name: "city", label: "City", autocomplete: "address-level2" })}${field({ name: "postalCode", label: "Postal code (optional)", autocomplete: "postal-code" })}</div>
+            <div class="grid gap-4 sm:grid-cols-2">${selectField({ name: "idType", label: "ID type", options: [["PASSPORT", "Passport"], ["NATIONAL_ID", "National ID card"], ["DRIVERS_LICENSE", "Driving licence"]], value: "NATIONAL_ID" })}${field({ name: "idNumber", label: "ID number (optional)", hint: "Encrypted at rest", autocomplete: "off" })}</div>
             <div class="grid gap-3 sm:grid-cols-2">${docs.map(fileDrop)}</div>
             <p class="text-xs text-dim">JPG, PNG, WEBP or PDF up to 8 MB each. Files are checked for type and stored in private storage.</p>
             <div data-form-error hidden></div>
@@ -128,13 +128,11 @@ watch("/api/users/me/kyc", ({ data, error }) => {
       country: [rules.required("Country")],
       addressLine: [rules.min(3, "Enter your residential address")],
       city: [rules.min(2, "Enter your city")],
-      postalCode: [rules.min(2, "Enter your postal code")],
-      idNumber: [rules.min(4, "Enter your ID number")],
     },
     async (values) => {
       const inputs = $$("input[type=file]", form);
       const missing = inputs.find((i) => !i.files?.length);
-      if (missing) throw new ApiError("VALIDATION_ERROR", `Please upload your ${DOCS.find((d) => d.key === missing.name).label.toLowerCase()}.`, 400);
+      if (missing) throw new ApiError("VALIDATION_ERROR", `Please upload: ${DOCS.find((d) => d.key === missing.name).label}.`, 400);
       const big = inputs.map((i) => i.files[0]).find((f) => f.size > MAX_FILE);
       if (big) throw new ApiError("VALIDATION_ERROR", `${big.name} is larger than 8 MB.`, 400);
       const body = new FormData();

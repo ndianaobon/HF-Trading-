@@ -81,6 +81,10 @@ export function timeAgo(v) {
 /** Display name for a transaction's type ("Express Deposit" for admin-funded deposits). */
 export const txTypeLabel = (t) => (t.metadata?.express ? "Express Deposit" : titleCase(t.type));
 
+const KYC_DOC_LABELS = { GOVERNMENT_ID: "ID (front)", GOVERNMENT_ID_BACK: "ID (back)", PROOF_OF_ADDRESS: "Proof of address", SELFIE: "Selfie" };
+/** Display name for a KYC document type. */
+export const kycDocLabel = (type) => KYC_DOC_LABELS[type] ?? titleCase(type);
+
 export const titleCase = (s) =>
   String(s ?? "")
     .toLowerCase()

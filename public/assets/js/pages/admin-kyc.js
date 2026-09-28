@@ -4,7 +4,7 @@ import { api } from "../core/api.js";
 import { invalidate } from "../core/store.js";
 import { pageHeader, statusBadge, smallDemo, notice, emptyState, skeleton, toast, openModal } from "../core/ui.js";
 import { countryName } from "../core/countries.js";
-import { formatDate, titleCase } from "../core/format.js";
+import { formatDate, kycDocLabel, titleCase } from "../core/format.js";
 import { adminPage, adminTable } from "../components/admin-kit.js";
 
 const { user: admin, view } = await adminPage();
@@ -41,7 +41,7 @@ async function openApplication(id) {
     ["Full name", d.fullName],
     ["Date of birth", formatDate(d.dateOfBirth, "date")],
     ["Country", countryName(d.country)],
-    ["Address", `${d.addressLine}, ${d.city} ${d.postalCode}`],
+    ["Address", `${d.addressLine}, ${d.city}${d.postalCode ? ` ${d.postalCode}` : ""}`],
     ["ID type", titleCase(d.idType)],
     ["ID number", d.idNumberMasked ?? "—"],
     ["Status", statusBadge(d.status)],
@@ -54,7 +54,7 @@ async function openApplication(id) {
     ${d.rejectionReason ? notice("down", { body: `Rejection reason: ${d.rejectionReason}` }) : ""}
     <div><p class="mb-2 text-xs font-bold tracking-wider text-dim uppercase">Documents</p>
       <div class="grid gap-2 sm:grid-cols-2">${d.documents.map(
-        (doc) => html`<a href="/api/files?key=${encodeURIComponent(doc.storageKey)}" target="_blank" rel="noopener" class="flex items-center justify-between rounded-xl border border-line bg-base-2 p-3 hover:border-accent/40"><span class="flex items-center gap-2 text-sm">${icon("file-text", "h-4 w-4 text-accent")}<span><span class="block font-semibold text-white">${titleCase(doc.type)}</span><span class="block text-xs text-dim">${doc.fileName} · ${(doc.size / 1024).toFixed(0)} KB</span></span></span>${icon("external-link", "h-4 w-4 text-dim")}</a>`,
+        (doc) => html`<a href="/api/files?key=${encodeURIComponent(doc.storageKey)}" target="_blank" rel="noopener" class="flex flex-col overflow-hidden rounded-xl border border-line bg-base-2 hover:border-accent/40">${doc.mimeType?.startsWith("image/") ? html`<img src="/api/files?key=${encodeURIComponent(doc.storageKey)}" alt="${kycDocLabel(doc.type)}" loading="lazy" class="aspect-[16/10] w-full bg-base object-contain" />` : ""}<span class="flex items-center justify-between p-3"><span class="flex items-center gap-2 text-sm">${icon("file-text", "h-4 w-4 text-accent")}<span><span class="block font-semibold text-white">${kycDocLabel(doc.type)}</span><span class="block text-xs text-dim">${doc.fileName} · ${(doc.size / 1024).toFixed(0)} KB</span></span></span>${icon("external-link", "h-4 w-4 text-dim")}</span></a>`,
       )}</div>
     </div>
     <a href="/admin/users/${d.user.id}" class="inline-flex text-sm font-semibold text-accent">Open user profile →</a>

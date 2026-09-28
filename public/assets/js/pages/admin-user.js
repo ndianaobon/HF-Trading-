@@ -4,7 +4,7 @@ import { api } from "../core/api.js";
 import { watch, invalidate } from "../core/store.js";
 import { card, badge, demoBadge, smallDemo, statusBadge, moneyStatusBadge, errorState, emptyState, skeleton, toast, DataTable } from "../core/ui.js";
 import { countryName, COUNTRIES } from "../core/countries.js";
-import { formatDate, formatNumber, formatUsd, titleCase, txTypeLabel } from "../core/format.js";
+import { formatDate, formatNumber, formatUsd, kycDocLabel, titleCase, txTypeLabel } from "../core/format.js";
 import { adminPage, actionModal, kv } from "../components/admin-kit.js";
 
 const { user: admin, view } = await adminPage();
@@ -88,7 +88,10 @@ watch(key, ({ data: u, error }) => {
         })}
         ${card({
           title: "Balances",
-          action: u.canAdjustBalance && u.id !== admin.id ? html`<button type="button" class="btn btn-secondary btn-sm" data-adjust>${icon("wallet", "h-4 w-4")} Adjust balance</button>` : "",
+          action:
+            u.canAdjustBalance && u.id !== admin.id
+              ? html`<div class="flex flex-wrap justify-end gap-2"><button type="button" class="btn btn-primary btn-sm" data-adjust="PROFIT">${icon("trending-up", "h-4 w-4")} Add profit</button><button type="button" class="btn btn-secondary btn-sm" data-adjust="CREDIT">${icon("wallet", "h-4 w-4")} Adjust balance</button></div>`
+              : "",
           body: html`<div class="card-body">${
             u.balance
               ? html`<div class="mb-4 flex items-end justify-between gap-3 rounded-xl border border-line bg-panel-2 p-3"><div><p class="text-[11px] font-semibold text-dim uppercase">Total account value</p><p class="num font-display text-xl font-extrabold text-white">${u.balance.totalValue === null ? "—" : formatUsd(u.balance.totalValue)}</p></div><p class="text-right text-xs text-muted">Available USDT<br /><span class="num text-sm font-semibold text-fg">${formatNumber(u.balance.available, 2)}</span></p></div>`
@@ -159,7 +162,7 @@ function docTile(d) {
       ${isImage ? html`<img src="${url}" alt="${d.name ?? "Uploaded image"}" loading="lazy" class="h-full w-full object-cover" />` : html`<span class="flex flex-col items-center gap-1 text-muted">${icon("file-text", "h-8 w-8")}<span class="text-xs font-semibold">PDF</span></span>`}
     </a>
     <div class="min-w-0 p-2.5">
-      <p class="truncate text-xs font-semibold text-white">${d.source} · ${d.source === "KYC" ? titleCase(d.label) : d.label}</p>
+      <p class="truncate text-xs font-semibold text-white">${d.source} · ${d.source === "KYC" ? kycDocLabel(d.label) : d.label}</p>
       <p class="truncate text-[11px] text-dim" title="${d.name ?? ""}">${d.name ?? ""}</p>
       <div class="mt-1.5 flex items-center justify-between gap-2 text-[11px]"><span class="text-dim">${formatDate(d.createdAt, "date")}</span>${d.link ? html`<a href="${d.link}" class="font-semibold text-accent">View →</a>` : ""}</div>
     </div>
@@ -194,24 +197,34 @@ const extraFieldsFor = (action) =>
       ? html`<div class="field"><label class="label" for="am-signal">Signal strength (%)</label><input id="am-signal" name="signalStrength" type="number" min="0" max="100" step="1" inputmode="numeric" class="input" value="${current?.signalStrength ?? 0}" /><p class="mt-1 text-xs text-dim">Shown on the user's dashboard under Trading Analysis.</p></div>`
       : "";
 
-on(view, "click", "[data-adjust]", async () => {
+const ADJUST_TYPES = [
+  ["CREDIT", "Express deposit (+)"],
+  ["PROFIT", "Profit (+)"],
+  ["DEBIT", "Debit (−)"],
+];
+
+on(view, "click", "[data-adjust]", async (_e, b) => {
+  const preset = b.dataset.adjust;
+  const profit = preset === "PROFIT";
   const assets = await api("/api/markets")
     .then((m) => ["USDT", ...m.markets.map((x) => x.base.symbol)])
     .catch(() => ["USDT"]);
   const ok = await actionModal({
-    title: "Adjust balance",
+    title: profit ? "Add profit" : "Adjust balance",
     description: current?.email,
-    confirmLabel: "Apply adjustment",
-    tone: "danger",
+    confirmLabel: profit ? "Add profit" : "Apply adjustment",
+    tone: profit ? "primary" : "danger",
     reason: "required",
     reasonLabel: "Internal reason (audit log only)",
-    warning: "Express deposit appears in the user's statement as a deposit; Profit appears as trading profit and counts toward their realized P&L; Debit appears as a balance adjustment. Every entry is kept in the audit log with your name. Debits can't take the available balance below zero.",
+    warning: profit
+      ? "Profit is added to the user's available balance, shows as trading profit in their statement and counts toward their realized P&L. The entry is kept in the audit log with your name."
+      : "Express deposit appears in the user's statement as a deposit; Profit appears as trading profit and counts toward their realized P&L; Debit appears as a balance adjustment. Every entry is kept in the audit log with your name. Debits can't take the available balance below zero.",
     extraFields: html`<div class="grid gap-3 sm:grid-cols-3">
-        <div class="field"><label class="label" for="adj-dir">Type</label><select id="adj-dir" name="direction" class="select"><option value="CREDIT">Express deposit (+)</option><option value="PROFIT">Profit (+)</option><option value="DEBIT">Debit (−)</option></select></div>
+        <div class="field"><label class="label" for="adj-dir">Type</label><select id="adj-dir" name="direction" class="select">${ADJUST_TYPES.map(([v, l]) => html`<option value="${v}" ${v === preset && "selected"}>${l}</option>`)}</select></div>
         <div class="field"><label class="label" for="adj-asset">Asset</label><select id="adj-asset" name="asset" class="select">${[...new Set(assets)].map((s) => html`<option value="${s}">${s}</option>`)}</select></div>
         <div class="field"><label class="label" for="adj-amount">Amount</label><input id="adj-amount" name="amount" class="input" inputmode="decimal" placeholder="0.00" /></div>
       </div>
-      <div class="field"><label class="label" for="adj-note">Note shown to the user (optional)</label><input id="adj-note" name="note" class="input" maxlength="200" placeholder="e.g. Correction for deposit DEP-…" /></div>`,
+      <div class="field"><label class="label" for="adj-note">Note shown to the user (optional)</label><input id="adj-note" name="note" class="input" maxlength="200" placeholder="${profit ? "e.g. BTC/USDT trade profit" : "e.g. Correction for deposit DEP-…"}" /></div>`,
     onConfirm: async ({ reason, form }) => {
       const amount = form.amount.value.trim();
       if (!/^\d+(\.\d+)?$/.test(amount) || Number(amount) <= 0) throw new Error("Enter an amount greater than zero.");
