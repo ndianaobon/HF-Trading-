@@ -5,7 +5,7 @@ import { RATE_LIMITS } from "@/lib/security/rate-limit";
 import { prisma } from "@/lib/db/prisma";
 import { hashPassword } from "@/lib/auth/password";
 import { createSession } from "@/lib/auth/session";
-import { issueToken } from "@/lib/auth/tokens";
+import { issueCode } from "@/lib/auth/tokens";
 import { emails } from "@/lib/email/mailer";
 import { getSetting } from "@/lib/services/settings";
 import { generateReferralCode } from "@/lib/services/users";
@@ -49,8 +49,8 @@ export const POST = route({ auth: "none", body: registerSchema, rateLimit: RATE_
   });
   await linkReferral(user.id, body.referralCode);
 
-  const token = await issueToken(user.id, "EMAIL_VERIFICATION");
-  await emails.verifyEmail(user.email, body.firstName, token);
+  const code = await issueCode(user.id, "EMAIL_VERIFICATION");
+  await emails.verifyCode(user.email, body.firstName, code);
   await createSession({ userId: user.id, remember: false, mfaVerified: true, ip, userAgent });
   await prisma.loginHistory.create({ data: { userId: user.id, ip, userAgent, success: true, reason: "registration" } });
 

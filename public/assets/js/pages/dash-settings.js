@@ -142,7 +142,7 @@ function securitySection() {
           description: "Other sessions are signed out when your password changes.",
           body: html`<div class="card-body"><form id="pw-form" class="grid max-w-xl gap-4" novalidate>
             ${field({ name: "currentPassword", label: "Current password", type: "password", autocomplete: "current-password" })}
-            ${field({ name: "newPassword", label: "New password", type: "password", autocomplete: "new-password", hint: "At least 10 characters with upper and lower case, a number and a symbol." })}
+            ${field({ name: "newPassword", label: "New password", type: "password", autocomplete: "new-password", hint: "At least 8 characters." })}
             ${field({ name: "confirmPassword", label: "Confirm new password", type: "password", autocomplete: "new-password" })}
             <div data-form-error hidden></div>
             <div><button type="submit" class="btn btn-primary">Update password</button></div>

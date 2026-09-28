@@ -9,7 +9,7 @@ await initApp();
 const view = $("#view");
 view.removeAttribute("aria-busy");
 
-const TYPES = ["ALL", "DEPOSIT", "WITHDRAWAL", "TRADE", "TRANSFER", "INVESTMENT", "COPY_TRADING", "REFERRAL"];
+const TYPES = ["ALL", "DEPOSIT", "WITHDRAWAL", "TRADE", "TRANSFER", "INVESTMENT", "COPY_TRADING", "REFERRAL", "ADJUSTMENT"];
 const STATUSES = ["PENDING", "CONFIRMING", "COMPLETED", "FAILED", "CANCELLED", "EXPIRED"];
 const state = { type: TYPES.includes(param("type")) ? param("type") : "ALL", status: "", asset: (param("asset") ?? "").toUpperCase(), q: "", page: 1 };
 

@@ -16,10 +16,10 @@ const done = (signedIn) =>
   );
 
 async function resend(button, messageEl) {
-  await withBusy(button, async () => {
+  return withBusy(button, async () => {
     try {
       await api("/api/auth/resend-verification", { method: "POST" });
-      mount(messageEl, notice("up", { body: "A new verification email is on its way.", iconName: "check-circle-2", cls: "mt-4" }));
+      mount(messageEl, notice("up", { body: "A new code is on its way. Only the latest code works.", iconName: "check-circle-2", cls: "mt-3" }));
       return true;
     } catch (err) {
       mount(messageEl, notice("down", { body: err instanceof ApiError ? err.message : "Could not resend the email.", cls: "mt-4" }));
@@ -46,31 +46,82 @@ async function init() {
     return;
   }
   if (user?.emailVerified) return done(true);
+  if (!user) {
+    mount(
+      root,
+      html`<div class="grid h-12 w-12 place-items-center rounded-2xl border border-accent/25 bg-accent-soft text-accent">${icon("mail-check", "h-6 w-6")}</div>
+      <h1 class="mt-6 font-display text-3xl font-extrabold tracking-tight text-white">Verify your email</h1>
+      <p class="mt-4 text-muted">Log in to enter the 6-digit code we emailed you.</p>
+      <a href="/login?next=%2Fverify-email" class="btn btn-primary btn-lg mt-8 w-full">Log in</a>`,
+    );
+    return;
+  }
 
   mount(
     root,
     html`<div class="grid h-12 w-12 place-items-center rounded-2xl border border-accent/25 bg-accent-soft text-accent">${icon("mail-check", "h-6 w-6")}</div>
     <h1 class="mt-6 font-display text-3xl font-extrabold tracking-tight text-white">Verify your email</h1>
-    ${param("registered") ? notice("up", { title: "Account created", body: "Your account is not verified yet.", iconName: "check-circle-2", cls: "mt-4" }) : ""}
-    <p class="mt-4 text-muted">${user ? html`We sent a verification link to <strong class="text-white">${user.email}</strong>. Open it to confirm your address. The link expires in 24 hours.` : "Open the verification link we emailed you to confirm your address."}</p>
-    <div class="mt-6 rounded-xl border border-line bg-panel p-4 text-sm">
-      <p class="font-semibold text-white">Verification status</p>
-      <p class="mt-1 flex items-center gap-2 text-warn"><span class="h-2 w-2 rounded-full bg-warn"></span> Email not verified</p>
-      <p class="mt-2 text-muted">Until verified you can browse your dashboard, but deposits, trading and withdrawals are disabled.</p>
+    ${param("registered") ? notice("up", { title: "Account created", body: "One last step: confirm your email address.", iconName: "check-circle-2", cls: "mt-4" }) : ""}
+    <p class="mt-4 text-muted">Enter the 6-digit code we sent to <strong class="text-white">${user.email}</strong>. It expires in 15 minutes.</p>
+    <form class="mt-6" data-code-form novalidate>
+      <label class="label" for="code">Verification code</label>
+      <input id="code" name="code" class="input h-14 text-center font-mono text-2xl font-bold tracking-[0.5em]" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••" aria-describedby="code-help" />
+      <p id="code-help" class="hint">Check your spam folder if it hasn't arrived within a minute.</p>
+      <div data-msg></div>
+      <button type="submit" class="btn btn-primary btn-lg mt-5 w-full" data-submit>Verify email</button>
+    </form>
+    <div class="mt-4 flex items-center justify-between text-sm">
+      <button type="button" class="font-semibold text-accent hover:text-accent-strong disabled:text-dim" data-resend>Resend code</button>
+      <a href="/dashboard" class="text-muted hover:text-white">Skip for now</a>
     </div>
-    <div data-msg></div>
-    <div class="mt-6 flex flex-col gap-3 sm:flex-row">
-      ${user ? html`<button type="button" class="btn btn-secondary flex-1" data-resend>Resend email</button>` : ""}
-      <a href="${user ? "/dashboard" : "/login"}" class="btn btn-primary flex-1">${user ? "Continue to dashboard" : "Log in"}</a>
-    </div>
-    <p class="mt-6 text-xs text-dim">Wrong email? <a href="/register" class="text-muted hover:underline">Create a new account</a> or contact support.</p>
+    <p class="mt-6 text-xs text-dim">Until verified you can browse your dashboard, but deposits, trading and withdrawals are disabled. Wrong email? <a href="/register" class="text-muted hover:underline">Create a new account</a> or contact support.</p>
     <div data-mailbox></div>`,
   );
-  on(root, "click", "[data-resend]", async (_e, b) => {
-    await resend(b, $("[data-msg]", root));
-    void renderDevMailbox($("[data-mailbox]", root), user.email);
+  const form = $("[data-code-form]", root);
+  const input = form.code;
+  const msg = $("[data-msg]", root);
+  input.focus();
+  input.addEventListener("input", () => {
+    input.value = input.value.replace(/[^0-9]/g, "").slice(0, 6);
+    if (input.value.length === 6) form.requestSubmit();
   });
-  if (user) void renderDevMailbox($("[data-mailbox]", root), user.email);
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const code = input.value.trim();
+    if (!/^[0-9]{6}$/.test(code)) {
+      mount(msg, notice("down", { body: "Enter the 6-digit code from the email.", cls: "mt-3" }));
+      return;
+    }
+    await withBusy($("[data-submit]", root), async () => {
+      try {
+        await api("/api/auth/verify-email", { body: { code } });
+        done(true);
+      } catch (err) {
+        mount(msg, notice("down", { body: err instanceof ApiError ? err.message : "Verification failed. Please try again.", cls: "mt-3" }));
+        input.select();
+      }
+    });
+  });
+
+  let cooldown = null;
+  on(root, "click", "[data-resend]", async (_e, b) => {
+    if (cooldown) return;
+    const ok = await resend(b, msg);
+    void renderDevMailbox($("[data-mailbox]", root), user.email);
+    if (!ok) return;
+    let left = 60;
+    b.disabled = true;
+    cooldown = setInterval(() => {
+      left -= 1;
+      b.textContent = left > 0 ? `Resend code (${left}s)` : "Resend code";
+      if (left <= 0) {
+        clearInterval(cooldown);
+        cooldown = null;
+        b.disabled = false;
+      }
+    }, 1000);
+  });
+  void renderDevMailbox($("[data-mailbox]", root), user.email);
 }
 
 void init();

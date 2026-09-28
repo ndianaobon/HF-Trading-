@@ -4,7 +4,7 @@ import { api } from "../core/api.js";
 import { watch, invalidate } from "../core/store.js";
 import { card, badge, demoBadge, smallDemo, statusBadge, errorState, emptyState, skeleton, toast, DataTable } from "../core/ui.js";
 import { countryName, COUNTRIES } from "../core/countries.js";
-import { formatDate, formatNumber, titleCase } from "../core/format.js";
+import { formatDate, formatNumber, formatUsd, titleCase } from "../core/format.js";
 import { adminPage, actionModal, kv } from "../components/admin-kit.js";
 
 const { user: admin, view } = await adminPage();
@@ -88,7 +88,12 @@ watch(key, ({ data: u, error }) => {
         })}
         ${card({
           title: "Balances",
+          action: u.canAdjustBalance && u.id !== admin.id ? html`<button type="button" class="btn btn-secondary btn-sm" data-adjust>${icon("wallet", "h-4 w-4")} Adjust balance</button>` : "",
           body: html`<div class="card-body">${
+            u.balance
+              ? html`<div class="mb-4 flex items-end justify-between gap-3 rounded-xl border border-line bg-panel-2 p-3"><div><p class="text-[11px] font-semibold text-dim uppercase">Total account value</p><p class="num font-display text-xl font-extrabold text-white">${u.balance.totalValue === null ? "—" : formatUsd(u.balance.totalValue)}</p></div><p class="text-right text-xs text-muted">Available USDT<br /><span class="num text-sm font-semibold text-fg">${formatNumber(u.balance.available, 2)}</span></p></div>`
+              : ""
+          }${
             u.wallets === null
               ? html`<p class="text-sm text-dim">You don't have permission to view balances.</p>`
               : !u.wallets.length
@@ -169,6 +174,34 @@ const extraFieldsFor = (action) =>
     : action === "set_signal"
       ? html`<div class="field"><label class="label" for="am-signal">Signal strength (%)</label><input id="am-signal" name="signalStrength" type="number" min="0" max="100" step="1" inputmode="numeric" class="input" value="${current?.signalStrength ?? 0}" /><p class="mt-1 text-xs text-dim">Shown on the user's dashboard under Trading Analysis.</p></div>`
       : "";
+
+on(view, "click", "[data-adjust]", async () => {
+  const assets = await api("/api/markets")
+    .then((m) => ["USDT", ...m.markets.map((x) => x.base.symbol)])
+    .catch(() => ["USDT"]);
+  const ok = await actionModal({
+    title: "Adjust balance",
+    description: current?.email,
+    confirmLabel: "Apply adjustment",
+    tone: "danger",
+    reason: "required",
+    reasonLabel: "Internal reason (audit log only)",
+    warning: "The adjustment is recorded in the user's account statement as a balance adjustment and in the audit log with your name. Debits can't take the available balance below zero.",
+    extraFields: html`<div class="grid gap-3 sm:grid-cols-3">
+        <div class="field"><label class="label" for="adj-dir">Type</label><select id="adj-dir" name="direction" class="select"><option value="CREDIT">Credit (+)</option><option value="DEBIT">Debit (−)</option></select></div>
+        <div class="field"><label class="label" for="adj-asset">Asset</label><select id="adj-asset" name="asset" class="select">${[...new Set(assets)].map((s) => html`<option value="${s}">${s}</option>`)}</select></div>
+        <div class="field"><label class="label" for="adj-amount">Amount</label><input id="adj-amount" name="amount" class="input" inputmode="decimal" placeholder="0.00" /></div>
+      </div>
+      <div class="field"><label class="label" for="adj-note">Note shown to the user (optional)</label><input id="adj-note" name="note" class="input" maxlength="200" placeholder="e.g. Correction for deposit DEP-…" /></div>`,
+    onConfirm: async ({ reason, form }) => {
+      const amount = form.amount.value.trim();
+      if (!/^\d+(\.\d+)?$/.test(amount) || Number(amount) <= 0) throw new Error("Enter an amount greater than zero.");
+      const r = await api(`${key}/balance`, { body: { direction: form.direction.value, asset: form.asset.value, amount, reason, note: form.note.value.trim() || undefined } });
+      toast.success("Balance adjusted", `Reference ${r.reference}`);
+    },
+  });
+  if (ok) invalidate(key);
+});
 
 on(view, "click", "[data-act]", async (_e, b) => {
   const action = b.dataset.act;

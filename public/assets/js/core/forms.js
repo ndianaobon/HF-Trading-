@@ -14,11 +14,8 @@ export const rules = {
   name: (label) => (v) => (/^[\p{L}\p{M}' .-]+$/u.test(String(v).trim()) ? null : `${label} contains invalid characters`),
   password: () => (v) => {
     const s = String(v ?? "");
-    if (s.length < 10) return "Use at least 10 characters";
-    if (!/[a-z]/.test(s)) return "Include a lowercase letter";
-    if (!/[A-Z]/.test(s)) return "Include an uppercase letter";
-    if (!/[0-9]/.test(s)) return "Include a number";
-    if (!/[^A-Za-z0-9]/.test(s)) return "Include a symbol";
+    if (s.length < 8) return "Use at least 8 characters";
+    if (s.length > 128) return "Password is too long";
     return null;
   },
   matches: (field, msg) => (v, all) => (v === all[field] ? null : msg),
