@@ -3,7 +3,7 @@ import { icon } from "../core/icons.js";
 import { api, ApiError } from "../core/api.js";
 import { watch, invalidate } from "../core/store.js";
 import { initApp } from "../core/app-shell.js";
-import { card, notice, errorState, emptyState, skeleton, pageHeader, pagination, smallDemo, statusBadge, toast, openModal, confirmDialog } from "../core/ui.js";
+import { card, notice, errorState, emptyState, skeleton, pageHeader, pagination, smallDemo, moneyStatusBadge, toast, openModal, confirmDialog } from "../core/ui.js";
 import { field, bindForm, rules, readForm, showErrors, setFormError } from "../core/forms.js";
 import { formatDate, formatNumber, toNum, truncateMiddle } from "../core/format.js";
 import { assetNetworkPicker, resolvePick, stepUpFields, stepUpRule } from "../components/wallet-bits.js";
@@ -176,7 +176,7 @@ function loadHistory() {
                   ${w.txHash ? html`<p class="truncate font-mono text-xs text-muted">Tx ${truncateMiddle(w.txHash, 10)}</p>` : ""}
                   ${w.rejectionReason ? html`<p class="text-xs text-down">${w.rejectionReason}</p>` : ""}
                 </div>
-                <div class="flex flex-col items-end gap-2">${statusBadge(w.status)}${w.status === "PENDING_REVIEW" ? html`<button type="button" data-cancel="${w.id}" class="text-xs font-semibold text-muted hover:text-down">Cancel</button>` : ""}</div>
+                <div class="flex flex-col items-end gap-2">${moneyStatusBadge(w.status)}${w.status === "PENDING_REVIEW" ? html`<button type="button" data-cancel="${w.id}" class="text-xs font-semibold text-muted hover:text-down">Cancel</button>` : ""}</div>
               </div></li>`,
             )}</ul>`,
       );

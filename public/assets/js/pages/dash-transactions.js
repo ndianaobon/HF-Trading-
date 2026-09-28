@@ -2,7 +2,7 @@ import { html, $, on, mount, param, debounce } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { watch } from "../core/store.js";
 import { initApp } from "../core/app-shell.js";
-import { emptyState, pageHeader, pagination, tabs, smallDemo, statusBadge, copyButton, openModal, DataTable } from "../core/ui.js";
+import { emptyState, pageHeader, pagination, tabs, smallDemo, moneyStatusBadge, moneyStatusLabel, copyButton, openModal, DataTable } from "../core/ui.js";
 import { formatDate, formatNumber, titleCase } from "../core/format.js";
 
 await initApp();
@@ -24,7 +24,7 @@ mount(
       <div class="overflow-x-auto px-4 pt-2" data-types></div>
       <div class="grid gap-3 border-t border-line px-4 py-3 sm:grid-cols-[1fr_180px_140px]">
         <div class="relative"><span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-dim">${icon("search", "h-4 w-4")}</span><input data-q class="input pl-9" placeholder="Search by transaction ID or reference" aria-label="Search transactions" /></div>
-        <select data-status class="select" aria-label="Status"><option value="">All statuses</option>${STATUSES.map((s) => html`<option value="${s}">${titleCase(s)}</option>`)}</select>
+        <select data-status class="select" aria-label="Status"><option value="">All statuses</option>${STATUSES.map((s) => html`<option value="${s}">${moneyStatusLabel(s)}</option>`)}</select>
         <input data-asset class="input uppercase" placeholder="Asset" aria-label="Asset" value="${state.asset}" maxlength="10" />
       </div>
       <div class="border-t border-line" data-table></div>
@@ -44,7 +44,7 @@ const table = new DataTable($("[data-table]", view), {
     { key: "asset", header: "Asset", cell: (t) => html`<span class="font-semibold">${t.asset.symbol}</span>` },
     { key: "amount", header: "Amount", align: "right", cell: (t) => html`<span class="num font-semibold ${t.direction === "CREDIT" ? "text-up" : "text-fg"}">${t.direction === "CREDIT" ? "+" : "−"}${formatNumber(t.amount, 8)}</span>` },
     { key: "fee", header: "Fee", align: "right", hideOnMobile: true, cell: (t) => html`<span class="num text-muted">${Number(t.fee) ? formatNumber(t.fee, 8) : "—"}</span>` },
-    { key: "status", header: "Status", cell: (t) => statusBadge(t.status) },
+    { key: "status", header: "Status", cell: (t) => moneyStatusBadge(t.status) },
     { key: "ref", header: "Transaction ID", hideOnMobile: true, cell: (t) => html`<span class="font-mono text-xs text-muted">${t.reference}</span>` },
   ],
 });
@@ -110,7 +110,7 @@ function showDetail(t) {
     ["Direction", t.direction === "CREDIT" ? "Credit (in)" : "Debit (out)"],
     ["Amount", `${formatNumber(t.amount, 8)} ${t.asset.symbol}`],
     ["Fee", formatNumber(t.fee, 8)],
-    ["Status", statusBadge(t.status)],
+    ["Status", moneyStatusBadge(t.status)],
     ["Description", t.description ?? "—"],
     ["Created", formatDate(t.createdAt)],
     ["Last updated", formatDate(t.updatedAt)],

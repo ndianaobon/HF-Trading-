@@ -743,6 +743,8 @@ model Deposit {
   networkId             String
   amount                Decimal       @db.Decimal(36, 18)
   txHash                String?
+  /// Optional payment screenshot uploaded by the user: { key, name, size, type }
+  proof                 Json?
   address               String?
   status                DepositStatus @default(PENDING)
   confirmations         Int           @default(0)

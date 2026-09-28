@@ -1,17 +1,19 @@
 import { html, $, on, mount } from "../core/dom.js";
 import { api } from "../core/api.js";
 import { invalidate } from "../core/store.js";
-import { pageHeader, statusBadge, smallDemo, copyButton, emptyState, toast } from "../core/ui.js";
+import { icon } from "../core/icons.js";
+import { pageHeader, moneyStatusBadge, moneyStatusLabel, smallDemo, copyButton, emptyState, toast } from "../core/ui.js";
 import { formatDate, formatNumber, truncateMiddle } from "../core/format.js";
 import { adminPage, adminTable, actionModal, statusOptions } from "../components/admin-kit.js";
 
 const { user: admin, view } = await adminPage();
+const proofUrl = (d) => `/api/files?key=${encodeURIComponent(d.proof.key)}`;
 mount(view, html`${pageHeader({ title: "Deposits", description: "Credit deposits only after independently verifying the transaction on-chain or with the custodian." })}<div data-list></div>`);
 
 const list = adminTable($("[data-list]", view), {
   endpoint: "/api/admin/deposits",
   filters: [
-    { name: "status", type: "select", options: statusOptions(["PENDING", "CONFIRMING", "COMPLETED", "FAILED", "EXPIRED"]) },
+    { name: "status", type: "select", options: statusOptions(["PENDING", "CONFIRMING", "COMPLETED", "FAILED", "EXPIRED"], undefined, moneyStatusLabel) },
     { name: "q", type: "search", placeholder: "Search tx hash, ID or email", cls: "md:w-72" },
   ],
   empty: emptyState({ title: "No deposits" }),
@@ -21,8 +23,16 @@ const list = adminTable($("[data-list]", view), {
     { key: "amt", header: "Amount", align: "right", cell: (d) => html`<span class="num">${formatNumber(d.amount, 8)}</span>` },
     { key: "n", header: "Network", hideOnMobile: true, cell: (d) => html`<span class="text-muted">${d.network.name}</span>` },
     { key: "tx", header: "Transaction ID", cell: (d) => (d.txHash ? html`<span class="flex items-center gap-1 font-mono text-xs text-muted">${truncateMiddle(d.txHash, 8)} ${copyButton(d.txHash, "Copy transaction hash", true)}</span>` : html`<span class="text-xs text-dim">${d.provider === "demo-simulator" ? "Simulated" : "—"}</span>`) },
+    {
+      key: "p",
+      header: "Proof",
+      cell: (d) =>
+        d.proof?.key
+          ? html`<a href="${proofUrl(d)}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-semibold text-accent hover:text-accent-strong">${icon("image", "h-3.5 w-3.5")} View</a>`
+          : html`<span class="text-xs text-dim">—</span>`,
+    },
     { key: "d", header: "Date", hideOnMobile: true, cell: (d) => html`<span class="text-xs text-muted">${formatDate(d.createdAt)}</span>` },
-    { key: "s", header: "Status", cell: (d) => html`<div>${statusBadge(d.status)}${d.status === "CONFIRMING" ? html`<span class="ml-1 text-[10px] text-dim">${d.confirmations}/${d.requiredConfirmations}</span>` : ""}${d.failureReason ? html`<p class="mt-0.5 max-w-40 truncate text-[10px] text-down">${d.failureReason}</p>` : ""}</div>` },
+    { key: "s", header: "Status", cell: (d) => html`<div>${moneyStatusBadge(d.status)}${d.status === "CONFIRMING" ? html`<span class="ml-1 text-[10px] text-dim">${d.confirmations}/${d.requiredConfirmations}</span>` : ""}${d.failureReason ? html`<p class="mt-0.5 max-w-40 truncate text-[10px] text-down">${d.failureReason}</p>` : ""}</div>` },
     {
       key: "act",
       header: html`<span class="sr-only">Actions</span>`,
@@ -42,7 +52,13 @@ on(view, "click", "[data-act][data-id]", async (_e, b) => {
     confirmLabel: approve ? "Credit deposit" : "Reject deposit",
     tone: approve ? "primary" : "danger",
     reason: approve ? undefined : "required",
-    warning: approve ? (row.isDemo ? "Demo deposit: approving credits simulated funds only." : `Confirm transaction ${row.txHash ?? ""} on ${row.network.name} has at least ${row.requiredConfirmations} confirmations to the configured address before crediting.`) : undefined,
+    warning: approve
+      ? row.isDemo
+        ? "Demo deposit: approving credits simulated funds only."
+        : row.txHash
+          ? `Confirm transaction ${row.txHash} on ${row.network.name} has at least ${row.requiredConfirmations} confirmations to the configured address before crediting.`
+          : `No transaction hash was provided${row.proof ? " — check the payment screenshot" : ""}. Confirm ${formatNumber(row.amount, 8)} ${row.asset.symbol} arrived at the configured ${row.network.name} address before crediting.`
+      : undefined,
     onConfirm: ({ reason }) => api(`/api/admin/deposits/${row.id}`, { body: { action: b.dataset.act, reason } }),
   });
   if (ok) {

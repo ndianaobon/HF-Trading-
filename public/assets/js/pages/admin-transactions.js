@@ -1,6 +1,6 @@
 import { html, $, mount, param } from "../core/dom.js";
 import { icon } from "../core/icons.js";
-import { pageHeader, statusBadge, smallDemo, notice, emptyState } from "../core/ui.js";
+import { pageHeader, moneyStatusBadge, moneyStatusLabel, smallDemo, notice, emptyState } from "../core/ui.js";
 import { formatDate, formatNumber, titleCase } from "../core/format.js";
 import { adminPage, adminTable, statusOptions, qs } from "../components/admin-kit.js";
 
@@ -21,7 +21,7 @@ const list = adminTable($("[data-list]", view), {
   filters: [
     { name: "q", type: "search", placeholder: "Search reference, ID or email" },
     { name: "type", type: "select", options: statusOptions(["DEPOSIT", "WITHDRAWAL", "TRADE", "TRANSFER", "INVESTMENT", "COPY_TRADING", "REFERRAL", "FEE", "ADJUSTMENT", "PROFIT"], "All types") },
-    { name: "status", type: "select", options: statusOptions(["PENDING", "CONFIRMING", "COMPLETED", "FAILED", "CANCELLED", "EXPIRED"]) },
+    { name: "status", type: "select", options: statusOptions(["PENDING", "CONFIRMING", "COMPLETED", "FAILED", "CANCELLED", "EXPIRED"], undefined, moneyStatusLabel) },
   ],
   empty: emptyState({ title: "No transactions" }),
   columns: [
@@ -30,7 +30,7 @@ const list = adminTable($("[data-list]", view), {
     { key: "t", header: "Type", cell: (t) => html`<span class="flex items-center gap-1.5">${titleCase(t.type)} ${t.isDemo ? smallDemo() : ""}</span>` },
     { key: "a", header: "Amount", align: "right", cell: (t) => html`<span class="num ${t.direction === "CREDIT" ? "text-up" : ""}">${t.direction === "CREDIT" ? "+" : "−"}${formatNumber(t.amount, 8)} ${t.asset.symbol}</span>` },
     { key: "f", header: "Fee", align: "right", hideOnMobile: true, cell: (t) => html`<span class="num text-muted">${Number(t.fee) ? formatNumber(t.fee, 8) : "—"}</span>` },
-    { key: "s", header: "Status", cell: (t) => statusBadge(t.status) },
+    { key: "s", header: "Status", cell: (t) => moneyStatusBadge(t.status) },
     { key: "r", header: "Transaction ID", hideOnMobile: true, cell: (t) => html`<span class="font-mono text-xs text-muted">${t.reference}</span>` },
   ],
 });

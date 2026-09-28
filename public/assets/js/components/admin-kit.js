@@ -22,7 +22,7 @@ export const qs = (params) => {
   return p.toString();
 };
 
-export const statusOptions = (list, all = "All statuses") => [["", all], ...list.map((s) => [s, titleCase(s)])];
+export const statusOptions = (list, all = "All statuses", label = titleCase) => [["", all], ...list.map((s) => [s, label(s)])];
 
 /**
  * Filterable, paginated table backed by an admin list endpoint returning

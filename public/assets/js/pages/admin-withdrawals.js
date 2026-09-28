@@ -1,7 +1,7 @@
 import { html, $, on, mount } from "../core/dom.js";
 import { api } from "../core/api.js";
 import { invalidate } from "../core/store.js";
-import { pageHeader, statusBadge, smallDemo, copyButton, emptyState, toast } from "../core/ui.js";
+import { pageHeader, moneyStatusBadge, moneyStatusLabel, smallDemo, copyButton, emptyState, toast } from "../core/ui.js";
 import { formatDate, formatNumber, truncateMiddle } from "../core/format.js";
 import { adminPage, adminTable, actionModal, statusOptions } from "../components/admin-kit.js";
 
@@ -19,7 +19,7 @@ const btn = (action, id, primary) => html`<button type="button" class="btn ${pri
 const list = adminTable($("[data-list]", view), {
   endpoint: "/api/admin/withdrawals",
   filters: [
-    { name: "status", type: "select", options: statusOptions(["PENDING_REVIEW", "PROCESSING", "COMPLETED", "REJECTED", "FAILED", "CANCELLED"]) },
+    { name: "status", type: "select", options: statusOptions(["PENDING_REVIEW", "PROCESSING", "COMPLETED", "REJECTED", "FAILED", "CANCELLED"], undefined, moneyStatusLabel) },
     { name: "q", type: "search", placeholder: "Search address, tx hash or email", cls: "md:w-72" },
   ],
   empty: emptyState({ title: "No withdrawals" }),
@@ -30,7 +30,7 @@ const list = adminTable($("[data-list]", view), {
     { key: "dest", header: "Destination", cell: (w) => html`<div><span class="flex items-center gap-1 font-mono text-xs text-muted">${truncateMiddle(w.address, 8)} ${copyButton(w.address, "Copy address", true)}</span><span class="text-[10px] text-dim">${w.network.name}${w.memo ? ` · memo ${w.memo}` : ""}</span></div>` },
     { key: "fee", header: "Fee", align: "right", hideOnMobile: true, cell: (w) => html`<span class="num text-muted">${formatNumber(w.fee, 8)}</span>` },
     { key: "d", header: "Date", hideOnMobile: true, cell: (w) => html`<span class="text-xs text-muted">${formatDate(w.createdAt)}</span>` },
-    { key: "s", header: "Status", cell: (w) => html`<div>${statusBadge(w.status)}${w.txHash ? html`<p class="mt-0.5 font-mono text-[10px] text-dim">${truncateMiddle(w.txHash, 6)}</p>` : ""}${w.rejectionReason ? html`<p class="mt-0.5 max-w-40 truncate text-[10px] text-down">${w.rejectionReason}</p>` : ""}</div>` },
+    { key: "s", header: "Status", cell: (w) => html`<div>${moneyStatusBadge(w.status)}${w.txHash ? html`<p class="mt-0.5 font-mono text-[10px] text-dim">${truncateMiddle(w.txHash, 6)}</p>` : ""}${w.rejectionReason ? html`<p class="mt-0.5 max-w-40 truncate text-[10px] text-down">${w.rejectionReason}</p>` : ""}</div>` },
     {
       key: "act",
       header: html`<span class="sr-only">Actions</span>`,

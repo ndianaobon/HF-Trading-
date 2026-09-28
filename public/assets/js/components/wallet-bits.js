@@ -5,7 +5,7 @@ import { html, $ } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { api } from "../core/api.js";
 import { invalidate } from "../core/store.js";
-import { statusBadge, smallDemo, openModal, notice, toast, assetIcon } from "../core/ui.js";
+import { moneyStatusBadge, smallDemo, openModal, notice, toast, assetIcon } from "../core/ui.js";
 import { field, selectField, bindForm, rules } from "../core/forms.js";
 import { formatNumber, timeAgo, titleCase, toNum } from "../core/format.js";
 
@@ -14,7 +14,7 @@ export function txRow(tx) {
   return html`<div class="flex items-center gap-3 py-3">
     <span class="grid h-9 w-9 shrink-0 place-items-center rounded-xl ${credit ? "bg-up-soft text-up" : "bg-panel-3 text-muted"}">${icon(credit ? "arrow-down-left" : "arrow-up-right", "h-4 w-4")}</span>
     <div class="min-w-0 flex-1"><p class="flex min-w-0 items-center gap-2 text-sm font-medium text-white"><span class="min-w-0 truncate">${tx.description ?? titleCase(tx.type)}</span>${tx.isDemo ? smallDemo() : ""}</p><p class="truncate text-xs text-dim">${titleCase(tx.type)} · ${timeAgo(tx.createdAt)}</p></div>
-    <div class="shrink-0 text-right"><p class="num text-sm font-semibold ${credit ? "text-up" : "text-fg"}">${credit ? "+" : "−"}${formatNumber(tx.amount, 8)} ${tx.asset.symbol}</p>${statusBadge(tx.status)}</div>
+    <div class="shrink-0 text-right"><p class="num text-sm font-semibold ${credit ? "text-up" : "text-fg"}">${credit ? "+" : "−"}${formatNumber(tx.amount, 8)} ${tx.asset.symbol}</p>${moneyStatusBadge(tx.status)}</div>
   </div>`;
 }
 
@@ -111,7 +111,7 @@ export function resolvePick(assets, asset, network, mode) {
 
 const DEPOSIT_STEPS = ["PENDING", "CONFIRMING", "COMPLETED"];
 
-/** Pending → Confirming (n/m) → Completed tracker, or a terminal failure. */
+/** Pending → Confirming (n/m) → Successful tracker, or a terminal failure. */
 export function depositProgress(status, confirmations, required) {
   if (status === "FAILED" || status === "EXPIRED") return html`<p class="text-xs font-semibold text-down">${status === "FAILED" ? "Failed" : "Expired"}</p>`;
   const idx = DEPOSIT_STEPS.indexOf(status);
@@ -120,6 +120,6 @@ export function depositProgress(status, confirmations, required) {
     ${DEPOSIT_STEPS.map(
       (s, i) => html`<div class="flex items-center gap-1.5"><span class="grid h-4 w-4 place-items-center rounded-full border text-[9px] ${done(i) ? "border-up bg-up text-[#04140d]" : i === idx ? "border-info text-info" : "border-line-strong text-dim"}">${done(i) ? icon("check", "h-2.5 w-2.5") : i + 1}</span>${i < DEPOSIT_STEPS.length - 1 ? html`<span class="h-px w-4 ${i < idx ? "bg-up" : "bg-line-strong"}"></span>` : ""}</div>`,
     )}
-    <span class="ml-1 text-xs text-muted">${status === "CONFIRMING" ? `${confirmations}/${required}` : status === "COMPLETED" ? "Credited" : "Awaiting"}</span>
+    <span class="ml-1 text-xs text-muted">${status === "CONFIRMING" ? `${confirmations}/${required}` : status === "COMPLETED" ? "Successful" : "Awaiting"}</span>
   </div>`;
 }

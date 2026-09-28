@@ -2,7 +2,7 @@ import { html, $, on, mount, cx } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { api } from "../core/api.js";
 import { watch, invalidate } from "../core/store.js";
-import { card, badge, demoBadge, smallDemo, statusBadge, errorState, emptyState, skeleton, toast, DataTable } from "../core/ui.js";
+import { card, badge, demoBadge, smallDemo, statusBadge, moneyStatusBadge, errorState, emptyState, skeleton, toast, DataTable } from "../core/ui.js";
 import { countryName, COUNTRIES } from "../core/countries.js";
 import { formatDate, formatNumber, formatUsd, titleCase } from "../core/format.js";
 import { adminPage, actionModal, kv } from "../components/admin-kit.js";
@@ -129,7 +129,7 @@ watch(key, ({ data: u, error }) => {
         { key: "d", header: "Date", cell: (t) => html`<span class="text-xs text-muted">${formatDate(t.createdAt)}</span>` },
         { key: "t", header: "Type", cell: (t) => html`<span class="flex items-center gap-1.5">${titleCase(t.type)} ${t.isDemo ? smallDemo() : ""}</span>` },
         { key: "a", header: "Amount", align: "right", cell: (t) => html`<span class="${cx("num", t.direction === "CREDIT" && "text-up")}">${t.direction === "CREDIT" ? "+" : "−"}${formatNumber(t.amount, 8)} ${t.asset.symbol}</span>` },
-        { key: "s", header: "Status", cell: (t) => statusBadge(t.status) },
+        { key: "s", header: "Status", cell: (t) => moneyStatusBadge(t.status) },
         { key: "r", header: "Reference", cell: (t) => html`<span class="font-mono text-xs text-muted">${t.reference}</span>` },
       ],
     }).set(u.transactions);

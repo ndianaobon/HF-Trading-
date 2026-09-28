@@ -195,12 +195,17 @@ function addressBody(a, n) {
           : ""}
       </div>
     </div>
-    ${notice("warn", { body: html`Send only <b>${a.symbol}</b> on <b>${n.name}</b> to this address. Other coins or networks may be permanently lost.${d.address.shared ? " This is a shared platform address — report your transaction hash below so we can credit your account." : ""}` })}
+    ${notice("warn", { body: html`Send only <b>${a.symbol}</b> on <b>${n.name}</b> to this address. Other coins or networks may be permanently lost.${d.address.shared ? " This is a shared platform address — report your deposit below so we can credit your account." : ""}` })}
     <button type="button" class="btn btn-primary w-full py-3.5 text-base" data-share>${icon("share-2", "h-5 w-5")} Save and Share Address</button>
     <details class="group rounded-2xl border border-line bg-base-2 p-4" ${d.address.shared ? html`open` : ""}>
       <summary class="flex cursor-pointer list-none items-center justify-between text-sm font-bold text-white">Already sent? Report your deposit ${icon("chevron-down", "h-4 w-4 text-dim transition-transform group-open:rotate-180")}</summary>
       <form data-report class="mt-4 space-y-4" novalidate>
-        <div class="grid gap-3 sm:grid-cols-2">${field({ name: "amount", label: "Amount sent", inputmode: "decimal", suffix: a.symbol })}${field({ name: "txHash", label: "Transaction hash", cls: "font-mono", autocomplete: "off" })}</div>
+        <div class="grid gap-3 sm:grid-cols-2">${field({ name: "amount", label: "Amount sent", inputmode: "decimal", suffix: a.symbol })}${field({ name: "txHash", label: "Transaction hash (optional)", cls: "font-mono", autocomplete: "off" })}</div>
+        <div class="field">
+          <label class="label" for="dep-proof">Payment screenshot (optional)</label>
+          <input id="dep-proof" name="proof" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" class="input py-2 text-sm" />
+          <p class="hint">JPG, PNG, WEBP or PDF, up to 8 MB. Adding a hash or screenshot helps us confirm your deposit faster.</p>
+        </div>
         <div data-form-error hidden></div>
         <button type="submit" class="btn btn-secondary w-full">I've sent the funds</button>
       </form>
@@ -312,16 +317,21 @@ async function submit(form, kind) {
   setFormError(form, null);
   if (!/^\d+(\.\d+)?$/.test(amount) || Number(amount) <= 0) return setFormError(form, "Enter a valid amount.");
   if (instr.data && Number(amount) < Number(instr.data.minDeposit)) return setFormError(form, `Minimum deposit is ${instr.data.minDeposit} ${asset}.`);
-  const txHash = form.txHash?.value.trim();
-  if (kind === "report" && (!txHash || txHash.length < 10)) return setFormError(form, "Enter the transaction hash from your wallet.");
+  const txHash = form.txHash?.value.trim() ?? "";
+  const proof = form.proof?.files?.[0];
+  if (kind === "report" && txHash && !/^[A-Za-z0-9]{10,128}$/.test(txHash)) return setFormError(form, "That transaction hash doesn't look right. Check it, or leave it empty.");
+  if (proof && proof.size > 8 * 1024 * 1024) return setFormError(form, "The screenshot must be 8 MB or smaller.");
   try {
     await withBusy(form.querySelector("[type=submit]"), async () => {
       if (kind === "simulate") {
         await api("/api/deposits/simulate", { body: { asset, network, amount } });
         toast.success("Simulated deposit created", "It will confirm over the next few seconds.");
       } else {
-        await api("/api/deposits", { body: { asset, network, amount, txHash } });
-        toast.success("Deposit reported", "We'll credit it once it's confirmed on-chain.");
+        const data = new FormData();
+        Object.entries({ asset, network, amount, txHash }).forEach(([k, v]) => data.append(k, v));
+        if (proof) data.append("proof", proof);
+        await api("/api/deposits", { form: data });
+        toast.success("Deposit submitted", "We'll credit it once the payment is confirmed.");
       }
     });
     form.reset();

@@ -21,6 +21,10 @@ const RISK_TONES = { LOW: "up", MEDIUM: "info", HIGH: "warn", VERY_HIGH: "down" 
 
 export const badge = (text, tone = "neutral", cls = "") => html`<span class="${cx("badge", `badge-${tone}`, cls)}">${text}</span>`;
 export const statusBadge = (status, label) => html`<span class="badge badge-dot badge-${STATUS_TONES[status] ?? "neutral"}">${label ?? titleCase(status)}</span>`;
+
+/** Money movements (deposits, withdrawals, ledger entries) show COMPLETED as "Successful". */
+export const moneyStatusLabel = (status) => (status === "COMPLETED" ? "Successful" : titleCase(status));
+export const moneyStatusBadge = (status) => statusBadge(status, moneyStatusLabel(status));
 export const riskBadge = (level) => badge(`${titleCase(level)} risk`, RISK_TONES[level] ?? "neutral");
 export const demoBadge = (label = "Demo", cls = "") => badge(label, "warn", cls);
 export const smallDemo = () => demoBadge("Demo", "px-1.5 py-0 text-[9px]");
