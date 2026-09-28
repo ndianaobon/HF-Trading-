@@ -9,7 +9,7 @@ export const PLAN_FEATURES = {
   basic: ["Full Analysis"],
   silver: ["Full Analysis", "Premium Signals", "Personal Manager"],
   gold: ["Full Analysis", "Premium Signals", "Personal Manager", "Signal Access"],
-  platinum: ["Full Analysis", "Premium Signals", "Personal Manager", "Priority Support", "Advanced Analytics", "Signal Access"],
+  platinum: ["Full Analysis", "Premium Signals", "Personal Manager", "Signal Access", "Priority Support", "Advanced Analytics"],
 };
 
 /** Investment plan card. Never shows projected or guaranteed returns. */
