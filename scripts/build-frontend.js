@@ -19,6 +19,7 @@ import { createRequire } from "node:module";
 import { spawnSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
 import { createHash } from "node:crypto";
+import { buildCsp } from "../lib/security/csp.js";
 
 const require = createRequire(import.meta.url);
 const ROOT = process.cwd();
@@ -98,6 +99,7 @@ function renderPage(body, meta, relPath) {
     robots: meta.robots ?? "index, follow",
     path: urlPath === "/" ? "/" : urlPath,
     assetBase: `/assets/v/${ASSET_VERSION}`,
+    csp: buildCsp({ meta: true }),
     script: meta.script ?? "site",
     bodyClass: meta.bodyClass ?? "",
     content: body,

@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { buildCsp } from "./lib/security/csp.js";
 
 const isDev = process.env.NODE_ENV !== "production";
 
@@ -10,20 +11,7 @@ try {
   assetVersion = null;
 }
 
-// Market data is streamed directly from the public provider in the browser;
-// everything else is same-origin.
-const csp = [
-  "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "img-src 'self' data: blob:",
-  "font-src 'self' data: https://fonts.gstatic.com",
-  "connect-src 'self' https://data-api.binance.vision wss://data-stream.binance.vision" + (isDev ? " ws://localhost:* ws://127.0.0.1:*" : ""),
-  "frame-ancestors 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-  "object-src 'none'",
-].join("; ");
+const csp = buildCsp({ dev: isDev });
 
 const securityHeaders = [
   { key: "Content-Security-Policy", value: csp },

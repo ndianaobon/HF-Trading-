@@ -31,6 +31,8 @@ export const GET = route({ auth: "user" }, async ({ session, params }) => {
 
 /** Reply (multipart with optional files, or JSON). */
 export const POST = route({ auth: "user", rateLimit: RATE_LIMITS.support }, async ({ session, params, req }) => {
+  const owned = await prisma.supportTicket.count({ where: { id: params.id, userId: session.user.id } });
+  if (!owned) throw new AppError("NOT_FOUND");
   const type = req.headers.get("content-type") ?? "";
   let body;
   let files = [];
