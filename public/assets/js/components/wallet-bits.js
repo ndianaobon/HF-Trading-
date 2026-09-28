@@ -7,13 +7,13 @@ import { api } from "../core/api.js";
 import { invalidate } from "../core/store.js";
 import { moneyStatusBadge, smallDemo, openModal, notice, toast, assetIcon } from "../core/ui.js";
 import { field, selectField, bindForm, rules } from "../core/forms.js";
-import { formatNumber, timeAgo, titleCase, toNum } from "../core/format.js";
+import { formatNumber, timeAgo, txTypeLabel, toNum } from "../core/format.js";
 
 export function txRow(tx) {
   const credit = tx.direction === "CREDIT";
   return html`<div class="flex items-center gap-3 py-3">
     <span class="grid h-9 w-9 shrink-0 place-items-center rounded-xl ${credit ? "bg-up-soft text-up" : "bg-panel-3 text-muted"}">${icon(credit ? "arrow-down-left" : "arrow-up-right", "h-4 w-4")}</span>
-    <div class="min-w-0 flex-1"><p class="flex min-w-0 items-center gap-2 text-sm font-medium text-white"><span class="min-w-0 truncate">${tx.description ?? titleCase(tx.type)}</span>${tx.isDemo ? smallDemo() : ""}</p><p class="truncate text-xs text-dim">${titleCase(tx.type)} · ${timeAgo(tx.createdAt)}</p></div>
+    <div class="min-w-0 flex-1"><p class="flex min-w-0 items-center gap-2 text-sm font-medium text-white"><span class="min-w-0 truncate">${tx.description ?? txTypeLabel(tx)}</span>${tx.isDemo ? smallDemo() : ""}</p><p class="truncate text-xs text-dim">${txTypeLabel(tx)} · ${timeAgo(tx.createdAt)}</p></div>
     <div class="shrink-0 text-right"><p class="num text-sm font-semibold ${credit ? "text-up" : "text-fg"}">${credit ? "+" : "−"}${formatNumber(tx.amount, 8)} ${tx.asset.symbol}</p>${moneyStatusBadge(tx.status)}</div>
   </div>`;
 }

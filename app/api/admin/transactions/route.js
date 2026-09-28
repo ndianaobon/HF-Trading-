@@ -18,7 +18,7 @@ export const GET = route({ admin: "transactions.read", query: transactionQuery }
           date: t.createdAt,
           reference: t.reference,
           user: t.user.email,
-          type: t.type,
+          type: t.metadata?.express ? "EXPRESS_DEPOSIT" : t.type,
           direction: t.direction,
           asset: t.asset.symbol,
           amount: t.amount.toString(),

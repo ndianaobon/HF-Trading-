@@ -3,7 +3,7 @@ import { icon } from "../core/icons.js";
 import { watch } from "../core/store.js";
 import { initApp } from "../core/app-shell.js";
 import { emptyState, pageHeader, pagination, tabs, smallDemo, moneyStatusBadge, moneyStatusLabel, copyButton, openModal, DataTable } from "../core/ui.js";
-import { formatDate, formatNumber, titleCase } from "../core/format.js";
+import { formatDate, formatNumber, titleCase, txTypeLabel } from "../core/format.js";
 
 await initApp();
 const view = $("#view");
@@ -40,7 +40,7 @@ const table = new DataTable($("[data-table]", view), {
   empty: emptyState({ title: "No transactions found", description: "Try a different filter or search." }),
   columns: [
     { key: "date", header: "Date", cell: (t) => html`<span class="text-muted">${formatDate(t.createdAt)}</span>` },
-    { key: "type", header: "Type", cell: (t) => html`<span class="flex items-center gap-2"><span class="font-medium text-white">${titleCase(t.type)}</span>${t.isDemo ? smallDemo() : ""}</span>` },
+    { key: "type", header: "Type", cell: (t) => html`<span class="flex items-center gap-2"><span class="font-medium text-white">${txTypeLabel(t)}</span>${t.isDemo ? smallDemo() : ""}</span>` },
     { key: "asset", header: "Asset", cell: (t) => html`<span class="font-semibold">${t.asset.symbol}</span>` },
     { key: "amount", header: "Amount", align: "right", cell: (t) => html`<span class="num font-semibold ${t.direction === "CREDIT" ? "text-up" : "text-fg"}">${t.direction === "CREDIT" ? "+" : "−"}${formatNumber(t.amount, 8)}</span>` },
     { key: "fee", header: "Fee", align: "right", hideOnMobile: true, cell: (t) => html`<span class="num text-muted">${Number(t.fee) ? formatNumber(t.fee, 8) : "—"}</span>` },
@@ -106,7 +106,7 @@ function showDetail(t) {
   const rows = [
     ["Transaction ID", html`<span class="flex items-center justify-end gap-2 font-mono">${t.reference}${copyButton(t.reference, "Copy", true)}</span>`],
     ["Internal ID", html`<span class="font-mono text-xs">${t.id}</span>`],
-    ["Type", titleCase(t.type)],
+    ["Type", txTypeLabel(t)],
     ["Direction", t.direction === "CREDIT" ? "Credit (in)" : "Debit (out)"],
     ["Amount", `${formatNumber(t.amount, 8)} ${t.asset.symbol}`],
     ["Fee", formatNumber(t.fee, 8)],

@@ -4,7 +4,7 @@ import { api } from "../core/api.js";
 import { watch, invalidate } from "../core/store.js";
 import { card, badge, demoBadge, smallDemo, statusBadge, moneyStatusBadge, errorState, emptyState, skeleton, toast, DataTable } from "../core/ui.js";
 import { countryName, COUNTRIES } from "../core/countries.js";
-import { formatDate, formatNumber, formatUsd, titleCase } from "../core/format.js";
+import { formatDate, formatNumber, formatUsd, titleCase, txTypeLabel } from "../core/format.js";
 import { adminPage, actionModal, kv } from "../components/admin-kit.js";
 
 const { user: admin, view } = await adminPage();
@@ -115,6 +115,10 @@ watch(key, ({ data: u, error }) => {
           }</div>`,
         })}
       </div>
+      ${card({
+        title: `Documents${u.documents.length ? ` (${u.documents.length})` : ""}`,
+        body: html`<div class="card-body">${!u.documents.length ? html`<p class="text-sm text-dim">No uploaded documents.</p>` : html`<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">${u.documents.map(docTile)}</div>`}</div>`,
+      })}
       ${card({ title: "Recent transactions", action: admin.can("transactions.read") ? html`<a href="/admin/transactions?userId=${u.id}" class="text-sm font-semibold text-accent">All →</a>` : "", body: u.transactions === null ? html`<p class="px-5 pb-5 text-sm text-dim">You don't have permission to view transactions.</p>` : html`<div data-tx></div>` })}
       ${card({ title: "Login history", body: html`<div data-logins></div>` })}
     </div>`,
@@ -127,7 +131,7 @@ watch(key, ({ data: u, error }) => {
       empty: emptyState({ title: "No transactions" }),
       columns: [
         { key: "d", header: "Date", cell: (t) => html`<span class="text-xs text-muted">${formatDate(t.createdAt)}</span>` },
-        { key: "t", header: "Type", cell: (t) => html`<span class="flex items-center gap-1.5">${titleCase(t.type)} ${t.isDemo ? smallDemo() : ""}</span>` },
+        { key: "t", header: "Type", cell: (t) => html`<span class="flex items-center gap-1.5">${txTypeLabel(t)} ${t.isDemo ? smallDemo() : ""}</span>` },
         { key: "a", header: "Amount", align: "right", cell: (t) => html`<span class="${cx("num", t.direction === "CREDIT" && "text-up")}">${t.direction === "CREDIT" ? "+" : "−"}${formatNumber(t.amount, 8)} ${t.asset.symbol}</span>` },
         { key: "s", header: "Status", cell: (t) => moneyStatusBadge(t.status) },
         { key: "r", header: "Reference", cell: (t) => html`<span class="font-mono text-xs text-muted">${t.reference}</span>` },
@@ -146,6 +150,21 @@ watch(key, ({ data: u, error }) => {
     ],
   }).set(u.loginHistory);
 });
+
+function docTile(d) {
+  const url = `/api/files?key=${encodeURIComponent(d.key)}`;
+  const isImage = d.type?.startsWith("image/");
+  return html`<div class="flex flex-col overflow-hidden rounded-xl border border-line bg-panel-2">
+    <a href="${url}" target="_blank" rel="noopener" class="grid aspect-[4/3] place-items-center bg-base-2 hover:opacity-90" title="Open ${d.name ?? "file"}">
+      ${isImage ? html`<img src="${url}" alt="${d.name ?? "Uploaded image"}" loading="lazy" class="h-full w-full object-cover" />` : html`<span class="flex flex-col items-center gap-1 text-muted">${icon("file-text", "h-8 w-8")}<span class="text-xs font-semibold">PDF</span></span>`}
+    </a>
+    <div class="min-w-0 p-2.5">
+      <p class="truncate text-xs font-semibold text-white">${d.source} · ${d.source === "KYC" ? titleCase(d.label) : d.label}</p>
+      <p class="truncate text-[11px] text-dim" title="${d.name ?? ""}">${d.name ?? ""}</p>
+      <div class="mt-1.5 flex items-center justify-between gap-2 text-[11px]"><span class="text-dim">${formatDate(d.createdAt, "date")}</span>${d.link ? html`<a href="${d.link}" class="font-semibold text-accent">View →</a>` : ""}</div>
+    </div>
+  </div>`;
+}
 
 const STATUSES = ["ACTIVE", "PENDING_VERIFICATION", "SUSPENDED", "BANNED", "CLOSED"];
 const PROFILE_FIELDS = [
@@ -186,9 +205,9 @@ on(view, "click", "[data-adjust]", async () => {
     tone: "danger",
     reason: "required",
     reasonLabel: "Internal reason (audit log only)",
-    warning: "Credits and debits appear in the user's statement as a balance adjustment; Profit appears as trading profit and counts toward their realized P&L. Every entry is kept in the audit log with your name. Debits can't take the available balance below zero.",
+    warning: "Express deposit appears in the user's statement as a deposit; Profit appears as trading profit and counts toward their realized P&L; Debit appears as a balance adjustment. Every entry is kept in the audit log with your name. Debits can't take the available balance below zero.",
     extraFields: html`<div class="grid gap-3 sm:grid-cols-3">
-        <div class="field"><label class="label" for="adj-dir">Type</label><select id="adj-dir" name="direction" class="select"><option value="CREDIT">Credit (+)</option><option value="PROFIT">Profit (+)</option><option value="DEBIT">Debit (−)</option></select></div>
+        <div class="field"><label class="label" for="adj-dir">Type</label><select id="adj-dir" name="direction" class="select"><option value="CREDIT">Express deposit (+)</option><option value="PROFIT">Profit (+)</option><option value="DEBIT">Debit (−)</option></select></div>
         <div class="field"><label class="label" for="adj-asset">Asset</label><select id="adj-asset" name="asset" class="select">${[...new Set(assets)].map((s) => html`<option value="${s}">${s}</option>`)}</select></div>
         <div class="field"><label class="label" for="adj-amount">Amount</label><input id="adj-amount" name="amount" class="input" inputmode="decimal" placeholder="0.00" /></div>
       </div>
@@ -197,7 +216,7 @@ on(view, "click", "[data-adjust]", async () => {
       const amount = form.amount.value.trim();
       if (!/^\d+(\.\d+)?$/.test(amount) || Number(amount) <= 0) throw new Error("Enter an amount greater than zero.");
       const r = await api(`${key}/balance`, { body: { direction: form.direction.value, asset: form.asset.value, amount, reason, note: form.note.value.trim() || undefined } });
-      toast.success(form.direction.value === "PROFIT" ? "Profit credited" : "Balance adjusted", `Reference ${r.reference}`);
+      toast.success({ PROFIT: "Profit credited", CREDIT: "Express deposit added" }[form.direction.value] ?? "Balance adjusted", `Reference ${r.reference}`);
     },
   });
   if (ok) invalidate(key);

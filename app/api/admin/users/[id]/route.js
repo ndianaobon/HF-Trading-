@@ -31,12 +31,13 @@ export const GET = route({ admin: "users.read" }, async ({ session, params, ip }
   });
   if (!user) throw new AppError("NOT_FOUND");
   const role = session.user.adminUser?.role;
-  const [wallets, transactions, portfolio] = await Promise.all([
+  const [wallets, transactions, portfolio, documents] = await Promise.all([
     can(role, "wallets.read") ? getWallets(user.id) : Promise.resolve(null),
     can(role, "transactions.read")
       ? prisma.transaction.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" }, take: 25, include: { asset: { select: { symbol: true } } } })
       : Promise.resolve(null),
     can(role, "wallets.read") ? getPortfolio(user.id).catch(() => null) : Promise.resolve(null),
+    userDocuments(user),
   ]);
   await audit({ actorId: session.user.id, actorEmail: session.user.email, action: "user.view", targetType: "User", targetId: user.id, ip });
 
@@ -52,8 +53,45 @@ export const GET = route({ admin: "users.read" }, async ({ session, params, ip }
     transactions,
     balance: portfolio ? { totalValue: portfolio.totalValue, available: portfolio.availableBalance } : null,
     canAdjustBalance: can(role, "balances.adjust"),
+    documents,
   };
 });
+
+/** Every file the user (or staff on their tickets) has uploaded: KYC, deposit proofs and support attachments. */
+async function userDocuments(user) {
+  const [deposits, messages] = await Promise.all([
+    prisma.deposit.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+      take: 500,
+      select: { id: true, proof: true, amount: true, createdAt: true, asset: { select: { symbol: true } } },
+    }),
+    prisma.supportMessage.findMany({
+      where: { ticket: { userId: user.id } },
+      orderBy: { createdAt: "desc" },
+      take: 1000,
+      select: { attachments: true, isStaff: true, createdAt: true, ticket: { select: { id: true, number: true } } },
+    }),
+  ]);
+  const docs = [
+    ...user.kycApplications.flatMap((k) =>
+      k.documents.map((d) => ({ key: d.storageKey, name: d.fileName, type: d.mimeType, size: d.size, createdAt: d.createdAt, source: "KYC", label: d.type, link: `/admin/kyc?status=&open=${k.id}` })),
+    ),
+    ...deposits
+      .filter((d) => d.proof?.key)
+      .map((d) => ({ ...d.proof, createdAt: d.createdAt, source: "Deposit proof", label: `${d.amount.toString()} ${d.asset.symbol}`, link: `/admin/deposits?q=${d.id}` })),
+    ...messages.flatMap((m) =>
+      (Array.isArray(m.attachments) ? m.attachments : []).map((a) => ({
+        ...a,
+        createdAt: m.createdAt,
+        source: "Support",
+        label: `Ticket #${m.ticket.number}${m.isStaff ? " · staff" : ""}`,
+        link: `/admin/support?ticket=${m.ticket.id}`,
+      })),
+    ),
+  ];
+  return docs.filter((d) => d.key).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
 
 const actionSchema = z.object({
   action: z.enum(["suspend", "ban", "activate", "set_status", "set_signal", "reset_kyc", "revoke_sessions", "verify_email", "unlock", "send_password_reset"]),

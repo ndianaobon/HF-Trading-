@@ -78,6 +78,9 @@ export function timeAgo(v) {
   return formatDate(d, "date");
 }
 
+/** Display name for a transaction's type ("Express Deposit" for admin-funded deposits). */
+export const txTypeLabel = (t) => (t.metadata?.express ? "Express Deposit" : titleCase(t.type));
+
 export const titleCase = (s) =>
   String(s ?? "")
     .toLowerCase()

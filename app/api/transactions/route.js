@@ -12,7 +12,7 @@ export const GET = route({ auth: "user", query: transactionQuery }, async ({ ses
       rows.map((t) => ({
         date: t.createdAt,
         reference: t.reference,
-        type: t.type,
+        type: t.metadata?.express ? "EXPRESS_DEPOSIT" : t.type,
         direction: t.direction,
         asset: t.asset.symbol,
         amount: t.amount.toString(),
