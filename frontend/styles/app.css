@@ -1132,3 +1132,110 @@ html[data-theme="light"] body {
     display: none;
   }
 }
+
+/* ───────────────────────── Page loader ─────────────────────────
+ * Full-screen brand loader (partials/loader.html), hidden by js/loader.js once
+ * the page has loaded. Only opacity and transforms are animated so it stays on
+ * the compositor. The first page of a session plays the full intro; later pages
+ * show the finished logo and fade out quickly (`html.hf-loader-quick`).
+ */
+.hf-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: var(--color-base);
+  color: var(--color-white);
+  transition:
+    opacity 520ms cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s linear 520ms;
+  /* Failsafe: never block the page if the script does not run. */
+  animation: hfl-failsafe 400ms ease 10s forwards;
+}
+.hf-loader.is-done {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.hf-loader__logo {
+  width: min(78vw, 420px);
+  height: auto;
+  overflow: visible;
+  transition: transform 520ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.hf-loader.is-done .hf-loader__logo {
+  transform: scale(1.04);
+}
+.hf-loader svg * {
+  transform-box: fill-box;
+}
+
+.hfl-icon {
+  transform-origin: center;
+  animation: hfl-pop 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.hfl-letter {
+  animation: hfl-rise 560ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.hfl-h { animation-delay: 220ms; }
+.hfl-f { animation-delay: 300ms; }
+.hfl-t { animation-delay: 380ms; }
+.hfl-word {
+  animation: hfl-slide 700ms cubic-bezier(0.2, 0.8, 0.2, 1) 420ms both;
+}
+.hfl-line {
+  transform-origin: left center;
+  animation: hfl-draw 600ms cubic-bezier(0.65, 0, 0.35, 1) 700ms both;
+}
+.hfl-trading {
+  animation: hfl-slide 700ms cubic-bezier(0.2, 0.8, 0.2, 1) 820ms both;
+}
+.hfl-sweep {
+  animation: hfl-sweep 1400ms cubic-bezier(0.45, 0, 0.55, 1) 600ms infinite;
+}
+
+html.hf-loader-quick .hf-loader {
+  transition-duration: 260ms, 0s;
+  transition-delay: 0s, 260ms;
+}
+html.hf-loader-quick .hf-loader :is(.hfl-icon, .hfl-letter, .hfl-word, .hfl-line, .hfl-trading) {
+  animation: none;
+}
+html.hf-loader-quick .hfl-sweep {
+  animation-delay: 0s;
+}
+
+@keyframes hfl-pop {
+  from { opacity: 0; transform: scale(0.86); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes hfl-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes hfl-slide {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes hfl-draw {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes hfl-sweep {
+  from { transform: translateX(0); }
+  to { transform: translateX(92px); }
+}
+@keyframes hfl-failsafe {
+  to { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hf-loader :is(.hfl-icon, .hfl-letter, .hfl-word, .hfl-line, .hfl-trading, .hfl-sweep) {
+    animation: none;
+  }
+  .hf-loader.is-done .hf-loader__logo {
+    transform: none;
+  }
+}
