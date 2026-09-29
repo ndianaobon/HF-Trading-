@@ -38,7 +38,7 @@ mount(
       <span class="pill-label">Trading dashboard</span>
       <h1 class="mt-4 font-display text-[1.9rem] leading-tight font-extrabold tracking-tight text-white sm:text-4xl">Welcome back, <span class="text-accent">${name}</span></h1>
       <p class="mt-2 text-[15px] text-muted">${today}</p>
-      <div class="mt-3">${statusBadge(user.status, `Status: ${ACCOUNT_STATUS[user.status] ?? "Unknown"}`)}</div>
+      <div class="mt-3">${statusBadge(user.status, `Status: ${user.statusLabel || ACCOUNT_STATUS[user.status] || "Unknown"}`)}</div>
       <p class="mt-4 max-w-2xl text-[15px] leading-relaxed text-muted">Monitor live crypto markets, place trades and manage your HarborFinance account.</p>
       <div class="mt-5 grid grid-cols-2 gap-2.5 sm:flex sm:flex-wrap">
         <a href="/dashboard/deposit" class="btn btn-primary">${icon("circle-arrow-down", "h-4 w-4")} Deposit</a>

@@ -265,6 +265,8 @@ model User {
   lockedUntil       DateTime?
   isDemo            Boolean    @default(false)
   signalStrength    Int        @default(0)
+  /// Custom status text set by staff and shown to the user; `status` still controls access
+  statusLabel       String?
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
 

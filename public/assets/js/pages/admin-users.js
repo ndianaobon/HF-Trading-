@@ -19,7 +19,7 @@ adminTable(view.querySelector("[data-list]"), {
   columns: [
     { key: "user", header: "User", cell: (u) => html`<div><p class="flex items-center gap-2 font-semibold text-white">${u.name || "—"} ${u.isDemo ? smallDemo() : ""} ${u.adminRole ? badge(titleCase(u.adminRole), "accent") : ""}</p><p class="text-xs text-dim">${u.email}</p></div>` },
     { key: "country", header: "Country", hideOnMobile: true, cell: (u) => html`<span class="text-muted">${u.country ?? "—"}</span>` },
-    { key: "status", header: "Status", cell: (u) => statusBadge(u.status) },
+    { key: "status", header: "Status", cell: (u) => html`<span class="flex flex-wrap items-center gap-1.5">${statusBadge(u.status)}${u.statusLabel ? badge(u.statusLabel, "accent") : ""}</span>` },
     { key: "kyc", header: "KYC", cell: (u) => statusBadge(u.kycStatus) },
     { key: "2fa", header: "2FA", hideOnMobile: true, cell: (u) => (u.twoFactor ? html`<span class="text-up" title="2FA enabled">${icon("shield-check", "h-4 w-4")}</span>` : html`<span class="text-xs text-dim">Off</span>`) },
     { key: "login", header: "Last login", hideOnMobile: true, cell: (u) => html`<span class="text-xs text-muted">${u.lastLoginAt ? timeAgo(u.lastLoginAt) : "Never"}</span>` },

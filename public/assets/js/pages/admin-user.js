@@ -58,7 +58,7 @@ watch(key, ({ data: u, error }) => {
         <div>
           <h1 class="flex flex-wrap items-center gap-2 font-display text-2xl font-extrabold text-white">${name} ${u.isDemo ? demoBadge() : ""} ${u.adminUser ? badge(titleCase(u.adminUser.role), "accent") : ""}</h1>
           <p class="text-sm text-muted">${u.email} · <span class="font-mono text-xs">${u.id}</span></p>
-          <div class="mt-2 flex flex-wrap gap-2">${statusBadge(u.status)}${statusBadge(u.emailVerifiedAt ? "ACTIVE" : "PENDING_VERIFICATION", u.emailVerifiedAt ? "Email verified" : "Email unverified")}${statusBadge(u.twoFactor?.enabled ? "ACTIVE" : "INACTIVE", u.twoFactor?.enabled ? "2FA on" : "2FA off")}${locked ? badge("Sign-in locked", "down") : ""}</div>
+          <div class="mt-2 flex flex-wrap gap-2">${statusBadge(u.status)}${u.statusLabel ? badge(u.statusLabel, "accent") : ""}${statusBadge(u.emailVerifiedAt ? "ACTIVE" : "PENDING_VERIFICATION", u.emailVerifiedAt ? "Email verified" : "Email unverified")}${statusBadge(u.twoFactor?.enabled ? "ACTIVE" : "INACTIVE", u.twoFactor?.enabled ? "2FA on" : "2FA off")}${locked ? badge("Sign-in locked", "down") : ""}</div>
         </div>
         ${admin.can("users.manage")
           ? html`<div class="flex flex-wrap gap-2">
@@ -192,7 +192,8 @@ const extraFieldsFor = (action) =>
   action === "edit_profile"
     ? profileFields()
     : action === "set_status"
-    ? html`<div class="field"><label class="label" for="am-status">Account status</label><select id="am-status" name="status" class="select">${STATUSES.map((s) => html`<option value="${s}" ${s === current?.status && "selected"}>${titleCase(s)}</option>`)}</select><p class="mt-1 text-xs text-dim">Suspended or closed accounts are signed out of every session.</p></div>`
+    ? html`<div class="field"><label class="label" for="am-status">Account status</label><select id="am-status" name="status" class="select">${STATUSES.map((s) => html`<option value="${s}" ${s === current?.status && "selected"}>${titleCase(s)}</option>`)}</select><p class="mt-1 text-xs text-dim">Controls access. Suspended, banned or closed accounts are signed out of every session.</p></div>
+      <div class="field"><label class="label" for="am-status-label">Custom status (optional)</label><input id="am-status-label" name="statusLabel" class="input" maxlength="40" list="am-status-suggest" placeholder="e.g. VIP, Under review, Premium trader" value="${current?.statusLabel ?? ""}" /><datalist id="am-status-suggest">${["VIP", "Premium", "Under review", "Verified trader", "Restricted", "On hold"].map((s) => html`<option value="${s}"></option>`)}</datalist><p class="mt-1 text-xs text-dim">Type any status to show the user on their dashboard instead of the one above. Leave blank to show the standard status.</p></div>`
     : action === "set_signal"
       ? html`<div class="field"><label class="label" for="am-signal">Signal strength (%)</label><input id="am-signal" name="signalStrength" type="number" min="0" max="100" step="1" inputmode="numeric" class="input" value="${current?.signalStrength ?? 0}" /><p class="mt-1 text-xs text-dim">Shown on the user's dashboard under Trading Analysis.</p></div>`
       : "";
@@ -250,7 +251,7 @@ on(view, "click", "[data-act]", async (_e, b) => {
     onConfirm: ({ reason, form }) =>
       action === "edit_profile"
         ? api(key, { method: "PATCH", body: { ...profileBody(form), reason } })
-        : api(key, { body: { action, reason, status: form.status?.value, signalStrength: form.signalStrength?.value } }),
+        : api(key, { body: { action, reason, status: form.status?.value, statusLabel: form.statusLabel?.value.trim(), signalStrength: form.signalStrength?.value } }),
   });
   if (ok) {
     toast.success("Action completed", meta.title);

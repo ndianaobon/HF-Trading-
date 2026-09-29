@@ -97,6 +97,7 @@ const actionSchema = z.object({
   action: z.enum(["suspend", "ban", "activate", "set_status", "set_signal", "reset_kyc", "revoke_sessions", "verify_email", "unlock", "send_password_reset"]),
   reason: z.string().trim().max(500).optional(),
   status: z.enum(["PENDING_VERIFICATION", "ACTIVE", "SUSPENDED", "BANNED", "CLOSED"]).optional(),
+  statusLabel: z.string().trim().max(40, "Keep the status label under 40 characters").optional(),
   signalStrength: z.coerce.number().int().min(0).max(100).optional(),
 });
 
@@ -137,7 +138,7 @@ export const POST = route({ admin: "users.manage", body: actionSchema }, async (
       await prisma.user.update({ where: { id: user.id }, data: { status: user.emailVerifiedAt ? "ACTIVE" : "PENDING_VERIFICATION" } });
       break;
     case "set_status":
-      await prisma.user.update({ where: { id: user.id }, data: { status: body.status } });
+      await prisma.user.update({ where: { id: user.id }, data: { status: body.status, statusLabel: body.statusLabel || null } });
       if (["SUSPENDED", "BANNED", "CLOSED"].includes(body.status)) await revokeAllSessions(user.id);
       break;
     case "set_signal":
@@ -175,7 +176,12 @@ export const POST = route({ admin: "users.manage", body: actionSchema }, async (
       action: `user.${body.action}`,
       targetType: "User",
       targetId: user.id,
-      metadata: { reason: body.reason, from: body.action === "set_status" ? user.status : body.action === "set_signal" ? user.signalStrength : undefined, to: body.status ?? body.signalStrength },
+      metadata: {
+        reason: body.reason,
+        from: body.action === "set_status" ? user.status : body.action === "set_signal" ? user.signalStrength : undefined,
+        to: body.status ?? body.signalStrength,
+        ...(body.action === "set_status" && { labelFrom: user.statusLabel, labelTo: body.statusLabel || null }),
+      },
     });
   }
   return { ok: true };
