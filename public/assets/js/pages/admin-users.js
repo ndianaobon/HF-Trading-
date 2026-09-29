@@ -2,7 +2,7 @@ import { html, mount } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { pageHeader, statusBadge, smallDemo, badge, emptyState } from "../core/ui.js";
 import { formatDate, timeAgo, titleCase } from "../core/format.js";
-import { adminPage, adminTable, statusOptions } from "../components/admin-kit.js";
+import { adminPage, adminTable, presenceBadge, statusOptions } from "../components/admin-kit.js";
 
 const { view } = await adminPage();
 mount(view, html`${pageHeader({ title: "Users", description: "Search accounts and open a profile to review balances, activity and verification." })}<div data-list></div>`);
@@ -13,6 +13,7 @@ adminTable(view.querySelector("[data-list]"), {
     { name: "q", type: "search", placeholder: "Search email, name, ID or referral code", cls: "md:w-96" },
     { name: "status", type: "select", options: statusOptions(["ACTIVE", "PENDING_VERIFICATION", "SUSPENDED", "BANNED", "CLOSED"]) },
     { name: "staff", type: "select", label: "Account type", options: [["", "All accounts"], ["false", "Customers"], ["true", "Staff"]] },
+    { name: "online", type: "select", label: "Presence", cls: "sm:w-40", options: [["", "Anyone"], ["true", "Online now"]] },
   ],
   onRowClick: (u) => (location.href = `/admin/users/${u.id}`),
   empty: emptyState({ title: "No users found" }),
@@ -22,6 +23,7 @@ adminTable(view.querySelector("[data-list]"), {
     { key: "status", header: "Status", cell: (u) => html`<span class="flex flex-wrap items-center gap-1.5">${statusBadge(u.status)}${u.statusLabel ? badge(u.statusLabel, "accent") : ""}</span>` },
     { key: "kyc", header: "KYC", cell: (u) => statusBadge(u.kycStatus) },
     { key: "2fa", header: "2FA", hideOnMobile: true, cell: (u) => (u.twoFactor ? html`<span class="text-up" title="2FA enabled">${icon("shield-check", "h-4 w-4")}</span>` : html`<span class="text-xs text-dim">Off</span>`) },
+    { key: "online", header: "Activity", cell: (u) => presenceBadge(u) },
     { key: "login", header: "Last login", hideOnMobile: true, cell: (u) => html`<span class="text-xs text-muted">${u.lastLoginAt ? timeAgo(u.lastLoginAt) : "Never"}</span>` },
     { key: "joined", header: "Joined", align: "right", cell: (u) => html`<span class="text-xs text-muted">${formatDate(u.createdAt, "date")}</span>` },
   ],

@@ -6,7 +6,7 @@ import { icon } from "../core/icons.js";
 import { watch } from "../core/store.js";
 import { initAdmin } from "../core/app-shell.js";
 import { pagination, emptyState, openModal, notice, DataTable } from "../core/ui.js";
-import { titleCase } from "../core/format.js";
+import { timeAgo, titleCase } from "../core/format.js";
 
 /** Initialises the admin shell; resolves with { user, view }. */
 export async function adminPage() {
@@ -133,3 +133,9 @@ export function actionModal({ title, description, confirmLabel, tone = "primary"
 
 /** Two-column key/value list. */
 export const kv = (rows) => html`<dl class="space-y-2 text-sm">${rows.map(([k, v]) => html`<div class="flex justify-between gap-3 border-b border-line/60 pb-2 last:border-0"><dt class="text-dim">${k}</dt><dd class="text-right text-fg">${v}</dd></div>`)}</dl>`;
+
+/** Online indicator: green "Online" while active, otherwise "Seen 3h ago" / "Never". */
+export const presenceBadge = (u) =>
+  u.online
+    ? html`<span class="inline-flex items-center gap-1.5 text-xs font-semibold text-up"><span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-up opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-up"></span></span>Online</span>`
+    : html`<span class="inline-flex items-center gap-1.5 text-xs text-dim"><span class="h-2 w-2 rounded-full bg-line-strong"></span>${u.lastSeenAt ? `Seen ${timeAgo(u.lastSeenAt)}` : "Never"}</span>`;

@@ -1,16 +1,19 @@
 import { z } from "zod";
 import { route, paginationSchema, paginate, pageResult } from "@/lib/api/route";
 import { prisma } from "@/lib/db/prisma";
+import { isOnline, lastSeenFor, onlineUserWhere } from "@/lib/auth/session";
 
 const query = z.object({
   q: z.string().trim().max(80).optional(),
   status: z.enum(["PENDING_VERIFICATION", "ACTIVE", "SUSPENDED", "BANNED", "CLOSED"]).optional(),
   staff: z.enum(["true", "false"]).optional(),
+  online: z.enum(["true"]).optional(),
   ...paginationSchema,
 });
 
 export const GET = route({ admin: "users.read", query }, async ({ query }) => {
   const where = {
+    ...(query.online ? onlineUserWhere() : {}),
     ...(query.status ? { status: query.status } : {}),
     ...(query.staff === "true" ? { adminUser: { isNot: null } } : query.staff === "false" ? { adminUser: null } : {}),
     ...(query.q
@@ -38,6 +41,7 @@ export const GET = route({ admin: "users.read", query }, async ({ query }) => {
     }),
     prisma.user.count({ where }),
   ]);
+  const seen = await lastSeenFor(users.map((u) => u.id));
   const items = users.map((u) => ({
     id: u.id,
     email: u.email,
@@ -50,6 +54,8 @@ export const GET = route({ admin: "users.read", query }, async ({ query }) => {
     adminRole: u.adminUser?.role ?? null,
     isDemo: u.isDemo,
     lastLoginAt: u.lastLoginAt,
+    lastSeenAt: seen.get(u.id) ?? null,
+    online: isOnline(seen.get(u.id)),
     createdAt: u.createdAt,
   }));
   return pageResult(items, total, query.page, query.pageSize);

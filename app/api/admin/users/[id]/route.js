@@ -5,7 +5,7 @@ import { can } from "@/lib/auth/rbac";
 import { prisma } from "@/lib/db/prisma";
 import { getWallets } from "@/lib/trading/wallet-service";
 import { getPortfolio } from "@/lib/trading/portfolio-service";
-import { revokeAllSessions } from "@/lib/auth/session";
+import { isOnline, lastSeenFor, revokeAllSessions } from "@/lib/auth/session";
 import { resetKyc } from "@/lib/services/kyc";
 import { audit } from "@/lib/services/audit";
 import { notify } from "@/lib/notifications/service";
@@ -31,19 +31,22 @@ export const GET = route({ admin: "users.read" }, async ({ session, params, ip }
   });
   if (!user) throw new AppError("NOT_FOUND");
   const role = session.user.adminUser?.role;
-  const [wallets, transactions, portfolio, documents] = await Promise.all([
+  const [wallets, transactions, portfolio, documents, seen] = await Promise.all([
     can(role, "wallets.read") ? getWallets(user.id) : Promise.resolve(null),
     can(role, "transactions.read")
       ? prisma.transaction.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" }, take: 25, include: { asset: { select: { symbol: true } } } })
       : Promise.resolve(null),
     can(role, "wallets.read") ? getPortfolio(user.id).catch(() => null) : Promise.resolve(null),
     userDocuments(user),
+    lastSeenFor([user.id]),
   ]);
   await audit({ actorId: session.user.id, actorEmail: session.user.email, action: "user.view", targetType: "User", targetId: user.id, ip });
 
   const { passwordHash: _p, ...safe } = user;
   return {
     ...safe,
+    lastSeenAt: seen.get(user.id) ?? null,
+    online: isOnline(seen.get(user.id)),
     kycApplications: can(role, "kyc.read") ? user.kycApplications.map(({ idNumberEnc: _i, ...k }) => k) : [],
     loginHistory: user.loginHistory.map((l) => ({ ...l, device: describeUserAgent(l.userAgent) })),
     wallets:

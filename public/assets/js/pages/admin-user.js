@@ -5,7 +5,7 @@ import { watch, invalidate } from "../core/store.js";
 import { card, badge, demoBadge, smallDemo, statusBadge, moneyStatusBadge, errorState, emptyState, skeleton, toast, DataTable } from "../core/ui.js";
 import { countryName, COUNTRIES } from "../core/countries.js";
 import { formatDate, formatNumber, formatUsd, kycDocLabel, titleCase, txTypeLabel } from "../core/format.js";
-import { adminPage, actionModal, kv } from "../components/admin-kit.js";
+import { adminPage, actionModal, kv, presenceBadge } from "../components/admin-kit.js";
 
 const { user: admin, view } = await adminPage();
 const id = location.pathname.split("/").pop();
@@ -58,7 +58,7 @@ watch(key, ({ data: u, error }) => {
         <div>
           <h1 class="flex flex-wrap items-center gap-2 font-display text-2xl font-extrabold text-white">${name} ${u.isDemo ? demoBadge() : ""} ${u.adminUser ? badge(titleCase(u.adminUser.role), "accent") : ""}</h1>
           <p class="text-sm text-muted">${u.email} · <span class="font-mono text-xs">${u.id}</span></p>
-          <div class="mt-2 flex flex-wrap gap-2">${statusBadge(u.status)}${u.statusLabel ? badge(u.statusLabel, "accent") : ""}${statusBadge(u.emailVerifiedAt ? "ACTIVE" : "PENDING_VERIFICATION", u.emailVerifiedAt ? "Email verified" : "Email unverified")}${statusBadge(u.twoFactor?.enabled ? "ACTIVE" : "INACTIVE", u.twoFactor?.enabled ? "2FA on" : "2FA off")}${locked ? badge("Sign-in locked", "down") : ""}</div>
+          <div class="mt-2 flex flex-wrap items-center gap-2">${presenceBadge(u)}${statusBadge(u.status)}${u.statusLabel ? badge(u.statusLabel, "accent") : ""}${statusBadge(u.emailVerifiedAt ? "ACTIVE" : "PENDING_VERIFICATION", u.emailVerifiedAt ? "Email verified" : "Email unverified")}${statusBadge(u.twoFactor?.enabled ? "ACTIVE" : "INACTIVE", u.twoFactor?.enabled ? "2FA on" : "2FA off")}${locked ? badge("Sign-in locked", "down") : ""}</div>
         </div>
         ${admin.can("users.manage")
           ? html`<div class="flex flex-wrap gap-2">
@@ -77,6 +77,7 @@ watch(key, ({ data: u, error }) => {
             ["City", u.profile?.city ?? "—"],
             ["Phone", u.profile?.phone ?? "—"],
             ["Joined", formatDate(u.createdAt)],
+            ["Last active", u.lastSeenAt ? formatDate(u.lastSeenAt) : "Never"],
             ["Last login", u.lastLoginAt ? `${formatDate(u.lastLoginAt)} (${u.lastLoginIp ?? "?"})` : "Never"],
             ["Signal strength", `${u.signalStrength ?? 0}%`],
             ["Referral code", u.referralCode],

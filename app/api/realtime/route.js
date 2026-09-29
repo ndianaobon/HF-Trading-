@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/auth/session";
+import { getSession, touchSession } from "@/lib/auth/session";
 import { subscribe } from "@/lib/realtime/bus";
 
 export const dynamic = "force-dynamic";
@@ -27,9 +27,12 @@ export async function GET(req) {
       send(`retry: 5000\nevent: ready\ndata: {"ok":true}\n\n`);
       const unsubscribe = subscribe(session.user.id, (event) => send(`data: ${JSON.stringify(event)}\n\n`));
       const heartbeat = setInterval(() => send(`: ping ${Date.now()}\n\n`), 25_000);
-      // Re-check the session periodically so revoked sessions stop receiving events.
+      // Re-check the session periodically so revoked sessions stop receiving events,
+      // and record activity while the page is open (admin online status).
+      touchSession(session.id);
       const expiry = setInterval(() => {
         if (session.expiresAt < new Date()) cleanup();
+        else touchSession(session.id);
       }, 60_000);
       cleanup = () => {
         clearInterval(heartbeat);
