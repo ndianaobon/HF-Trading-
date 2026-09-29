@@ -24,6 +24,8 @@ let plans = [];
 let subs = [];
 let usdt = 0;
 
+const isMatured = (s) => s.status === "ACTIVE" && s.endsAt && new Date(s.endsAt) <= new Date();
+
 const table = new DataTable($("[data-subs]", view), {
   empty: emptyState({ title: "No subscriptions yet", description: "Choose a plan below to get started." }),
   columns: [
@@ -37,15 +39,15 @@ const table = new DataTable($("[data-subs]", view), {
       align: "right",
       cell: (s) =>
         s.realizedPnl === null
-          ? html`<span class="text-xs text-dim">${s.status === "ACTIVE" && s.endsAt && new Date(s.endsAt) < new Date() ? "Awaiting settlement" : "Not yet settled"}</span>`
+          ? html`<span class="text-xs text-dim">${isMatured(s) ? "Awaiting settlement" : "Not yet settled"}</span>`
           : html`<span class="num font-semibold ${toNum(s.realizedPnl) >= 0 ? "text-up" : "text-down"}">${formatUsd(s.realizedPnl, { sign: true })}</span>`,
     },
-    { key: "status", header: "Status", cell: (s) => statusBadge(s.status) },
+    { key: "status", header: "Status", cell: (s) => (isMatured(s) ? statusBadge("PENDING", "Awaiting settlement") : statusBadge(s.status)) },
     {
       key: "act",
       header: html`<span class="sr-only">Actions</span>`,
       align: "right",
-      cell: (s) => (s.status === "PENDING" || (s.status === "ACTIVE" && s.plan.earlyExitAllowed) ? html`<button type="button" class="btn btn-ghost btn-sm" data-cancel="${s.id}">${s.status === "PENDING" ? "Cancel" : "Exit early"}</button>` : ""),
+      cell: (s) => (s.status === "PENDING" || (s.status === "ACTIVE" && s.plan.earlyExitAllowed && !isMatured(s)) ? html`<button type="button" class="btn btn-ghost btn-sm" data-cancel="${s.id}">${s.status === "PENDING" ? "Cancel" : "Exit early"}</button>` : ""),
     },
   ],
 });

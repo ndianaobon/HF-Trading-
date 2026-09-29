@@ -5,9 +5,10 @@ import { audit } from "@/lib/services/audit";
 import { planSchema, assertNoGuarantees } from "@/lib/validation/admin";
 
 export const GET = route({ admin: "plans.manage" }, async () => {
-  const [plans, stats] = await Promise.all([
+  const [plans, stats, matured] = await Promise.all([
     prisma.investmentPlan.findMany({ orderBy: { sortOrder: "asc" } }),
     prisma.investmentSubscription.groupBy({ by: ["planId", "status"], _sum: { amount: true }, _count: { _all: true } }),
+    prisma.investmentSubscription.groupBy({ by: ["planId"], where: { status: "ACTIVE", endsAt: { lte: new Date() } }, _count: { _all: true } }),
   ]);
   return plans.map((p) => {
     const s = stats.filter((x) => x.planId === p.id);
@@ -15,6 +16,7 @@ export const GET = route({ admin: "plans.manage" }, async () => {
       ...p,
       activeCount: s.filter((x) => x.status === "ACTIVE").reduce((a, x) => a + x._count._all, 0),
       pendingCount: s.filter((x) => x.status === "PENDING").reduce((a, x) => a + x._count._all, 0),
+      maturedCount: matured.find((x) => x.planId === p.id)?._count._all ?? 0,
       allocated: s.filter((x) => x.status === "ACTIVE" || x.status === "PENDING").reduce((a, x) => a + (x._sum.amount?.toNumber() ?? 0), 0),
     };
   });

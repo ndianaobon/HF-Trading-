@@ -2,14 +2,17 @@ import { z } from "zod";
 import { route, paginationSchema, paginate, pageResult } from "@/lib/api/route";
 import { prisma } from "@/lib/db/prisma";
 
-const query = z.object({ status: z.enum(["PENDING", "ACTIVE", "COMPLETED", "CANCELLED"]).optional(), planId: z.string().optional(), ...paginationSchema });
+const query = z.object({ status: z.enum(["PENDING", "ACTIVE", "MATURED", "COMPLETED", "CANCELLED"]).optional(), planId: z.string().optional(), ...paginationSchema });
 
 export const GET = route({ admin: "plans.manage", query }, async ({ query }) => {
-  const where = { ...(query.status ? { status: query.status } : {}), ...(query.planId ? { planId: query.planId } : {}) };
+  // MATURED: active subscriptions whose term has ended and that await the admin's settlement.
+  const status =
+    query.status === "MATURED" ? { status: "ACTIVE", endsAt: { lte: new Date() } } : query.status ? { status: query.status } : {};
+  const where = { ...status, ...(query.planId ? { planId: query.planId } : {}) };
   const [items, total] = await Promise.all([
     prisma.investmentSubscription.findMany({
       where,
-      orderBy: { createdAt: "desc" },
+      orderBy: query.status === "MATURED" ? { endsAt: "asc" } : { createdAt: "desc" },
       include: { user: { select: { email: true } }, plan: { select: { name: true, durationDays: true } } },
       ...paginate(query.page, query.pageSize),
     }),

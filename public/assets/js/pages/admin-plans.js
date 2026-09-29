@@ -25,7 +25,7 @@ const table = new DataTable($("[data-plans]", view), {
     { key: "r", header: "Risk", cell: (p) => riskBadge(p.riskLevel) },
     { key: "lim", header: "Limits", hideOnMobile: true, cell: (p) => html`<span class="num text-xs">${formatNumber(p.minAllocation, 0)} – ${formatNumber(p.maxAllocation, 0)} USDT · ${p.durationDays}d</span>` },
     { key: "fees", header: "Fees", hideOnMobile: true, cell: (p) => html`<span class="text-xs">${Number(p.managementFeePct)}% mgmt · ${Number(p.performanceFeePct)}% perf</span>` },
-    { key: "subs", header: "Subscriptions", align: "right", cell: (p) => html`<span class="num text-xs">${p.activeCount} active · ${p.pendingCount} pending<br />${formatUsd(p.allocated)}</span>` },
+    { key: "subs", header: "Subscriptions", align: "right", cell: (p) => html`<span class="num text-xs">${p.activeCount} active · ${p.pendingCount} pending${p.maturedCount ? html`<br /><span class="text-warn">${p.maturedCount} awaiting settlement</span>` : ""}<br />${formatUsd(p.allocated)}</span>` },
     { key: "s", header: "Status", cell: (p) => statusBadge(p.status) },
     { key: "a", header: html`<span class="sr-only">Actions</span>`, align: "right", cell: (p) => html`<div class="flex justify-end gap-1"><button type="button" class="btn btn-ghost btn-sm" data-edit="${p.id}">Edit</button><button type="button" class="btn btn-ghost btn-sm" data-toggle="${p.id}">${p.status === "ACTIVE" ? "Disable" : "Enable"}</button></div>` },
   ],
@@ -37,18 +37,20 @@ watch("/api/admin/investment-plans", ({ data, error }) => {
   table.set(data);
 });
 
+const isMatured = (s) => s.status === "ACTIVE" && s.endsAt && new Date(s.endsAt) <= new Date();
+
 const subs = adminTable($("[data-subs]", view), {
   endpoint: "/api/admin/investment-subscriptions",
   pageSize: 20,
-  filters: [{ name: "status", type: "select", default: "ACTIVE", options: [["PENDING", "Pending"], ["ACTIVE", "Active"], ["COMPLETED", "Completed"], ["CANCELLED", "Cancelled"], ["", "All"]] }],
+  filters: [{ name: "status", type: "select", default: "ACTIVE", options: [["PENDING", "Pending"], ["ACTIVE", "Active"], ["MATURED", "Awaiting settlement"], ["COMPLETED", "Completed"], ["CANCELLED", "Cancelled"], ["", "All"]] }],
   empty: emptyState({ title: "No subscriptions" }),
   columns: [
     { key: "u", header: "User", cell: (s) => html`<span class="flex items-center gap-1.5">${s.user.email} ${s.isDemo ? smallDemo() : ""}</span>` },
     { key: "p", header: "Plan", cell: (s) => s.plan.name },
     { key: "a", header: "Amount", align: "right", cell: (s) => html`<span class="num">${formatNumber(s.amount, 2)}</span>` },
-    { key: "t", header: "Term", hideOnMobile: true, cell: (s) => html`<span class="text-xs text-muted">${s.startedAt ? `${formatDate(s.startedAt, "date")} → ${formatDate(s.endsAt, "date")}` : "Not started"}${s.endsAt && new Date(s.endsAt) < new Date() && s.status === "ACTIVE" ? html`<span class="ml-1 text-warn">· matured</span>` : ""}</span>` },
+    { key: "t", header: "Term", hideOnMobile: true, cell: (s) => html`<span class="text-xs text-muted">${s.startedAt ? `${formatDate(s.startedAt, "date")} → ${formatDate(s.endsAt, "date")}` : "Not started"}${isMatured(s) ? html`<span class="ml-1 text-warn">· matured</span>` : ""}</span>` },
     { key: "r", header: "Realised P&L", align: "right", cell: (s) => (s.realizedPnl === null ? html`<span class="text-dim">—</span>` : html`<span class="num ${Number(s.realizedPnl) >= 0 ? "text-up" : "text-down"}">${formatUsd(s.realizedPnl, { sign: true })}</span>`) },
-    { key: "s", header: "Status", cell: (s) => statusBadge(s.status) },
+    { key: "s", header: "Status", cell: (s) => (isMatured(s) ? statusBadge("PENDING", "Awaiting settlement") : statusBadge(s.status)) },
     {
       key: "x",
       header: html`<span class="sr-only">Actions</span>`,
